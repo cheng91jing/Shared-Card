@@ -9,6 +9,8 @@
  */
 
 namespace app\common\controller;
+use app\common\model\AdminUser;
+use think\Session;
 
 /**
  * 后台控制器基类
@@ -21,5 +23,10 @@ class AdminBase extends Base
     {
         //TODO: 后台用户验证等
         parent::_initialize();
+    }
+
+    protected function login(AdminUser $user)
+    {
+        Session::set('admin_user', $user);
     }
 }

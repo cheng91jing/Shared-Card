@@ -9,7 +9,7 @@
  */
 
 namespace app\common\model;
-use app\common\library\PasswordHandler;
+use app\common\library\AuthHandler;
 
 /**
  * 后台用户表
@@ -32,12 +32,22 @@ use app\common\library\PasswordHandler;
  */
 class AdminUser extends Base
 {
+    /**
+     * 获取后台登陆用户
+     * @param $username
+     * @param $password
+     *
+     * @return bool|null|static
+     * @throws \think\exception\DbException
+     */
     public static function getUserForLogin($username, $password)
     {
-        $user = self::where(['username|mobile' => $username])->find();
-//        if(!empty($user)){
-//            if(PasswordHandler::verify($password))
-//        }
+        $user = self::get(['username|mobile' => $username]);
+        if(!empty($user)){
+            if(AuthHandler::verify($password, $user->password)){
+                return $user;
+            }
+        }
         return false;
     }
 }

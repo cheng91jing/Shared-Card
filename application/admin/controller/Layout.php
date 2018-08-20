@@ -11,10 +11,17 @@
 namespace app\admin\controller;
 
 
-class Index
+use app\common\controller\AdminBase;
+
+class Layout extends AdminBase
 {
     public function index()
     {
-        return '后端';
+        return $this->fetch();
+    }
+
+    public function home()
+    {
+        return $this->fetch();
     }
 }

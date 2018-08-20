@@ -24,8 +24,9 @@ class Login extends AdminBase
             $password = $this->request->post('password', null);
             try{
                 if(empty($username) || empty($password)) throw new Exception('请输入账号和密码！');
-//                $user = AdminUser::
-
+                $user = AdminUser::getUserForLogin($username, $password);
+                if(empty($user)) throw new Exception('用户名或密码错误！');
+                $this->login($user);
             }catch (Exception $e){
                 $this->jsonReturn->error_code = -1;
                 $this->jsonReturn->error_message = $e->getMessage();

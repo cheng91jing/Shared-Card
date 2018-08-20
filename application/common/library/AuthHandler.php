@@ -12,8 +12,16 @@ namespace app\common\library;
 
 use Exception;
 
-class PasswordHandler
+class AuthHandler
 {
+    /**
+     * 生成密码哈希散列
+     * @param $password
+     * @param array $otherImplode
+     *
+     * @return bool|string
+     * @throws Exception
+     */
     public static function generateHash($password, array $otherImplode = [])
     {
         $otherString = implode("", $otherImplode);
@@ -23,6 +31,14 @@ class PasswordHandler
         return $hash;
     }
 
+    /**
+     * 验证用户密码
+     * @param $password
+     * @param $hash
+     * @param array $otherImplode
+     *
+     * @return bool
+     */
     public static function verify($password, $hash, array $otherImplode = [])
     {
         $otherString = implode("", $otherImplode);

@@ -6,8 +6,8 @@ use think\Config;
 
 class Index extends IndexBase
 {
-    public function index()
-    {
-        return json(Config::get('customize.aaa'));
-    }
+//    public function index()
+//    {
+//        return json(Config::get('customize.aaa'));
+//    }
 }
