@@ -17,7 +17,6 @@ namespace app\common\controller;
  */
 class AdminBase extends Base
 {
-
     public function _initialize()
     {
         //TODO: 后台用户验证等
