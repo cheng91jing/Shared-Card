@@ -9,7 +9,9 @@
  */
 
 namespace app\common\model;
+
 use app\common\library\AuthHandler;
+use think\Request;
 
 /**
  * 后台用户表
@@ -34,20 +36,33 @@ class AdminUser extends Base
 {
     /**
      * 获取后台登陆用户
+     *
      * @param $username
      * @param $password
      *
      * @return bool|null|static
      * @throws \think\exception\DbException
      */
-    public static function getUserForLogin($username, $password)
+    public static function verificationOfLogin($username, $password)
     {
         $user = self::get(['username|mobile' => $username]);
-        if(!empty($user)){
-            if(AuthHandler::verify($password, $user->password, [$user->auth_code])){
+        if (! empty($user)) {
+            if (AuthHandler::verify($password, $user->password, [$user->auth_code])) {
                 return $user;
             }
         }
         return false;
+    }
+
+    //用户登陆
+    public function login()
+    {
+        //生成登陆鉴权码
+        $this->login_code = generate_rand_str(10, true);
+        $this->login_ip   = Request::instance()->ip();
+        $this->login_time = date('Y-m-d H:i:s');
+        $this->save();
+
+        return $this;
     }
 }

@@ -10,7 +10,7 @@
 
 namespace app\common\library;
 
-use Exception;
+use think\Exception;
 
 class AuthHandler
 {
@@ -20,7 +20,7 @@ class AuthHandler
      * @param array $otherImplode
      *
      * @return bool|string
-     * @throws Exception
+     * @throws \think\Exception
      */
     public static function generateHash($password, array $otherImplode = [])
     {

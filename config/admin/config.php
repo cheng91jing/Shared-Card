@@ -4,8 +4,6 @@
 return [
     //会话设置
     'session'                => [
-        'id'             => '',
-        'var_session_id' => '',
         'prefix'         => 'admin',
         'type'           => '',
         'auto_start'     => true,

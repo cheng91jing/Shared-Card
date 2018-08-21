@@ -14,7 +14,6 @@ namespace app\admin\controller;
 use app\common\controller\AdminBase;
 use app\common\model\AdminUser;
 use think\Exception;
-use think\Session;
 
 class Login extends AdminBase
 {
@@ -25,7 +24,7 @@ class Login extends AdminBase
             $password = $this->request->post('password', null);
             try{
                 if(empty($username) || empty($password)) throw new Exception('请输入账号和密码！');
-                $user = AdminUser::getUserForLogin($username, $password);
+                $user = AdminUser::verificationOfLogin($username, $password);
                 if(empty($user)) throw new Exception('用户名或密码错误！');
                 $this->login($user);
             }catch (Exception $e){
@@ -39,7 +38,7 @@ class Login extends AdminBase
 
     public function logout()
     {
-        Session::clear();
+        $this->clearLogin();
         return redirect('index',302);
     }
 }

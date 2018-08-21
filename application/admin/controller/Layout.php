@@ -19,7 +19,8 @@ class Layout extends AdminBase
     public function index()
     {
         $user_nav = Config::get('jurisdiction');    //获取用户导航
-        return $this->fetch('', compact('user_nav'));
+        $user = $this->user;
+        return $this->fetch('', compact('user_nav', 'user'));
     }
 
     public function home()

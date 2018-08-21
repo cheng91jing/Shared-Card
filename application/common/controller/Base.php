@@ -12,6 +12,7 @@ namespace app\common\controller;
 
 
 use app\common\library\APIFormatResponse;
+use app\common\library\PermissionHandler;
 use think\Controller;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
@@ -35,6 +36,11 @@ abstract class Base extends Controller
     public $user = null;
 
     /**
+     * @var null|\app\common\library\PermissionHandler 权限助手
+     */
+    public $permission = null;
+
+    /**
      * @var null|APIFormatResponse API返回类型
      */
     public $jsonReturn = null;
@@ -43,7 +49,8 @@ abstract class Base extends Controller
     {
         //设置API返回数据格式类，用作后台AJAX，或者前端API等
         $this->jsonReturn = new APIFormatResponse();
-        //TODO: 全局控制器初始化基本操作
+        //初始化权限类
+        $this->permission = PermissionHandler::getInstance();
     }
 
     /**
@@ -73,5 +80,11 @@ abstract class Base extends Controller
     protected function throwPageException($message = '', $statusCode = 404)
     {
         throw new HttpException($statusCode, $message);
+    }
+
+    //设置权限
+    protected function loadPermission(array $permission)
+    {
+        $this->permission->init($permission);
     }
 }
