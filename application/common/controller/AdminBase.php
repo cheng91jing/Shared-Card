@@ -27,6 +27,21 @@ class AdminBase extends Base
 
     protected function login(AdminUser $user)
     {
-        Session::set('admin_user', $user);
+        $this->isLogin = true;
+        $this->user = $user;
+    }
+
+    protected function checkLogin()
+    {
+        if(! $this->isLogin){
+            if($this->request->isAjax()){
+                $this->throwJsonException($this->jsonReturn->getSetParameterToArray([
+                    'error_code' => -1,
+                    'error_message' => '登录已失效！'
+                ]));
+            }else{
+                $this->throwRedirectException('admin/login/logout');
+            }
+        }
     }
 }

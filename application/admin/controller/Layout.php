@@ -12,12 +12,14 @@ namespace app\admin\controller;
 
 
 use app\common\controller\AdminBase;
+use think\Config;
 
 class Layout extends AdminBase
 {
     public function index()
     {
-        return $this->fetch();
+        $user_nav = Config::get('jurisdiction');    //获取用户导航
+        return $this->fetch('', compact('user_nav'));
     }
 
     public function home()

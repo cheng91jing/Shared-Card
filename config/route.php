@@ -8,14 +8,21 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
+use think\Route;
+
+/**
+ * 定义路由
+ */
+//路由规则
+Route::pattern([
+    'id' => '\d+',
+]);
+//后台路由
+Route::group('admin', function (){
+    //架构页面
+    Route::any('home', 'admin/layout/index');
+});
 
 return [
-    '__pattern__' => [
-        'name' => '\w+',
-    ],
-    '[hello]'     => [
-        ':id'   => ['index/hello', ['method' => 'get'], ['id' => '\d+']],
-        ':name' => ['index/hello', ['method' => 'post']],
-    ],
 
 ];

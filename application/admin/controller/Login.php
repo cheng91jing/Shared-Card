@@ -14,6 +14,7 @@ namespace app\admin\controller;
 use app\common\controller\AdminBase;
 use app\common\model\AdminUser;
 use think\Exception;
+use think\Session;
 
 class Login extends AdminBase
 {
@@ -34,5 +35,11 @@ class Login extends AdminBase
             return json($this->jsonReturn);
         }
         return $this->fetch();
+    }
+
+    public function logout()
+    {
+        Session::clear();
+        return redirect('index',302);
     }
 }

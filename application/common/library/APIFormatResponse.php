@@ -30,4 +30,22 @@ class APIFormatResponse
      * @var null 返回数据
      */
     public $data = null;
+
+    public function setParameter(array $parameters)
+    {
+        foreach ($parameters as $k => $v){
+            $this->$k = $v;
+        }
+        return $this;
+    }
+
+    public function transformArray()
+    {
+        return json_decode(json_encode($this), true);
+    }
+
+    public function getSetParameterToArray(array $parameters)
+    {
+        return $this->setParameter($parameters)->transformArray();
+    }
 }

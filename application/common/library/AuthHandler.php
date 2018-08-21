@@ -24,6 +24,7 @@ class AuthHandler
      */
     public static function generateHash($password, array $otherImplode = [])
     {
+        sort($otherImplode);
         $otherString = implode("", $otherImplode);
         $encryptString = $password .$otherString;
         $hash = password_hash($encryptString, PASSWORD_DEFAULT);
@@ -41,6 +42,7 @@ class AuthHandler
      */
     public static function verify($password, $hash, array $otherImplode = [])
     {
+        sort($otherImplode);
         $otherString = implode("", $otherImplode);
         $encryptString = $password .$otherString;
         return password_verify($encryptString, $hash);

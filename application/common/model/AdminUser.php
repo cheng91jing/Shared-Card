@@ -44,7 +44,7 @@ class AdminUser extends Base
     {
         $user = self::get(['username|mobile' => $username]);
         if(!empty($user)){
-            if(AuthHandler::verify($password, $user->password)){
+            if(AuthHandler::verify($password, $user->password, [$user->auth_code])){
                 return $user;
             }
         }
