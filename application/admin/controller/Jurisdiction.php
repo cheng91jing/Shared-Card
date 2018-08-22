@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminBase;
 use app\common\model\AdminIdentity;
+use think\Config;
 
 class Jurisdiction extends AdminBase
 {
@@ -76,7 +77,8 @@ class Jurisdiction extends AdminBase
         if($this->request->isAjax()){
 
         }
-        return $this->fetch('info', compact('identity'));
+        $jurisdiction = Config::get('jurisdiction');
+        return $this->fetch('info', compact('identity', 'jurisdiction'));
     }
 
     public function delIdentity($identityId)

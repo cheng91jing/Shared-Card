@@ -9,7 +9,7 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // [ 应用入口文件 ]
-
+$_SERVER['PATH_INFO'] = $_SERVER['REQUEST_URI'];
 // 定义应用目录
 define('APP_PATH', __DIR__ . '/../application/');
 // 自定义配置文件目录
