@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{block name="title"}共享卡管理后台{/block}</title>
+    <link rel="shortcut icon" href="__ROOT__/favicon.ico">
+    <link href="__STATIC__/plugins/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="__STATIC__/plugins/font-awesome/font-awesome.mini.css" rel="stylesheet">
+    <link href="__STATIC__/plugins/jqgrid/ui.jqgrid-bootstrap.css" rel="stylesheet">
+    <link href="__STATIC__/plugins/animate/animate.css" rel="stylesheet">
+    <link href="__STATIC__/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <link href="__STATIC__/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    {block name="header_resource"}{/block}
+    <style>
+        /* Additional style to fix warning dialog position */
+        #alertmod_table_list_2 {
+            top: 900px !important;
+        }
+    </style>
+
+</head>
+
+<body class="gray-bg">
+{block name="back"}{/block}
+    <div class="wrapper wrapper-content  animated zoomIn">
+        {block name="main"}主体{/block}
+    </div>
+
+    <script src="__STATIC__/plugins/jq/jquery.min.js"></script>
+    <script src="__STATIC__/plugins/bootstrap/bootstrap.min.js"></script>
+    <script src="__STATIC__/plugins/jqgrid/grid.locale-cn.js"></script>
+    <script src="__STATIC__/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+    <script src="__STATIC__/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+    <!--<script src="js/plugins/peity/jquery.peity.min.js"></script>-->
+    <!--<script src="js/content.min.js?v=1.0.0"></script>-->
+    {block name="footer_resource"}{/block}
+    {block name="footer_js"}{/block}
+</body>
+</html>

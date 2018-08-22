@@ -1,0 +1,103 @@
+{extend name="../../common/view/layout_base"}
+{block name="back"}
+<!--<div class="row border-bottom white-bg dashboard-header">-->
+<!--<a class="btn btn-primary" href="javascript:void(0)" type="button" onclick="window.history.back()">-->
+<!--<i class="fa fa-arrow-left"></i>&nbsp;上一页-->
+<!--</a>-->
+<!--</div>-->
+{/block}
+{block name="main"}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        <h5>角色列表</h5>
+                        <div class="ibox-tools">
+                            <button onclick="window.location.href='__ROOT__/admin/jurisdiction/add'" type="button" class="btn btn-outline btn-primary btn-xs">新增角色</button>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="jqGrid_wrapper" style="overflow: auto;">
+                            <table id="table_list_1"></table>
+                            <div id="pager_list_1"></div>
+                        </div>
+                        <p>&nbsp</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+{/block}
+{block name="footer_js"}
+    <script>
+        $(document).ready(function(){
+            $("#table_list_1").jqGrid({
+                url:'__ROOT__/admin/jurisdiction/index',
+                mtype: "post",
+                datatype: "json",
+                styleUI:'Bootstrap',
+                height:350,
+                // autowidth:true,
+                shrinkToFit:true,
+                rowNum:10,
+                rowList:[10,20,30],
+                colNames:["序号","身份","合作商","操作"],
+                colModel:[
+                    {name:"identity_id",index:"identity_id",width:60,sorttype:"int"},
+                    {name:"identity_name",index:"identity_name",sortable:false,width:100},
+                    {name:"partner_id",index:"partner_id",width:200,sortable:false},
+                    {name:"identity_id",index:"identity_id",width:200,sortable:false}
+                    ],
+                pager:"#pager_list_1",
+                viewrecords:true,
+                caption:"角色列表",
+                hidegrid:false,
+                sortable:true
+            });
+            $('#table_list_1').navGrid("#pager_list_1", {
+                    search: false, // show search button on the toolbar
+                    add: false,
+                    edit: false,
+                    del: false,
+                    refresh: true
+                },
+                {}, // edit options
+                {}, // add options
+                {}, // delete options
+                { multipleSearch: false, multipleGroup: false, showQuery: false } // search options - define multiple search
+            );
+            function formatOperation(cellValue, options, rowObject){
+                var operationHtml = '<span operationValue="'+cellValue+'"><a href="__ROOT__/admin/jurisdiction/identityDetail/identityId/'+cellValue+'" type="button" class="btn btn-primary btn-xs" >权限详情</a> <a onclick="delIdentity('+ cellValue +')" class="btn btn-danger btn-xs btn-bitbucket"> <i class="fa fa-close"></i></a></span>';
+                return operationHtml;
+            }
+
+            function unformatOperation(cellValue, options, cellObject){
+                return $(cellObject.html()).attr('operationValue');
+            }
+        });
+        function delIdentity(id){
+            parent.layer.alert('确认删除该身份吗？',
+                {icon: -1, shadeClose:!0, title:'提示', btn: ['确认','取消']},
+                function () {
+                    parent.layer.closeAll();
+                    $.ajax({
+                        type:'POST',
+                        dataType:'json',
+                        url:'__ROOT__/admin/jurisdiction/delIdentity',
+                        data:{identityId:id},
+                        success: function (msg) {
+                            if(msg.error){
+                                parent.layer.alert(msg.msg);
+                            }else{
+                                $("#table_list_1").trigger("reloadGrid");
+                            }
+                            return false;
+                        },
+                        error:function(XMLHttpRequest, textStatus, errorThrown){
+                            console.log(XMLHttpRequest);
+                        }
+                    });
+                }
+            );
+        }
+    </script>
+{/block}

@@ -39,8 +39,8 @@ return [
                 ],
             ],
             [
-                'name' => '管理员管理',
-                'id' => 'admin/administrator',
+                'name' => '后台账号管理',
+                'id' => 'system-administrator',
                 'nav' => true,
                 'href' => 'admin/administrator',
                 'permission' => [
@@ -63,7 +63,7 @@ return [
                 ],
             ],
             [
-                'name' => '权限管理',
+                'name' => '后台角色管理',
                 'id' => 'admin/jurisdiction',
                 'nav' => true,
                 'href' => 'admin/jurisdiction',

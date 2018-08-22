@@ -22,5 +22,12 @@ namespace app\common\model;
  */
 class AdminIdentity extends Base
 {
+    //获取身份的权限
+    public static function getIdentityPermission($identity_id)
+    {
+        $identity = self::get($identity_id);
+        return $identity ? explode('|', $identity->permission_ids) : [];
+    }
 
+    
 }

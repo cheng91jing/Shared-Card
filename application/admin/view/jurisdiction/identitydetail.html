@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+
+<!-- Mirrored from www.zi-han.net/theme/hplus/tree_view.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 20 Jan 2016 14:19:58 GMT -->
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>海南故事分润 - 身份权限详情</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="{$Think.WWW_DOMAIN}static/favicon.ico">
+    <link href="{$Think.WWW_DOMAIN}static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="{$Think.WWW_DOMAIN}static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+
+    <link href="{$Think.WWW_DOMAIN}static/css/animate.min.css" rel="stylesheet">
+    <link href="{$Think.WWW_DOMAIN}static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <link href="{$Think.WWW_DOMAIN}static/css/plugins/treeview/bootstrap-treeview.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg col-sm-8">
+    <div class="row wrapper wrapper-content animated fadeInRight">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>身份权限详情 - {$identity_arr.identity_name}</h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" method="get">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">身份名</label>
+
+                            <div class="col-sm-10">
+                                <input class="form-control" name="identity_name" value="{$identity_arr.identity_name}" placeholder="请填写身份名称" type="text">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>权限列表</h5>
+                    <div class="ibox-tools">
+                        <a type="button" class="btn btn-primary btn-xs" style="color: #FFF" id="collapse_all">收起</a>
+                        <a type="button" class="btn btn-danger btn-xs" style="color: #FFF" id="expand_all">展开</a>
+                        <a type="button" class="btn btn-warning btn-xs" style="color: #FFF" id="check_all">全选</a>
+                        <a type="button" class="btn btn-success btn-xs" style="color: #FFF" id="un_check_all">全不选</a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div id="treeview12" class="test"></div>
+                    <button type="button" class="btn btn-block btn-outline btn-primary dim" id="confirm_submit">确认提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{$Think.WWW_DOMAIN}static/js/jquery.min.js?v=2.1.4"></script>
+    <script src="{$Think.WWW_DOMAIN}static/js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="{$Think.WWW_DOMAIN}static/js/content.min.js?v=1.0.0"></script>
+    <script src="{$Think.WWW_DOMAIN}static/js/plugins/treeview/bootstrap-treeview.min.js"></script>
+    <script src="{$Think.WWW_DOMAIN}static/js/plugins/layer/layer.min.js"></script>
+    <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+    <script>
+        t = '{$jurisdiction_List}';
+        $(function () {
+            var checkAbleTree = $("#treeview12").treeview({
+                data: t,
+                showIcon: false,
+                showCheckbox: true,
+                showTags: true,
+                levels: 3,
+                onNodeChecked:function (event, node) {
+                    var selectNodes = getNodeIdArr(node);//获取所有子节点
+                    if(selectNodes){ //子节点不为空，则选中所有子节点
+                        checkAbleTree.treeview('checkNode', [ selectNodes,{ silent: true }]);
+                    }
+                },
+                onNodeUnchecked: function (event, node) {
+                    var selectNodes = getNodeIdArr(node);
+                    if(selectNodes){
+                        checkAbleTree.treeview('uncheckNode', [ selectNodes,{ silent: true }]);
+                    }
+                }
+            });
+            $("#check_all").on('click', function () {
+                checkAbleTree.treeview('checkAll', {silent:true});
+            });
+            $("#un_check_all").on('click', function () {
+                checkAbleTree.treeview('uncheckAll', {silent:true});
+            });
+            $("#collapse_all").on('click', function () {
+                checkAbleTree.treeview('collapseAll', {silent:true});
+            });
+            $("#expand_all").on('click', function () {
+                checkAbleTree.treeview('expandAll', {levels:2, silent:true});
+            });
+
+            $("#confirm_submit").click(function () {
+                var node = checkAbleTree.treeview('getChecked');
+                var jurisdiction = [];
+                for(var i=0; i < node.length; i++){
+                    jurisdiction.push(node[i].id);
+                }
+                var identity_name = $("input[name='identity_name']").val();
+                if(identity_name == ''){
+                    parent.layer.alert('身份名称必须填写', {icon: -1, shadeClose:!0, title:'提示'},function () {
+                        parent.layer.closeAll();
+                    });
+                    return false;
+                }
+                $.post('{$Think.WWW_DOMAIN}admin/jurisdiction/identitydetail',
+                    {jurisdiction:jurisdiction, identityId:'{$Request.param.identityId}', identity_name: identity_name},
+                    function (msg) {
+                        parent.layer.alert(msg.msg, {icon: -1, shadeClose:!0, title:'提示'},function () {
+                            parent.layer.closeAll();
+                            if(!msg.error) window.history.back(-1);
+                        });
+                        return false;
+                    },
+                    'json'
+                );
+            });
+            //递归获取所有的结点id
+            function getNodeIdArr( node ){
+                var ts = [];
+                if(node.nodes){
+                    for(x in node.nodes){
+                        ts.push(node.nodes[x].nodeId)
+                        if(node.nodes[x].nodes){
+                            var getNodeDieDai = getNodeIdArr(node.nodes[x]);
+                            for(j in getNodeDieDai){
+                                ts.push(getNodeDieDai[j]);
+                            }
+                        }
+                    }
+                }else{
+                    ts.push(node.nodeId);
+                }
+                return ts;
+            }
+        });
+    </script>
+</body>
+
+
+<!-- Mirrored from www.zi-han.net/theme/hplus/tree_view.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 20 Jan 2016 14:19:59 GMT -->
+</html>

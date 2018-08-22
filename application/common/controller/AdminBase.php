@@ -34,11 +34,11 @@ class AdminBase extends Base
     protected function autoLogin()
     {
         $session_user = Session::get('admin_user');
-        if($session_user && !empty($session_user['admin_id']) && !empty($session_user['access_token'])){
+        if($session_user && !empty($session_user['id']) && !empty($session_user['access_token'])){
             try{
-                $user = AdminUser::get($session_user['admin_id']);
+                $user = AdminUser::get($session_user['id']);
                 if(empty($user)) throw new Exception('未知用户');
-                $approved = AuthHandler::verify($user->admin_id, $session_user['access_token'], [$user->auth_code, $user->login_code]);
+                $approved = AuthHandler::verify($user->id, $session_user['access_token'], [$user->auth_code, $user->login_code]);
                 if(!$approved) throw new Exception('登陆验证失败');
                 $this->initUserInfo($user);
             }catch (Exception $e){
@@ -54,8 +54,8 @@ class AdminBase extends Base
         $admin_user = $user->login();
         //记录session
         $login_session = [
-            'admin_id' => $admin_user->admin_id,
-            'access_token' => AuthHandler::generateHash($admin_user->admin_id, [$admin_user->login_code, $admin_user->auth_code]),
+            'id' => $admin_user->id,
+            'access_token' => AuthHandler::generateHash($admin_user->id, [$admin_user->login_code, $admin_user->auth_code]),
         ];
         Session::set('admin_user', $login_session);
 
@@ -63,14 +63,12 @@ class AdminBase extends Base
     }
 
     //系统初始化用户信息，权限等
-    protected function initUserInfo(AdminUser $user)
-    {
-        $this->isLogin = true;
-        $this->user = $user;
-        //权限加载
-        $permissions = [];
-        $this->loadPermission($permissions);
-    }
+//    protected function initUserInfo($user)
+//    {
+//        $this->isLogin = true;
+//        $this->user = $user;
+//        AuthHandler::$user = $user;
+//    }
 
     protected function checkLogin()
     {
@@ -84,13 +82,5 @@ class AdminBase extends Base
                 $this->throwRedirectException('admin/login/logout');
             }
         }
-    }
-
-    //清除登陆状态
-    protected function clearLogin()
-    {
-        $this->user = null;
-        $this->isLogin = false;
-        Session::clear();
     }
 }

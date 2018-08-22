@@ -8,69 +8,111 @@
 
 namespace app\common\library;
 
+
+use app\common\model\AdminIdentity;
+
 /**
  * 权限助手
  * Class PermissionHandler
  * @package app\common\library
+ * @method static PermissionHandler can($action)
+ * @method public PermissionHandler can($action)
  */
 class PermissionHandler
 {
-    public static $instance = null;
-    //导航
-    public $permissions = [];
+    public static $instance = [];
     //权限
-    public $nav = [];
+    protected $permissions = [];
+    //导航
+    protected $nav = [];
 
-    private function __construct()
+    protected $user = null;
+
+    /**
+     * PermissionHandler constructor.
+     * @param $user \app\common\model\AdminUser
+     */
+    private function __construct($user)
     {
+        $user_permission = explode('|',$user->permission_ids);
+        $identity_permission = ($user->identity_id > 0) ? AdminIdentity::getIdentityPermission($user->identity_id) : [];
+        $permissions = array_unique(array_merge($user_permission, $identity_permission));
+        $this->permissions = $permissions;
+        $this->user = $user;
 
+//        $jurisdiction = Config::get('jurisdiction');
+//        foreach ($jurisdiction as $jur){
+//            if(!empty($jur['nav'])){
+//                if(in_array('all', $permissions) || in_array($jur['id'], $permissions))
+//                    $this->nav = [];
+//            }else{
+//
+//            }
+//        }
     }
 
-    public static function getInstance()
+    /**
+     * @param $user \app\common\model\AdminUser|null
+     * @return \app\common\library\PermissionHandler|array
+     */
+    public static function getInstance($user = null)
     {
-        if(self::$instance === null){
-            self::$instance = new self();
+        if($user === null){
+            $user = AuthHandler::$user;
         }
-        return self::$instance;
+        if(empty($user)) return null;
+        if(empty(self::$instance[$user->id])){
+            self::$instance[$user->id] = new self($user);
+        }
+        return self::$instance[$user->id];
     }
 
-    //设置多个权限
-    public function init(array $permissions)
+    public function getPermission()
     {
-        
+        return $this->permissions;
     }
 
     //新增权限
-    public function push($action)
+    public function pushAction($action)
     {
         
     }
 
-    public function del($action)
+    public function delAction($action)
     {
         
     }
 
-    public function can($action)
+    public function canAction($action)
     {
-
+        return in_array('all', $this->permissions) || in_array($action, $this->permissions);
     }
 
-    public function cannot($action)
+    public function cannotAction($action)
     {
 
     }
 
     public static function __callStatic($name, $arguments)
     {
-        if(self::$instance === null){
-            self::$instance = new self();
-        }
         $self = self::getInstance();
-        if(method_exists($self, $name)){
-            return $self->{$name}($arguments[0]);
+        $method = $name . 'Action';
+        if($self && method_exists($self, $method)){
+            return $self->{$method}($arguments[0]);
+        }else{
+            return false;
         }
     }
 
-
+    public function __call($name, $arguments)
+    {
+        $self = self::getInstance();
+        $method = $name . 'Action';
+        if($self && method_exists($self, $method)){
+            return $self->{$method}($arguments[0]);
+        }else{
+            return false;
+        }
+    }
+    
 }

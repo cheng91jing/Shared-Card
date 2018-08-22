@@ -12,11 +12,14 @@ namespace app\common\controller;
 
 
 use app\common\library\APIFormatResponse;
+use app\common\library\AuthHandler;
 use app\common\library\PermissionHandler;
+use app\common\model\AdminUser;
 use think\Controller;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
 use think\Response;
+use think\Session;
 
 /**
  * 全局控制器基类
@@ -38,7 +41,7 @@ abstract class Base extends Controller
     /**
      * @var null|\app\common\library\PermissionHandler 权限助手
      */
-    public $permission = null;
+//    public $permission = null;
 
     /**
      * @var null|APIFormatResponse API返回类型
@@ -49,8 +52,6 @@ abstract class Base extends Controller
     {
         //设置API返回数据格式类，用作后台AJAX，或者前端API等
         $this->jsonReturn = new APIFormatResponse();
-        //初始化权限类
-        $this->permission = PermissionHandler::getInstance();
     }
 
     /**
@@ -82,9 +83,28 @@ abstract class Base extends Controller
         throw new HttpException($statusCode, $message);
     }
 
-    //设置权限
-    protected function loadPermission(array $permission)
+    //判断权限
+    protected function can($action)
     {
-        $this->permission->init($permission);
+        if($this->isLogin){
+            return PermissionHandler::can($action);
+        }
+        return false;
+    }
+
+    //系统初始化用户信息，权限等
+    protected function initUserInfo($user)
+    {
+        $this->isLogin = true;
+        $this->user = $user;
+        AuthHandler::$user = $user;
+    }
+
+    //清除登陆状态
+    protected function clearLogin()
+    {
+        $this->user = null;
+        $this->isLogin = false;
+        Session::clear();
     }
 }

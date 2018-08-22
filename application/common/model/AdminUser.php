@@ -19,7 +19,7 @@ use think\Request;
  * @author Chen <654807719@qq.com>
  * @package app\common\model
  *
- * @property integer $admin_id
+ * @property integer $id
  * @property string $username 用户名
  * @property string $mobile 手机号
  * @property integer $partner_id 合伙人ID（商家ID）

@@ -15,6 +15,11 @@ use think\Exception;
 class AuthHandler
 {
     /**
+     * @var null|\app\common\model\AdminUser 全局用户模型
+     */
+    public static $user = null;
+
+    /**
      * 生成密码哈希散列
      * @param $password
      * @param array $otherImplode

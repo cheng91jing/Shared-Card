@@ -13,39 +13,25 @@ namespace app\admin\controller;
 
 use app\common\action\Register;
 use app\common\controller\AdminBase;
+use app\common\model\AdminUser;
 use think\Request;
 
 class Administrator extends AdminBase
 {
     protected $beforeActionList = [
-//        'checkLogin',
+        'checkLogin',
 //        'verifyauthority' => ['only' => 'index,updateadmin,addadmin,deladmin'],
     ];
 
     public function index()
     {
+        if($this->request->isAjax()){
+            $data = AdminUser::paginateScope();
+            return json($data);
+        }
         return $this->fetch();
     }
-    public function getList()
-    {
-        $PostData = Request::instance()->post();
-        $SQL_start = ($PostData['page'] - 1) * $PostData['rows'];
-        $records = Db::table('identity')->count();      //总记录数
-        $totalPage = ceil($records/$PostData['rows']);  //总页码数
-        if(!empty($PostData['sidx'])){
-            $SQL_order = $PostData['sidx'] . ' ' . $PostData['sord'];
-        }else{
-            $SQL_order = 'identityId '. $PostData['sord'];
-        }
-        $identity_arr = Db::table('admin a')
-            ->join('identity b', 'a.identityId = b.identityId')
-            ->field('a.*,a.adminId as operation,b.identity_name')
-            ->order($SQL_order)
-            ->limit($SQL_start, $PostData['rows'])
-            ->select();
-        $result = ['page' => $PostData['page'], 'total' => $totalPage, 'records' => $records, 'rows'=>$identity_arr];
-        return json($result);
-    }
+
     public function updateAdmin($adminId)
     {
         if(!Request::instance()->isAjax()) {

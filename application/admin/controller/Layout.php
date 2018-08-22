@@ -12,15 +12,20 @@ namespace app\admin\controller;
 
 
 use app\common\controller\AdminBase;
+use app\common\library\PermissionHandler;
 use think\Config;
 
 class Layout extends AdminBase
 {
+    protected $beforeActionList = [
+        'checkLogin'
+    ];
     public function index()
     {
         $user_nav = Config::get('jurisdiction');    //获取用户导航
         $user = $this->user;
-        return $this->fetch('', compact('user_nav', 'user'));
+        $permission = PermissionHandler::getInstance();
+        return $this->fetch('', compact('user_nav', 'user', 'permission'));
     }
 
     public function home()

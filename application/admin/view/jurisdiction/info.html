@@ -1,0 +1,57 @@
+{extend name="../../common/view/layout_base"}
+{block name="main"}
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>角色相关</h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" method="get">
+                        <input type="hidden" name="identity_id" id="identity_id" value="{$identity.id ?? ''}">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="identity_name">角色名称</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" id="identity_name" name="identity_name" value="{$identity.identity_name ?? ''}" placeholder="请写角色名称" type="text" maxlength="20">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="partner_id">所属合作商</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" name="partner_id" id="partner_id">
+                                    <option value="">请选择角色所属合作商</option>
+                                    <option value="1">选项一</option>
+                                    <option value="2">选项二</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>权限设置</h5>
+                    <div class="ibox-tools">
+                        <a type="button" class="btn btn-primary btn-xs" style="color: #FFF" id="collapse_all">收起</a>
+                        <a type="button" class="btn btn-danger btn-xs" style="color: #FFF" id="expand_all">展开</a>
+                        <a type="button" class="btn btn-warning btn-xs" style="color: #FFF" id="check_all">全选</a>
+                        <a type="button" class="btn btn-success btn-xs" style="color: #FFF" id="un_check_all">全不选</a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="">
+
+                    </div>
+                    <button type="button" class="btn btn-outline btn-primary dim" id="confirm_submit">确认提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+{block name="footer_js"}
+    <script>
+
+    </script>
+{/block}
