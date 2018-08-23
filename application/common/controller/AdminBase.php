@@ -74,10 +74,7 @@ class AdminBase extends Base
     {
         if(! $this->isLogin){
             if($this->request->isAjax()){
-                $this->throwJsonException($this->jsonReturn->getSetParameterToArray([
-                    'error_code' => -1,
-                    'error_message' => '登录已失效！'
-                ]));
+                $this->throwJsonException($this->setReturnJsonError('登录已失效', -1)->transformArray());
             }else{
                 $this->throwRedirectException('admin/login/logout');
             }

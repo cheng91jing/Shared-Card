@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-08-21 10:40:19
+-- Generation Time: 2018-08-23 10:15:55
 -- 服务器版本： 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `card_admin_user` (
-  `admin_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `username` varchar(20) NOT NULL COMMENT '用户名',
   `mobile` varchar(11) DEFAULT NULL COMMENT '手机号',
   `partner_id` int(11) NOT NULL DEFAULT '0' COMMENT '所属合伙人',
@@ -47,8 +47,8 @@ CREATE TABLE `card_admin_user` (
 -- 转存表中的数据 `card_admin_user`
 --
 
-INSERT INTO `card_admin_user` (`admin_id`, `username`, `mobile`, `partner_id`, `identity_id`, `permission_ids`, `password`, `auth_code`, `login_code`, `create_time`, `login_time`, `login_ip`) VALUES
-(2, 'admin', '18423031505', 0, 0, NULL, '$2y$10$BdRZOOnT6NvpokaORtxpX.r8gPdLMmnvNXDCFSP06cPYCyQvlSjme', '5,24c4fb*v', NULL, '2018-08-21 06:22:19', NULL, NULL);
+INSERT INTO `card_admin_user` (`id`, `username`, `mobile`, `partner_id`, `identity_id`, `permission_ids`, `password`, `auth_code`, `login_code`, `create_time`, `login_time`, `login_ip`) VALUES
+(2, 'admin', '18423031505', 0, 0, 'all', '$2y$10$BdRZOOnT6NvpokaORtxpX.r8gPdLMmnvNXDCFSP06cPYCyQvlSjme', '5,24c4fb*v', '{c;SLwe7dR', '2018-08-21 06:22:19', '2018-08-23 01:14:21', '0.0.0.0');
 
 --
 -- Indexes for dumped tables
@@ -58,7 +58,7 @@ INSERT INTO `card_admin_user` (`admin_id`, `username`, `mobile`, `partner_id`, `
 -- Indexes for table `card_admin_user`
 --
 ALTER TABLE `card_admin_user`
-  ADD PRIMARY KEY (`admin_id`),
+  ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `mobile` (`mobile`);
 
@@ -70,7 +70,7 @@ ALTER TABLE `card_admin_user`
 -- 使用表AUTO_INCREMENT `card_admin_user`
 --
 ALTER TABLE `card_admin_user`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

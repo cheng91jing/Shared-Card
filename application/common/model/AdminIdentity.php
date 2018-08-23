@@ -18,7 +18,9 @@ namespace app\common\model;
  *
  * @property integer $identity_id
  * @property string $identity_name 身份名称
- * @property integer $permission_ids 权限ID组
+ * @property string $permission_ids 权限ID组
+ * @property integer $partner_id 合伙人
+ * @property integer $parent_id 父级
  */
 class AdminIdentity extends Base
 {

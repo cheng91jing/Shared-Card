@@ -107,4 +107,30 @@ abstract class Base extends Controller
         $this->isLogin = false;
         Session::clear();
     }
+
+    /**
+     * 设置Json返回数据
+     *
+     * @param $data
+     *
+     * @return APIFormatResponse
+     */
+    protected function setReturnJsonData($data)
+    {
+        return $this->jsonReturn->setData($data);
+    }
+
+    /**
+     * 设置Json返回错误信息
+     *
+     * @param $error_message
+     * @param int $error_code
+     * @param null $data
+     *
+     * @return APIFormatResponse
+     */
+    protected function setReturnJsonError($error_message, $error_code = -1, $data = null)
+    {
+        return $this->jsonReturn->setErrorMessage($error_message)->setErrorCode($error_code)->setData($data);
+    }
 }

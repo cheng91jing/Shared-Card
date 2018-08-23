@@ -1,19 +1,12 @@
 {extend name="../../common/view/layout_base"}
-{block name="back"}
-<!--<div class="row border-bottom white-bg dashboard-header">-->
-    <!--<a class="btn btn-primary" href="javascript:void(0)" type="button" onclick="window.history.back()">-->
-        <!--<i class="fa fa-arrow-left"></i>&nbsp;上一页-->
-    <!--</a>-->
-<!--</div>-->
-{/block}
 {block name="main"}
         <div class="row">
             <div class="col-sm-12">
                 <div class="ibox ">
                     <div class="ibox-title">
-                        <h5>管理员列表</h5>
+                        <h5>用户列表</h5>
                         <div class="ibox-tools">
-                            <button onclick="window.location.href='__ROOT__/admin/administrator/addadmin'" type="button" class="btn btn-outline btn-primary btn-xs">新增管理员</button>
+                            <button onclick="window.location.href='__ROOT__/admin/member/add'" type="button" class="btn btn-outline btn-primary btn-xs">新增用户</button>
                         </div>
                     </div>
                     <div class="ibox-content">
@@ -32,7 +25,7 @@
     <script>
         $(document).ready(function(){
             $("#table_list_1").jqGrid({
-                url:'__ROOT__/admin/administrator/index',
+                url:'__ROOT__/admin/member/index',
                 mtype: "post",
                 datatype: "json",
                 styleUI:'Bootstrap',    //风格
@@ -41,12 +34,10 @@
                 shrinkToFit:true,
                 rowNum:10,
                 rowList:[10,20,30],
-                colNames:["序号","用户名","手机号", "身份", "上次登陆时间","上次登陆IP","注册时间","操作"],
+                colNames:["序号","手机号", "上次登陆时间","上次登陆IP","注册时间","操作"],
                 colModel:[
                     {name:"id",index:"id",width:60,sorttype:"int"},
-                    {name:"username",index:"username",sortable:false,width:100},
-                    {name:"mobile",index:"identity_name",sortable:false,width:100},
-                    {name:"identity_id",index:"identity_id",sorttype:false,width:100},
+                    {name:"mobile",index:"username",sortable:false,width:100},
                     {name:"login_time",index:"login_time",sortable:false,width:150},
                     {name:"login_ip",index:"login_ip",sortable:false,width:100},
                     {name:"create_time",index:"create_time",sorttype:"datetime",formatter:"datetime",width:150},
@@ -71,7 +62,7 @@
                 { multipleSearch: false, multipleGroup: false, showQuery: false } // search options - define multiple search
             );
             function formatOperation(cellValue, options, rowObject){
-                var operationHtml = '<span operationValue="'+cellValue+'"><a href="__ROOT__/admin/administrator/updateadmin/adminId/'+cellValue+'" type="button" class="btn btn-primary btn-xs" >详情</a> <a href="__ROOT__/admin/jurisdiction/permission?type=0&id='+cellValue+'" type="button" class="btn btn-success btn-xs">权限</a> <a onclick="delAdmin('+ cellValue +')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+                var operationHtml = '<span operationValue="'+cellValue+'"><a href="__ROOT__/admin/member/add?user_id='+cellValue+'" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin('+ cellValue +')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
                 return operationHtml;
             }
 
@@ -79,30 +70,5 @@
                 return $(cellObject.html()).attr('operationValue');
             }
         });
-        function delAdmin(id){
-            parent.layer.alert('确认删除该管理员吗？',
-                {icon: -1, shadeClose:!0, title:'提示', btn: ['确认','取消']},
-                function () {
-                    parent.layer.closeAll();
-                    $.ajax({
-                        type:'POST',
-                        dataType:'json',
-                        url:'__ROOT__/admin/administrator/deladmin',
-                        data:{adminId:id},
-                        success: function (msg) {
-                            if(msg.error){
-                                parent.layer.alert(msg.msg);
-                            }else{
-                                $("#table_list_1").trigger("reloadGrid");
-                            }
-                            return false;
-                        },
-                        error:function(XMLHttpRequest, textStatus, errorThrown){
-                            console.log(XMLHttpRequest);
-                        }
-                    });
-                }
-            );
-        }
     </script>
 {/block}

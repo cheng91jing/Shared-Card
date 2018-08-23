@@ -33,4 +33,9 @@ class Register
         $user_model->save();
         return $user_model;
     }
+
+    public static function register($mobile)
+    {
+
+    }
 }

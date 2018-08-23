@@ -44,8 +44,46 @@ class APIFormatResponse
         return json_decode(json_encode($this), true);
     }
 
-    public function getSetParameterToArray(array $parameters)
+//    public function getSetParameterToArray(array $parameters)
+//    {
+//        return $this->setParameter($parameters)->transformArray();
+//    }
+    /**
+     * 设置错误代码
+     *
+     * @param $error_code
+     *
+     * @return $this
+     */
+    public function setErrorCode($error_code)
     {
-        return $this->setParameter($parameters)->transformArray();
+        $this->error_code = $error_code;
+        return $this;
+    }
+
+    /**
+     * 设置错误信息
+     *
+     * @param $error_message
+     *
+     * @return $this
+     */
+    public function setErrorMessage($error_message)
+    {
+        $this->error_message = $error_message;
+        return $this;
+    }
+
+    /**
+     * 设置数据
+     *
+     * @param $data
+     *
+     * @return $this
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+        return $this;
     }
 }

@@ -65,7 +65,6 @@
     $("#login").submit(function (e) {
         e.preventDefault();
         $.post('__ROOT__/admin/login', $(this).serialize(), function (res) {
-            console.log(res);
             if(res.error_code){
                 swal({
                     type: 'error',

@@ -26,7 +26,7 @@ use think\Request;
  * @property integer $identity_id 身份ID
  * @property string $permission_ids 权限ID组
  * @property string $password 密码
- * @property string auth_code 鉴权随机字符串
+ * @property string $auth_code 鉴权随机字符串
  * @property string $login_code 登录状态鉴权随机数
  * @property string $create_time 创建时间
  * @property string $login_time 上次登录时间

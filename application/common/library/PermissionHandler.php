@@ -67,7 +67,7 @@ class PermissionHandler
         return self::$instance[$user->id];
     }
 
-    public function getPermission()
+    public function getPermissionAction()
     {
         return $this->permissions;
     }
@@ -83,9 +83,23 @@ class PermissionHandler
         
     }
 
-    public function canAction($action)
+    public function canAction($actions)
     {
-        return in_array('all', $this->permissions) || in_array($action, $this->permissions);
+        if(in_array('all', $this->permissions)) return true;
+        if(is_array($actions)){
+            foreach ($actions as $action){
+                if(is_array($action)){
+                    foreach ($action as $a){
+                        if(!in_array($a, $this->permissions)) return false;
+                    }
+                }else{
+                    if(!in_array($action, $this->permissions)) return false;
+                }
+            }
+            return true;
+        }else{
+            return  in_array($actions, $this->permissions);
+        }
     }
 
     public function cannotAction($action)
@@ -98,7 +112,7 @@ class PermissionHandler
         $self = self::getInstance();
         $method = $name . 'Action';
         if($self && method_exists($self, $method)){
-            return $self->{$method}($arguments[0]);
+            return $self->{$method}($arguments);
         }else{
             return false;
         }
@@ -109,7 +123,7 @@ class PermissionHandler
         $self = self::getInstance();
         $method = $name . 'Action';
         if($self && method_exists($self, $method)){
-            return $self->{$method}($arguments[0]);
+            return $self->{$method}($arguments);
         }else{
             return false;
         }

@@ -1,0 +1,165 @@
+{extend name="../../common/view/layout_base"}
+{block name="back"}
+<div class="row border-bottom white-bg dashboard-header">
+    <a class="btn btn-warning" title="上一页" href="javascript:void(0)" type="button" onclick="window.history.back()">
+        <i class="fa fa-hand-point-left"></i>&nbsp;上一页
+    </a>
+    <button class="btn btn-success btn-rounded btn-outline dim pull-right" id="submit">
+        <i class="fa fa-check"></i> 确认提交
+    </button>
+</div>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>权限设置</h5>
+                <!--<div class="ibox-tools">-->
+                <!--<a type="button" class="btn btn-primary btn-xs" style="color: #FFF" id="collapse_all">收起</a>-->
+                <!--<a type="button" class="btn btn-danger btn-xs" style="color: #FFF" id="expand_all">展开</a>-->
+                <!--<a type="button" class="btn btn-warning btn-xs" style="color: #FFF" id="check_all">全选</a>-->
+                <!--<a type="button" class="btn btn-success btn-xs" style="color: #FFF" id="un_check_all">全不选</a>-->
+                <!--</div>-->
+            </div>
+            <div class="ibox-content">
+                <form id="form-permission">
+                    <input type="hidden" name="id" value="{$Request.get.type ? $model.identity_id : $model.id}">
+                    <input type="hidden" name="type" value="{$Request.get.type}">
+                    <div class="col-sm-12">
+                        <blockquote class="" style="">
+                            <div class="well well-sm">
+                                <span class="label label-success">{$Request.get.type ? '角色权限设置' : '管理员权限设置'}</span>
+                                <span class="label label-primary">{$Request.get.type ? $model.identity_name : $model.username}</span>
+                            </div>
+                        </blockquote>
+                        <hr>
+                    </div>
+                    <div class="panel blank-panel">
+                        <div class="panel-heading">
+                            <div class="panel-options">
+                                <ul class="nav nav-tabs">
+                                    {volist name="jurisdiction" id="head"}
+                                    <li class='{eq name="key" value="0"}active{/eq}'>
+                                        <a data-toggle="tab" href="#tab-{$key}"><i class="{$head.icon}"></i>{$head.name}</a>
+                                    </li>
+                                    {/volist}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                {volist name="jurisdiction" id="nav"}
+                                <div id="tab-{$key}" class='tab-pane {eq name="key" value="0"}active{/eq}'>
+                                    <div class="panel panel-success permission-main">
+                                        <div class="panel-heading permission-main-head">
+                                            <div class="checkbox-inline">
+                                                <label><input class="permission-main-full" type="checkbox"
+                                                              name="permission[]" {if
+                                                              condition="in_array($nav.id, $owned)" }checked{/if}
+                                                    value="{$nav.id}">{$nav.name}</label>
+                                            </div>
+                                            <span class="badge">简介文字</span>
+                                            <span class="pull-right badge">主菜单</span>
+                                        </div>
+                                        <ul class="list-group">
+                                            {volist name="nav.child" id="child"}
+                                            <li class="list-group-item">
+                                                <div class="panel panel-warning permission-secondary">
+                                                    <div class="panel-heading permission-secondary-head">
+                                                        <div class="checkbox-inline">
+                                                            <label><input class="permission-secondary-full"
+                                                                          type="checkbox" name="permission[]" {if
+                                                                          condition="in_array($child.id, $owned)"
+                                                                          }checked{/if}
+                                                                value="{$child.id}">{$child.name}</label>
+                                                        </div>
+                                                        <span class="badge">简介文字</span>
+                                                        <span class="pull-right badge">子菜单</span>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        {volist name="child.permission" id="permission"}
+                                                        <div class="checkbox-inline col-sm-2">
+                                                            <label><input class="permission-full" type="checkbox"
+                                                                          name="permission[]" {if
+                                                                          condition="in_array($permission.id, $owned)"
+                                                                          }checked{/if}
+                                                                value="{$permission.id}">{$permission.name}</label>
+                                                        </div>
+                                                        {/volist}
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            {/volist}
+                                        </ul>
+                                    </div>
+                                </div>
+                                {/volist}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    let type = {$Request.get.type};
+    $("input:checkbox[name='permission[]']").on('click', function (e) {
+        let check = $(this).is(':checked');
+        if ($(this).hasClass('permission-full')) {
+            if (check) {
+                $(this).parents('.permission-secondary').find('.permission-secondary-head .permission-secondary-full').prop('checked', true);
+                $(this).parents('.permission-main').find('.permission-main-head .permission-main-full').prop('checked', true);
+            } else {
+                if ($(this).parents('.permission-secondary').find('.permission-full:checked').length === 0) {
+                    $(this).parents('.permission-secondary').find('.permission-secondary-head .permission-secondary-full').removeAttr('checked');
+                }
+                if ($(this).parents('.permission-main').find('.permission-full:checked').length === 0) {
+                    $(this).parents('.permission-main').find('.permission-main-head .permission-main-full').removeAttr('checked');
+                }
+            }
+        } else if ($(this).hasClass('permission-secondary-full')) {
+            if (check) {
+                $(this).parents('.permission-main').find('.permission-main-head .permission-main-full').prop('checked', true);
+                $(this).parents('.permission-secondary').find('.permission-full').prop('checked', true);
+            } else {
+                $(this).parents('.permission-secondary').find('.permission-full').removeAttr('checked');
+                if ($(this).parents('.permission-main').find('.permission-full:checked').length === 0) {
+                    $(this).parents('.permission-main').find('.permission-main-head .permission-main-full').removeAttr('checked');
+                }
+            }
+        } else if ($(this).hasClass('permission-main-full')) {
+            if (check) {
+                $(this).parents('.permission-main').find("input:checkbox[name='permission[]']").prop('checked', true);
+            } else {
+                $(this).parents('.permission-main').find("input:checkbox[name='permission[]']").removeAttr('checked');
+            }
+        }
+    })
+    $("#submit").click(function (e) {
+        $.post('__ROOT__/admin/jurisdiction/permission', $("#form-permission").serialize(), function (res) {
+            if(res.error_code){
+                swal({
+                    type: 'error',
+                    title: '出错了',
+                    text: res.error_message,
+                    allowOutsideClick: false
+                })
+            }else{
+                swal({
+                    type: 'success',
+                    title: '添加成功',
+                    timer: 3000,
+                    allowOutsideClick: false
+                    // animation: false,
+                }).then(result => {
+                    window.location.href = type ? '__ROOT__/admin/jurisdiction' : '__ROOT__/admin/administrator';
+                })
+            }
+        }, 'json')
+    });
+</script>
+{/block}

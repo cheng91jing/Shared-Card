@@ -4,40 +4,92 @@
  */
 return [
     [
+        'name' => '会员',
+        'id' => 'member',
+        'nav' => true,
+        'icon' => 'fa fa-users-cog',
+        'child' => [
+            [
+                'name' => '用户管理',
+                'id' => 'member-user',
+                'nav' => true,
+                'href' => 'admin/member',
+                'permission' => [
+                    [
+                        'name' => '用户列表',
+                        'id' => 'member-user-list',
+                    ],
+                ],
+            ],
+        ]
+    ],
+    [
+        'name' => '商家',
+        'id' => 'partner',
+        'nav' => true,
+        'icon' => 'fa fa-hotel',
+        'child' => [
+            [
+                'name' => '商家管理',
+                'id' => 'partner-info',
+                'nav' => true,
+                'href' => 'admin/partner',
+                'permission' => [
+                    [
+                        'name' => '商家列表',
+                        'id' => 'partner-info-list',
+                    ],
+                ],
+            ],
+        ]
+    ],
+    [
+        'name' => '交易',
+        'id' => 'trade',
+        'nav' => true,
+        'icon' => 'fa fa-hand-holding-usd',
+        'child' => [
+            [
+                'name' => '订单管理',
+                'id' => 'trade-order',
+                'nav' => true,
+                'href' => 'admin/order',
+                'permission' => [
+                    [
+                        'name' => '订单列表',
+                        'id' => 'trade-order-list',
+                    ],
+                ],
+            ],
+        ]
+    ],
+    [
+        'name' => '会员卡',
+        'id' => 'card',
+        'nav' => true,
+        'icon' => 'fa fa-address-card',
+        'child' => [
+            [
+                'name' => '会员卡类型',
+                'id' => 'card-category',
+                'nav' => true,
+                'href' => 'admin/card',
+                'permission' => [
+                    [
+                        'name' => '会员卡分类列表',
+                        'id' => 'card-category-list',
+                    ],
+                ],
+            ],
+        ]
+    ],
+    [
         'name' => '系统',
         'id' => 'system',
         'nav' => true,
 //        'href' => '#',
         'icon' => 'fa fa-cogs',
         'child' => [
-            [
-                'name' => '管理员操作记录',
-                'id' => 'admin/operation',
-                'nav' => true,
-                'href' => 'admin/operation',
-                'permission' => [
-                    [
-                        'name' => '管理员操作列表',
-                        'id' => 'admin/operation/index',
-                    ],
-                ],
-            ],
-            [
-                'name' => '分润参数管理',
-                'id' => 'admin/parameters',
-                'nav' => true,
-                'href' => 'admin/parameters',
-                'permission' => [
-                    [
-                        'name' => '分润参数列表',
-                        'id' => 'admin/parameters/index',
-                    ],
-                    [
-                        'name' => '分润参数修改',
-                        'id' => 'admin/parameters/updateparams',
-                    ],
-                ],
-            ],
             [
                 'name' => '后台账号管理',
                 'id' => 'system-administrator',
@@ -46,43 +98,43 @@ return [
                 'permission' => [
                     [
                         'name' => '管理员列表',
-                        'id' => 'admin/administrator/index',
+                        'id' => 'system-administrator-list',
                     ],
                     [
                         'name' => '新增管理员',
-                        'id' => 'admin/administrator/addadmin',
+                        'id' => 'system-administrator-add',
                     ],
                     [
                         'name' => '修改管理员',
-                        'id' => 'admin/administrator/updateadmin',
+                        'id' => 'system-administrator-update',
                     ],
                     [
                         'name' => '删除管理员',
-                        'id' => 'admin/administrator/deladmin',
+                        'id' => 'system-administrator-del',
                     ],
                 ],
             ],
             [
                 'name' => '后台角色管理',
-                'id' => 'admin/jurisdiction',
+                'id' => 'system-role',
                 'nav' => true,
                 'href' => 'admin/jurisdiction',
                 'permission' => [
                     [
                         'name' => '权限列表',
-                        'id' => 'admin/jurisdiction/index',
+                        'id' => 'system-role-list',
                     ],
                     [
                         'name' => '新增身份',
-                        'id' => 'admin/jurisdiction/addidentity',
+                        'id' => 'system-role-add',
                     ],
                     [
                         'name' => '修改身份',
-                        'id' => 'admin/jurisdiction/identitydetail',
+                        'id' => 'system-role-update',
                     ],
                     [
                         'name' => '删除身份',
-                        'id' => 'admin/jurisdiction/delidentity',
+                        'id' => 'system-role-del',
                     ],
                 ],
             ],

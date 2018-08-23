@@ -14,12 +14,12 @@
                     <h5>角色相关</h5>
                 </div>
                 <div class="ibox-content">
-                    <form class="form-horizontal" method="get">
+                    <form class="form-horizontal" id="permission_form">
                         <input type="hidden" name="identity_id" id="identity_id" value="{$identity.id ?? ''}">
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="identity_name">角色名称</label>
                             <div class="col-sm-6">
-                                <input class="form-control" id="identity_name" name="identity_name" value="{$identity.identity_name ?? ''}" placeholder="请写角色名称" type="text" maxlength="20">
+                                <input class="form-control" id="identity_name" name="identity_name" value="{$identity.identity_name ?? ''}" placeholder="请写角色名称" type="text" maxlength="20" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -34,78 +34,10 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-6">
-                                <button type="button" class="btn btn-outline btn-primary dim" id="confirm_submit">确认提交</button>
+                                <button type="submit" class="btn btn-outline btn-primary dim" id="confirm_submit">确认提交</button>
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-12">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>权限设置</h5>
-                    <!--<div class="ibox-tools">-->
-                        <!--<a type="button" class="btn btn-primary btn-xs" style="color: #FFF" id="collapse_all">收起</a>-->
-                        <!--<a type="button" class="btn btn-danger btn-xs" style="color: #FFF" id="expand_all">展开</a>-->
-                        <!--<a type="button" class="btn btn-warning btn-xs" style="color: #FFF" id="check_all">全选</a>-->
-                        <!--<a type="button" class="btn btn-success btn-xs" style="color: #FFF" id="un_check_all">全不选</a>-->
-                    <!--</div>-->
-                </div>
-                <div class="ibox-content">
-                    <p>注意事项</p>
-                    <div class="panel blank-panel">
-                        <div class="panel-heading">
-                            <div class="panel-options">
-                                <ul class="nav nav-tabs">
-                                    {volist name="jurisdiction" id="head"}
-                                    <li class='{eq name="key" value="0"}active{/eq}'>
-                                        <a data-toggle="tab" href="#tab-{$key}"><i class="{$head.icon}"></i>{$head.name}</a>
-                                    </li>
-                                    {/volist}
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <div class="tab-content">
-                                {volist name="jurisdiction" id="nav"}
-                                <div id="tab-{$key}" class='tab-pane {eq name="key" value="0"}active{/eq}'>
-                                    <div class="panel panel-success permission-main">
-                                        <div class="panel-heading permission-main-head">
-                                            <div class="checkbox-inline">
-                                                <label><input class="permission-main-full" type="checkbox" name="permission[]" value="{$nav.id}">{$nav.name}</label>
-                                            </div>
-                                            <span class="badge">简介文字</span>
-                                            <span class="pull-right badge">主菜单</span>
-                                        </div>
-                                        <ul class="list-group">
-                                            {volist name="nav.child" id="child"}
-                                            <li class="list-group-item">
-                                                <div class="panel panel-warning permission-secondary">
-                                                    <div class="panel-heading permission-secondary-head">
-                                                        <div class="checkbox-inline">
-                                                            <label><input class="permission-secondary-full" type="checkbox" name="permission[]" value="{$child.id}">{$child.name}</label>
-                                                        </div>
-                                                        <span class="badge">简介文字</span>
-                                                        <span class="pull-right badge">子菜单</span>
-                                                    </div>
-                                                    <div class="panel-body">
-                                                        {volist name="child.permission" id="permission"}
-                                                        <div class="checkbox-inline col-sm-2">
-                                                            <label><input class="permission-full" type="checkbox" name="permission[]" value="{$permission.id}">{$permission.name}</label>
-                                                        </div>
-                                                        {/volist}
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            {/volist}
-                                        </ul>
-                                    </div>
-                                </div>
-                                {/volist}
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -113,38 +45,28 @@
 {/block}
 {block name="footer_js"}
     <script>
-$("input:checkbox[name='permission[]']").on('click', function (e) {
-    console.log(1);
-    let check = $(this).is(':checked');
-    if($(this).hasClass('permission-full')){
-        if(check){
-            $(this).parents('.permission-secondary').find('.permission-secondary-head .permission-secondary-full').prop('checked', true);
-            $(this).parents('.permission-main').find('.permission-main-head .permission-main-full').prop('checked', true);
-        }else{
-            if($(this).parents('.permission-secondary').find('.permission-full:checked').length === 0){
-                $(this).parents('.permission-secondary').find('.permission-secondary-head .permission-secondary-full').removeAttr('checked');
-            }
-            if($(this).parents('.permission-main').find('.permission-full:checked').length === 0){
-                $(this).parents('.permission-main').find('.permission-main-head .permission-main-full').removeAttr('checked');
-            }
-        }
-    }else if($(this).hasClass('permission-secondary-full')){
-        if(check){
-            $(this).parents('.permission-main').find('.permission-main-head .permission-main-full').prop('checked', true);
-            $(this).parents('.permission-secondary').find('.permission-full').prop('checked', true);
-        }else{
-            $(this).parents('.permission-secondary').find('.permission-full').removeAttr('checked');
-            if($(this).parents('.permission-main').find('.permission-full:checked').length === 0){
-                $(this).parents('.permission-main').find('.permission-main-head .permission-main-full').removeAttr('checked');
-            }
-        }
-    }else if($(this).hasClass('permission-main-full')){
-        if(check){
-            $(this).parents('.permission-main').find("input:checkbox[name='permission[]']").prop('checked', true);
-        }else{
-            $(this).parents('.permission-main').find("input:checkbox[name='permission[]']").removeAttr('checked');
-        }
-    }
-})
+        $("#permission_form").submit(function (e) {
+            e.preventDefault();
+            $.post('__ROOT__/admin/jurisdiction/add', $(this).serialize(), function (res) {
+                if(res.error_code){
+                    swal({
+                        type: 'error',
+                        title: '出错了',
+                        text: res.error_message,
+                        allowOutsideClick: false
+                    })
+                }else{
+                    swal({
+                        type: 'success',
+                        title: '添加成功',
+                        timer: 3000,
+                        allowOutsideClick: false
+                        // animation: false,
+                    }).then(result => {
+                        window.location.href = '__ROOT__/admin/jurisdiction'
+                    })
+                }
+            }, 'json');
+        })
     </script>
 {/block}

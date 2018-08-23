@@ -45,7 +45,7 @@
                     {name:"identity_id",index:"identity_id",width:60,sorttype:"int"},
                     {name:"identity_name",index:"identity_name",sortable:false,width:100},
                     {name:"partner_id",index:"partner_id",width:200,sortable:false},
-                    {name:"identity_id",index:"identity_id",width:200,sortable:false}
+                    {name:"identity_id",index:"identity_id",width:200,sortable:false,formatter:formatOperation}
                     ],
                 pager:"#pager_list_1",
                 viewrecords:true,
@@ -66,7 +66,7 @@
                 { multipleSearch: false, multipleGroup: false, showQuery: false } // search options - define multiple search
             );
             function formatOperation(cellValue, options, rowObject){
-                var operationHtml = '<span operationValue="'+cellValue+'"><a href="__ROOT__/admin/jurisdiction/identityDetail/identityId/'+cellValue+'" type="button" class="btn btn-primary btn-xs" >权限详情</a> <a onclick="delIdentity('+ cellValue +')" class="btn btn-danger btn-xs btn-bitbucket"> <i class="fa fa-close"></i></a></span>';
+                var operationHtml = '<span operationValue="'+cellValue+'"><a href="__ROOT__/admin/jurisdiction/permission?type=1&id='+cellValue+'" type="button" class="btn btn-primary btn-xs" >权限详情</a> <a onclick="delIdentity('+ cellValue +')" class="btn btn-danger btn-xs btn-bitbucket"> <i class="fa fa-times"></i></a></span>';
                 return operationHtml;
             }
 
