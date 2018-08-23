@@ -29,38 +29,21 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `card_partner` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `admin_id` int(11) NOT NULL DEFAULT '0' COMMENT '所属后台用户',
   `partner_type` int(11) NOT NULL DEFAULT '0' COMMENT '类型',
-  `pertner_cat` int(11) NOT NULL DEFAULT '0' COMMENT '分类',
+  `partner_cat` int(11) NOT NULL DEFAULT '0' COMMENT '分类',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
-  `name` varchar(20) NOT NULL COMMENT '名称',
+  `partner_name` varchar(20) NOT NULL DEFAULT '' COMMENT '名称',
   `address` varchar(255) DEFAULT NULL COMMENT '地址',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `simply_introduce` varchar(50) DEFAULT NULL COMMENT '简介',
   `detail_introduce` varchar(255) DEFAULT NULL COMMENT '详细介绍',
-  `tel` varchar(20) DEFAULT NULL COMMENT '电话'
+  `tel` varchar(20) DEFAULT NULL COMMENT '电话',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `partner_name` (`partner_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合作人/商家/店铺表';
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `card_partner`
---
-ALTER TABLE `card_partner`
-  ADD PRIMARY KEY (`id`);
-
---
--- 在导出的表使用AUTO_INCREMENT
---
-
---
--- 使用表AUTO_INCREMENT `card_partner`
---
-ALTER TABLE `card_partner`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -8,6 +8,9 @@ return [
         'type'           => '',
         'auto_start'     => true,
     ],
+    'template'               => [
+        'taglib_pre_load'     =>    'app\common\library\tag\Auth',
+    ],
 
     // +----------------------------------------------------------------------
     // | Cookie设置

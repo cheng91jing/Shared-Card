@@ -1,0 +1,79 @@
+{extend name="../../common/view/layout_base"}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>商家列表</h5>
+                <div class="ibox-tools">
+                    {auth:can action="all"}
+                    <button onclick="window.location.href='__ROOT__/admin/merchant/add'" type="button"
+                            class="btn btn-outline btn-primary btn-xs">新增商家
+                    </button>
+                    {/auth:can}
+                </div>
+            </div>
+            <div class="ibox-content">
+                <hr>
+                <div class="jqGrid_wrapper" style="overflow: auto;">
+                    <table id="table_list_1"></table>
+                    <div id="pager_list_1"></div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    $(document).ready(function () {
+        $("#table_list_1").jqGrid({
+            url: '__ROOT__/admin/merchant/index',
+            mtype: "post",
+            datatype: "json",
+            styleUI: 'Bootstrap',    //风格
+            height: 350,
+            // autowidth:true,
+            shrinkToFit: true,
+            rowNum: 10,
+            rowList: [10, 20, 30],
+            colNames: ["序号", "手机号", "上次登陆时间", "上次登陆IP", "注册时间", "操作"],
+            colModel: [
+                {name: "id", index: "id", width: 60, sorttype: "int"},
+                {name: "mobile", index: "username", sortable: false, width: 100},
+                {name: "login_time", index: "login_time", sortable: false, width: 150},
+                {name: "login_ip", index: "login_ip", sortable: false, width: 100},
+                {name: "create_time", index: "create_time", sorttype: "datetime", formatter: "datetime", width: 150},
+                {name: "id", index: "id", width: 150, sortable: false, formatter: formatOperation}
+            ],
+            pager: "#pager_list_1",
+            viewrecords: true,
+            caption: "管理员列表",
+            hidegrid: false,
+            sortable: true
+        });
+        $('#table_list_1').navGrid("#pager_list_1", {
+                search: false, // show search button on the toolbar
+                add: false,
+                edit: false,
+                del: false,
+                refresh: true
+            },
+            {}, // edit options
+            {}, // add options
+            {}, // delete options
+            {multipleSearch: false, multipleGroup: false, showQuery: false} // search options - define multiple search
+        );
+
+        function formatOperation(cellValue, options, rowObject) {
+            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/member/add?user_id=' + cellValue + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+            return operationHtml;
+        }
+
+        function unformatOperation(cellValue, options, cellObject) {
+            return $(cellObject.html()).attr('operationValue');
+        }
+    });
+</script>
+{/block}

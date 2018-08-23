@@ -25,19 +25,19 @@ return [
     ],
     [
         'name' => '商家',
-        'id' => 'partner',
+        'id' => 'merchant',
         'nav' => true,
         'icon' => 'fa fa-hotel',
         'child' => [
             [
                 'name' => '商家管理',
-                'id' => 'partner-info',
+                'id' => 'merchant-partner',
                 'nav' => true,
-                'href' => 'admin/partner',
+                'href' => 'admin/merchant',
                 'permission' => [
                     [
                         'name' => '商家列表',
-                        'id' => 'partner-info-list',
+                        'id' => 'merchant-partner-list',
                     ],
                 ],
             ],
