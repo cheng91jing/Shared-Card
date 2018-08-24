@@ -45,8 +45,8 @@ abstract class Base extends Model
     }
 
     /*分页*/
-    public static function paginateScope($wheres = [], $scopes = [])
+    public static function paginateScope($wheres = [], $scopes = [], $with = [])
     {
-        return self::gridSort(static::scope($scopes)->where($wheres));
+        return self::gridSort(static::scope($scopes)->with($with)->where($wheres));
     }
 }

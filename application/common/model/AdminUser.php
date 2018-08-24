@@ -34,6 +34,12 @@ use think\Request;
  */
 class AdminUser extends Base
 {
+    //商家
+    public function partners()
+    {
+        return $this->hasMany(Partner::class, 'admin_id', 'id');
+    }
+    
     /**
      * 获取后台登陆用户
      *

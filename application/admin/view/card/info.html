@@ -1,0 +1,261 @@
+{extend name="../../common/view/layout_base"}
+{block name="header_resource"}
+<link href="__STATIC__/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
+{/block}
+{block name="back"}
+<div class="row border-bottom white-bg dashboard-header">
+    <a class="btn btn-warning" title="上一页" href="javascript:void(0)" type="button" onclick="window.history.back()">
+        <i class="fa fa-hand-point-left"></i>&nbsp;上一页
+    </a>
+</div>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>分类信息 <span class="text-warning">【{$cat.cat_id ? '修改' : '新增'}】</span></h5>
+            </div>
+            <div class="ibox-content">
+                <form class="form-horizontal" id="card-form">
+                    <input type="hidden" name="cat_id" id="cat_id" value="{$cat.cat_id ?? ''}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="cat_name">分类名称</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" name="cat_name" id="cat_name"
+                                   required
+                                   value=""
+                                   rangelength="[2,20]"
+                                   placeholder="请输入名称">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">期限开始类型</label>
+                        <div class="col-sm-6">
+                            {volist name="$cat->ps_name" id="name"}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="period_start" value="{$key}">
+                                    {$name}
+                                </label>
+                            </div>
+                            {/volist}
+                        </div>
+                    </div>
+                    <div class="form-group regular_no hide">
+                        <label class="col-sm-2 control-label">期限类型</label>
+                        <div class="col-sm-6">
+                            {volist name="$cat->pt_name" id="name"}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="period_type" value="{$key}">
+                                    {$name}
+                                </label>
+                            </div>
+                            {/volist}
+                        </div>
+                    </div>
+                    <div class="form-group regular_no hide">
+                        <label class="col-sm-2 control-label" for="period_number">期限数量</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" name="period_number" id="period_number"
+                                   value=""
+                                   placeholder="必须输入整数，单位为所选的期限类型">
+                        </div>
+                    </div>
+                    <div class="form-group regular_yes hide">
+                        <label class="col-sm-2 control-label" for="datetime_range">定期期限设置：</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input type="text" class="input-sm form-control" name="datetime_range" value="" id="datetime_range" readonly/>
+                                <span class="input-group-addon"> <i class="glyphicon glyphicon-calendar"></i></span>
+                            </div>
+                            <span class="help-block">固定期限时的有效期限</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">优惠类型</label>
+                        <div class="col-sm-6">
+                            {volist name="$cat->dt_name" id="name"}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="discount_type" value="{$key}">
+                                    {$name}
+                                </label>
+                            </div>
+                            {/volist}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="discount_number">优惠数量</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" name="discount_number" id="discount_number"
+                                   required
+                                   value=""
+                                   placeholder="请输入优惠数量">
+                            <div class="help-block">
+                                <ol>
+                                    <li>优惠数量为会员消费时的减少数量</li>
+                                    <li>如果为打折，则此处填写大于0小于1的最多2位小数点数字，例：如填写0.3，表示用户扣款时减少30%，即用户消费打7折</li>
+                                    <li>如果为直减，则此处填写大于0最多2位小数点的数字（推荐整数），例：如填写300，表示用户扣款时直接优惠300元</li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" class="btn btn-outline btn-success dim" id="confirm_submit">确认提交
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_resource"}
+<script src="__STATIC__/plugins/validate/jquery.validate.min.js"></script>
+<script src="__STATIC__/plugins/validate/messages_zh.min.js"></script>
+<script src="__STATIC__/plugins/moment/moment.js"></script>
+<script src="__STATIC__/plugins/moment/moment-with-locales.min.js"></script>
+<script src="__STATIC__/plugins/daterangepicker/daterangepicker.js"></script>
+{/block}
+{block name="footer_js"}
+<script>
+    $.validator.setDefaults({
+        highlight: function (e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        }, success: function (e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        }, errorElement: "span", errorPlacement: function (e, r) {
+            // e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+            if (r.is(":radio") || r.is(":checkbox")) {
+                e.appendTo(r.parent().parent().parent())
+            } else if (r.parent().hasClass('input-group')) {
+                e.appendTo(r.parent().parent())
+            } else {
+                e.appendTo(r.parent())
+            }
+        }/*, errorClass: "help-block m-b-none", validClass: "help-block m-b-none"*/
+    });
+    //添加自定义验证
+    $.validator.addMethod("discountNumber", function(value, element, param) {
+        if(isNaN(value)) return false;
+        let number = /^[0-9]+(.[0-9]{1,2})?$/;
+        let period_start = $("input[name='discount_type']:checked").val();
+        if(period_start === '0' && (value < 0 || value > 1)) return false;
+        return this.optional(element) || (number.test(value));
+    }, "请仔细阅读上面的注释，填写正确数字");
+
+    $('#card-form').validate({
+        rules: {
+            period_start: "required",
+            discount_type: "required",
+            period_type: {
+                required: function (e) {
+                    let period_start = $("input[name='period_start']:checked").val();
+                    return period_start === '1' || period_start === '0';
+                }
+            },
+            period_number:{
+                required: function (e) {
+                    let period_start = $("input[name='period_start']:checked").val();
+                    return period_start === '1' || period_start === '0';
+                },
+                digits:true
+            },
+            datetime_range:{
+                required: function (e) {
+                    let period_start = $("input[name='period_start']:checked").val();
+                    return period_start === '2';
+                }
+            },
+            discount_number:{
+                required: true,
+                discountNumber: true
+            }
+        },
+        messages:{
+            period_type:{
+                required: '期限开始类型选择首次消费或开卡日，则期限类型必须选择'
+            },
+            period_number:{
+                required: '期限开始类型选择首次消费或开卡日，则期限数量必须填写'
+            },
+            datetime_range:{
+                required: '期限开始类型选择固定期限，则定期期限必须设置'
+            }
+        },
+        submitHandler: function (form) {
+            $.post('__ROOT__/admin/card/add', $(form).serialize(), function (res) {
+                console.log(res);
+                if (res.error_code) {
+                    swal({
+                        type: 'error',
+                        title: '出错了',
+                        text: res.error_message,
+                        allowOutsideClick: false
+                    })
+                } else {
+                    swal({
+                        type: 'success',
+                        title: '成功',
+                        timer: 3000,
+                        allowOutsideClick: false
+                    }).then(result => {
+                        // window.location.href = '__ROOT__/admin/card'
+                    })
+                }
+            }, 'json')
+        },
+        // errorPlacement:function(error, element) {
+        //     if(element.parent().hasClass('input-group')){
+        //         error.appendTo(element.parent().parent());
+        //     }else{
+        //         error.appendTo(element.parent());
+        //     }
+        // }
+    });
+    $(function () {
+        moment.locale('zh-cn');
+        $("#datetime_range").daterangepicker({
+            drops: "down",
+            showDropdowns: true,
+            timePicker: true,
+            timePicker24Hour: true,
+            timePickerIncrement: 30,
+            startDate: {notempty name="$cart.regular_start"}moment('{$cart.regular_start}', 'YYYY-MM-DD HH:ii:ss'){else}moment().add(1, 'months').startOf('months'){/notempty},
+            endDate: {notempty name="$cart.regular_end"}moment('{$cart.regular_end}', 'YYYY-MM-DD HH:ii:ss'){else}moment().add(1, 'year').add(1, 'months').startOf('months'){/notempty},
+            minDate: moment(),
+            maxDate: moment().add(3, 'year'),
+            locale:{
+                // direction: "ltr",
+                format: "YYYY-MM-DD HH:mm:ss",
+                separator: " - ",
+                applyLabel: "应用",
+                cancelLabel: "取消"
+                // fromLabel: "From",
+                // toLabel: "To",
+                // customRangeLabel: "Custom",
+                // daysOfWeek: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+                // monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+                // firstDay: 1
+            }
+        });
+        $("input[name='period_start']").on('change', function (e) {
+            let start_type = $(this).val();
+            if(start_type === '1' || start_type === '0'){
+                $(".regular_no").removeClass('hide').addClass('show');
+                $(".regular_yes").removeClass('show').addClass('hide');
+            }else{
+                $(".regular_no").removeClass('show').addClass('hide');
+                $(".regular_yes").removeClass('hide').addClass('show');
+            }
+        });
+        // $("input[name='period_start'][value='{$cat.period_start ? $cat.period_start : 0}']").trigger('click');
+    });
+</script>
+{/block}

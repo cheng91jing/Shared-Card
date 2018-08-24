@@ -14,7 +14,6 @@ namespace app\common\controller;
 use app\common\library\APIFormatResponse;
 use app\common\library\AuthHandler;
 use app\common\library\PermissionHandler;
-use app\common\model\AdminUser;
 use think\Controller;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;

@@ -11,11 +11,22 @@
     <link href="__STATIC__/plugins/animate/animate.css" rel="stylesheet">
     <link href="__STATIC__/css/style.min.css" rel="stylesheet">
     <link href="__STATIC__/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    {if condition="$Request.isMobile"}
+    <link href="__STATIC__/plugins/layer/mobile/need/layer.css" rel="stylesheet">
+    {else /}
+    <link href="__STATIC__/plugins/layer/theme/default/layer.css" rel="stylesheet">
+    {/if}
     {block name="header_resource"}{/block}
     <style>
         /* Additional style to fix warning dialog position */
         #alertmod_table_list_2 {
             top: 900px !important;
+        }
+        .ui-jqgrid tr.jqgrow td {
+            white-space: normal !important;
+            height:auto;
+            vertical-align:text-top;
+            padding-top:2px;
         }
     </style>
 
@@ -32,6 +43,11 @@
     <script src="__STATIC__/plugins/jqgrid/grid.locale-cn.js"></script>
     <script src="__STATIC__/plugins/jqgrid/jquery.jqGrid.min.js"></script>
     <script src="__STATIC__/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+{if condition="$Request.isMobile"}
+<script src="__STATIC__/plugins/layer/mobile/layer.js"></script>
+{else /}
+<script src="__STATIC__/plugins/layer/layer.js"></script>
+{/if}
     <!--<script src="js/plugins/peity/jquery.peity.min.js"></script>-->
     <!--<script src="js/content.min.js?v=1.0.0"></script>-->
     {block name="footer_resource"}{/block}

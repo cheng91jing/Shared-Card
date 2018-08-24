@@ -70,7 +70,7 @@ return [
         'icon' => 'fa fa-address-card',
         'child' => [
             [
-                'name' => '会员卡类型',
+                'name' => '会员卡分类',
                 'id' => 'card-category',
                 'nav' => true,
                 'href' => 'admin/card',

@@ -31,6 +31,11 @@ use think\Exception;
  */
 class Partner extends Base
 {
+    public function admin()
+    {
+        return $this->hasOne(AdminUser::class, 'id', 'admin_id');
+    }
+
     /**
      * 商家基础信息
      * @param array $param [admin_id, admin_mobile, partner_type, partner_cat, name]

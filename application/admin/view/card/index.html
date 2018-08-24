@@ -7,10 +7,10 @@
     <div class="col-sm-12">
         <div class="ibox ">
             <div class="ibox-title">
-                <h5>商家列表</h5>
+                <h5>会员卡分类</h5>
                 <div class="ibox-tools">
-                    <button onclick="window.location.href='__ROOT__/admin/merchant/add'" type="button"
-                            class="btn btn-outline btn-primary btn-xs">新增商家
+                    <button onclick="window.location.href='__ROOT__/admin/card/add'" type="button"
+                            class="btn btn-outline btn-primary btn-xs">新增卡类
                     </button>
                 </div>
             </div>
@@ -35,7 +35,7 @@
     $(document).ready(function () {
         let table = $("#table_list_1");
         table.jqGrid({
-            url: '__ROOT__/admin/merchant/index',
+            url: '__ROOT__/admin/card/index',
             mtype: "post",
             datatype: "json",
             styleUI: 'Bootstrap',    //风格
