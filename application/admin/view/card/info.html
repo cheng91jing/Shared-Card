@@ -11,7 +11,7 @@
 {/block}
 {block name="main"}
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-8">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
                 <h5>分类信息 <span class="text-warning">【{$cat.cat_id ? '修改' : '新增'}】</span></h5>
@@ -24,7 +24,7 @@
                         <div class="col-sm-6">
                             <input class="form-control" name="cat_name" id="cat_name"
                                    required
-                                   value=""
+                                   value="{$cat.cat_name ?? ''}"
                                    rangelength="[2,20]"
                                    placeholder="请输入名称">
 
@@ -36,35 +36,35 @@
                             {volist name="$cat->ps_name" id="name"}
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="period_start" value="{$key}">
+                                    <input type="radio" name="period_start" value="{$key}" {$cat.period_start == $key ? 'checked' : ''}>
                                     {$name}
                                 </label>
                             </div>
                             {/volist}
                         </div>
                     </div>
-                    <div class="form-group regular_no hide">
+                    <div class="form-group regular_no {$cat.period_start == 2 ? 'hide' : ''}">
                         <label class="col-sm-2 control-label">期限类型</label>
                         <div class="col-sm-6">
                             {volist name="$cat->pt_name" id="name"}
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="period_type" value="{$key}">
+                                    <input type="radio" name="period_type" value="{$key}" {$cat.period_type == $key ? 'checked' : ''}>
                                     {$name}
                                 </label>
                             </div>
                             {/volist}
                         </div>
                     </div>
-                    <div class="form-group regular_no hide">
+                    <div class="form-group regular_no {$cat.period_start == 2 ? 'hide' : ''}">
                         <label class="col-sm-2 control-label" for="period_number">期限数量</label>
                         <div class="col-sm-6">
                             <input class="form-control" name="period_number" id="period_number"
-                                   value=""
+                                   value="{$cat.period_number ?? ''}"
                                    placeholder="必须输入整数，单位为所选的期限类型">
                         </div>
                     </div>
-                    <div class="form-group regular_yes hide">
+                    <div class="form-group regular_yes {$cat.period_start != 2 ? 'hide' : ''}">
                         <label class="col-sm-2 control-label" for="datetime_range">定期期限设置：</label>
                         <div class="col-sm-6">
                             <div class="input-group">
@@ -80,7 +80,7 @@
                             {volist name="$cat->dt_name" id="name"}
                             <div class="radio">
                                 <label>
-                                    <input type="radio" name="discount_type" value="{$key}">
+                                    <input type="radio" name="discount_type" value="{$key}" {$cat.discount_type == $key ? 'checked' : ''}>
                                     {$name}
                                 </label>
                             </div>
@@ -92,7 +92,7 @@
                         <div class="col-sm-6">
                             <input class="form-control" name="discount_number" id="discount_number"
                                    required
-                                   value=""
+                                   value="{$cat.discount_number ?? ''}"
                                    placeholder="请输入优惠数量">
                             <div class="help-block">
                                 <ol>
@@ -102,6 +102,25 @@
                                 </ol>
                             </div>
 
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="discount_number">面额</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" name="denomination" id="denomination"
+                                   required
+                                   value="{$cat.denomination ?? ''}"
+                                   placeholder="请输入最多2位小数点的数字">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="prefix">编号前缀</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" name="prefix" id="prefix"
+                                   required
+                                   maxlength="4"
+                                   value="{$cat.prefix ?? ''}"
+                                   placeholder="请输入会员卡编号前缀，最多4位，英文字母会转换为大写">
                         </div>
                     </div>
                     <div class="form-group">
@@ -149,6 +168,11 @@
         if(period_start === '0' && (value < 0 || value > 1)) return false;
         return this.optional(element) || (number.test(value));
     }, "请仔细阅读上面的注释，填写正确数字");
+    $.validator.addMethod("isPriceNumber", function(value, element, param) {
+        if(isNaN(value)) return false;
+        let number = /^[0-9]+(.[0-9]{1,2})?$/;
+        return this.optional(element) || (number.test(value));
+    }, "最多为2为小数点的数字");
 
     $('#card-form').validate({
         rules: {
@@ -176,6 +200,9 @@
             discount_number:{
                 required: true,
                 discountNumber: true
+            },
+            denomination:{
+                isPriceNumber: true
             }
         },
         messages:{
@@ -191,7 +218,6 @@
         },
         submitHandler: function (form) {
             $.post('__ROOT__/admin/card/add', $(form).serialize(), function (res) {
-                console.log(res);
                 if (res.error_code) {
                     swal({
                         type: 'error',
@@ -206,7 +232,7 @@
                         timer: 3000,
                         allowOutsideClick: false
                     }).then(result => {
-                        // window.location.href = '__ROOT__/admin/card'
+                        window.location.href = '__ROOT__/admin/card'
                     })
                 }
             }, 'json')
@@ -227,8 +253,8 @@
             timePicker: true,
             timePicker24Hour: true,
             timePickerIncrement: 30,
-            startDate: {notempty name="$cart.regular_start"}moment('{$cart.regular_start}', 'YYYY-MM-DD HH:ii:ss'){else}moment().add(1, 'months').startOf('months'){/notempty},
-            endDate: {notempty name="$cart.regular_end"}moment('{$cart.regular_end}', 'YYYY-MM-DD HH:ii:ss'){else}moment().add(1, 'year').add(1, 'months').startOf('months'){/notempty},
+            startDate: {notempty name="$cat.regular_start"}moment('{$cat.regular_start}', 'YYYY-MM-DD HH:ii:ss'){else}moment().add(1, 'months').startOf('months'){/notempty},
+            endDate: {notempty name="$cat.regular_end"}moment('{$cat.regular_end}', 'YYYY-MM-DD HH:ii:ss'){else}moment().add(1, 'year').add(1, 'months').startOf('months'){/notempty},
             minDate: moment(),
             maxDate: moment().add(3, 'year'),
             locale:{

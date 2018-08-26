@@ -1,0 +1,199 @@
+{extend name="../../common/view/layout_base"}
+{block name="header_resource"}
+<link href="__STATIC__/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
+{/block}
+{block name="back"}
+<div class="row border-bottom white-bg dashboard-header">
+    <a class="btn btn-warning" title="上一页" href="javascript:void(0)" type="button" onclick="window.history.back()">
+        <i class="fa fa-hand-point-left"></i>&nbsp;上一页
+    </a>
+</div>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>用户会员卡信息 <span class="text-warning">【{$user_card.id ? '修改' : '新增'}】</span></h5>
+            </div>
+            <div class="ibox-content">
+                <form class="form-horizontal" id="card-form">
+                    <input type="hidden" name="id" id="id" value="{$user_card.id ?? ''}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">会员卡编号</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">{$user_card.card_number ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">面额</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">{$user_card.denomination ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">普通状态</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">{$user_card.status_show ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">激活状态</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">{$user_card.activating_show ?? ''}</p>
+                        </div>
+                    </div>
+                    {notempty name="$user_card.activating_status"}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="user">用户</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <input id="user" name="user" type="text" class="form-control" disabled
+                                       value="{$user_card.user ? $user_card.user.mobile : '未知用户'}">
+                                <span class="input-group-btn">
+                                    <a href="{$user_card.user ? '__ROOT__/admin/member/add?user_id=' . $user_card.user.id : 'javascript:void(0)'}"
+                                       class="btn btn-primary">查看</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">启用状态</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">{$user_card.enable_show ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">余额</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">{$user_card.balance ?? ''}</p>
+                        </div>
+                    </div>
+                    {notempty name="$user_card.enable"}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">期限</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">
+                                {$user_card.regular_start ?? ''} - {$user_card.regular_end ?? ''}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">开卡时间</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">{$user_card.open_time ?? ''}</p>
+                        </div>
+                    </div>
+                    {/notempty}
+                    {else /}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">{$user_card.password ?? ''}</p>
+                        </div>
+                    </div>
+                    {/notempty}
+                    <!--<div class="form-group">-->
+                    <!--<div class="col-sm-offset-2 col-sm-6">-->
+                    <!--<button type="submit" class="btn btn-outline btn-success dim" id="confirm_submit">确认提交-->
+                    <!--</button>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="panel panel-success">
+            <div class="panel-heading">会员卡类型信息</div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        {$user_card.cat.cat_name ?? ''}
+                        <span class="badge">名称</span>
+                    </li>
+                    <li class="list-group-item">
+                        {$user_card.cat.status ? '启用' : '禁用'}
+                        <span class="badge">状态</span>
+                    </li>
+                    <li class="list-group-item">
+                        {$user_card.cat.period_start_show}
+                        <span class="badge">期限开始类型</span>
+                    </li>
+                    <li class="list-group-item">
+                        {$user_card.cat.discount_type_show}
+                        <span class="badge">优惠类型</span>
+                    </li>
+                    <li class="list-group-item">
+                        {eq name="$user_card.cat.discount_type" value="1"}
+                        {$user_card.cat.discount_number|number_format}
+                        {else /}
+                        {$user_card.cat.discount_number * 100}%
+                        {/eq}
+                        <span class="badge">优惠额度</span>
+                    </li>
+                    <li class="list-group-item">
+                        {$user_card.cat.denomination|number_format}
+                        <span class="badge">面额</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_resource"}
+<script src="__STATIC__/plugins/validate/jquery.validate.min.js"></script>
+<script src="__STATIC__/plugins/validate/messages_zh.min.js"></script>
+<script src="__STATIC__/plugins/moment/moment.js"></script>
+<script src="__STATIC__/plugins/moment/moment-with-locales.min.js"></script>
+<script src="__STATIC__/plugins/daterangepicker/daterangepicker.js"></script>
+{/block}
+{block name="footer_js"}
+<script>
+    $.validator.setDefaults({
+        highlight: function (e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        }, success: function (e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        }, errorElement: "span", errorPlacement: function (e, r) {
+            // e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+            if (r.is(":radio") || r.is(":checkbox")) {
+                e.appendTo(r.parent().parent().parent())
+            } else if (r.parent().hasClass('input-group')) {
+                e.appendTo(r.parent().parent())
+            } else {
+                e.appendTo(r.parent())
+            }
+        }/*, errorClass: "help-block m-b-none", validClass: "help-block m-b-none"*/
+    });
+
+    $('#card-form').validate({
+        submitHandler: function (form) {
+            layer.alert('暂不支持修改');
+            return false;
+            // $.post('__ROOT__/admin/card/add', $(form).serialize(), function (res) {
+            //     if (res.error_code) {
+            //         swal({
+            //             type: 'error',
+            //             title: '出错了',
+            //             text: res.error_message,
+            //             allowOutsideClick: false
+            //         })
+            //     } else {
+            //         swal({
+            //             type: 'success',
+            //             title: '成功',
+            //             timer: 3000,
+            //             allowOutsideClick: false
+            //         }).then(result => {
+            //             window.location.href = '__ROOT__/admin/card'
+            //         })
+            //     }
+            // }, 'json')
+        },
+    });
+    $(function () {
+    });
+</script>
+{/block}

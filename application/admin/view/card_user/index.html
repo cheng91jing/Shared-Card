@@ -1,0 +1,274 @@
+{extend name="../../common/view/layout_base"}
+{block name="header_resource"}
+<link href="__STATIC__/plugins/bootstrap-switch/bootstrap-switch.min.css" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>用户会员卡列表</h5>
+                <div class="ibox-tools">
+                    <button id="generator" type="button" class="btn btn-success btn-xs">生成</button>
+                    <button data-toggle="modal" data-target="#grant_card" type="button"
+                            class="btn btn-primary btn-xs">发放会员卡
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <hr>
+                <div class="jqGrid_wrapper" style="overflow: auto;">
+                    <table id="table_list_1"></table>
+                    <div id="pager_list_1"></div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_resource"}
+<script src="__STATIC__/plugins/validate/jquery.validate.min.js"></script>
+<script src="__STATIC__/plugins/validate/messages_zh.min.js"></script>
+<script src="__STATIC__/plugins/bootstrap-switch/bootstrap-switch.min.js"></script>
+{/block}
+{block name="footer_js"}
+<div class="modal inmodal" id="grant_card" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeInDown">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                        class="sr-only">关闭</span>
+                </button>
+                <h4 class="modal-title">发放会员卡</h4>
+                <!--<small class="font-bold">这里可以显示副标题。</small>-->
+            </div>
+            <form class="form-horizontal" id="form-grant">
+            <div class="modal-body">
+                <p>输入框填写要发放用户的手机号，多个用户使用<code>|</code>隔开，最多同时发放100个用户！</p>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="user_mobile">发放对象</label>
+                        <div class="col-sm-8">
+                            <textarea id="user_mobile" name="user_mobile" class="form-control" rows="4"
+                                      required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="cat_id">卡类型</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" name="cat_id" id="cat_id" required>
+                                <option value="">请选择会员卡类型</option>
+                                {volist name="$card_cat" id="cat"}
+                                <option value="{$cat.cat_id}">{$cat.cat_name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary">提交</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $.validator.setDefaults({
+        highlight: function (e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        }, success: function (e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        }, errorElement: "span", errorPlacement: function (e, r) {
+            // e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+            if (r.is(":radio") || r.is(":checkbox")) {
+                e.appendTo(r.parent().parent().parent())
+            } else if (r.parent().hasClass('input-group')) {
+                e.appendTo(r.parent().parent())
+            } else {
+                e.appendTo(r.parent())
+            }
+        }/*, errorClass: "help-block m-b-none", validClass: "help-block m-b-none"*/
+    });
+    let loading = false;
+    $(document).ready(function () {
+        let table = $("#table_list_1");
+        table.jqGrid({
+            url: '__ROOT__/admin/card_user/index',
+            mtype: "post",
+            datatype: "json",
+            styleUI: 'Bootstrap',    //风格
+            height: 350,
+            // width: $(".jqGrid_wrapper").width(),
+            autowidth:true,
+            shrinkToFit: true,
+            rowNum: 10,
+            rowList: [10, 20, 30],
+            colNames: ["编号", "用户", "类型", "状态", "启用", "期限", "开卡时间", "面额", "余额", "操作"],
+            colModel: [
+                {name: "card_number", index: "card_number", align: "center", width: 100, sortable: false},
+                {name: "user_show", index: "user_show", align: "center", sortable: false, width: 100, formatter:userFormat},
+                {name: "cat.cat_name", index: "cat.cat_name", align: "center", sortable: false, width: 70},
+                {name: "status", index: "status", align: "center", sortable: false, width: 100, formatter: switchFormat2},
+                {name: "enable_show", index: "enable_show", align: "center", sortable: false, width: 50},
+                {name: "regular_range", index: "regular_range", align: "center", sortable: false, width: 150, formatter: regularFormat},
+                {name: "open_time", index: "open_time", align: "center", sortable: false, width: 100},
+                {name: "denomination", index: "denomination", align: "center", sortable: false, width: 100},
+                {name: "balance", index: "balance", align: "center", sortable: false, width: 100},
+                {name: "id", index: "id", align: "center", width: 100, sortable: false, formatter: formatOperation}
+            ],
+            pager: "#pager_list_1",
+            viewrecords: true,
+            caption: "用户会员卡列表",
+            hidegrid: false,
+            sortable: true,
+            page: 1,
+            loadComplete: function () {
+                $("#table_list_1 input[type='checkbox']").bootstrapSwitch();
+            }
+        });
+        table.navGrid("#pager_list_1", {
+                search: false, // show search button on the toolbar
+                add: false,
+                edit: false,
+                del: false,
+                refresh: true
+            },
+            {}, // edit options
+            {}, // add options
+            {}, // delete options
+            {multipleSearch: false, multipleGroup: false, showQuery: false} // search options - define multiple search
+        );
+        function regularFormat(cellValue, options, rowObject) {
+            return !!rowObject.regular_start ? rowObject.regular_start + ' - ' + rowObject.regular_end : '暂无期限';
+        }
+
+        function userFormat(cellValue, options, rowObject) {
+            return !! rowObject.activating_status ? (!! rowObject.user ? rowObject.user.mobile : '未知用户') : '未绑定';
+        }
+
+        function switchFormat2(cellValue, options, rowObject) {
+            return '<input type="checkbox" data-id="' + rowObject.id + '" ' + (cellValue === 1 ? 'checked' : '') + ' data-size="mini" data-on-color="success" data-off-color="warning" />';
+        }
+
+        function formatOperation(cellValue, options, rowObject) {
+            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/card_user/info?id=' + cellValue + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+            return operationHtml;
+        }
+
+        function unformatOperation(cellValue, options, cellObject) {
+            return $(cellObject.html()).attr('operationValue');
+        }
+        $(window).bind("resize",function(){
+            var width=$(".jqGrid_wrapper").width();
+            table.setGridWidth(width);
+        });
+
+        /**
+         * 生成卡密
+         */
+        $("#generator").click(function () {
+            swal({
+                title: '会员卡密生成',
+                html: `
+<p class="text-danger">请选择你要生成的会员卡类型与数量！</p>
+<hr>
+<div class="form-group">
+    <label for="generator-cat" class="sr-only">用户名</label>
+    <select id="generator-cat" required class="form-control">
+        <option value="">请选择会员卡类型</option>
+        {volist name="$card_cat" id="cat"}
+        <option value="{$cat.cat_id}">{$cat.cat_name}</option>
+        {/volist}
+    </select>
+</div>
+<div class="form-group">
+    <label for="generator-number" class="sr-only">生成数量</label>
+    <input type="text" required placeholder="请输入需要生成的会员卡数量（整数）" id="generator-number" class="form-control">
+</div>`,
+                showCancelButton: true,
+                confirmButtonText: '确认生成',
+                cancelButtonText: '取消',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    let cat_id = $("#generator-cat").val();
+                    let number = parseInt($("#generator-number").val());
+                    if($.trim(cat_id) === '' || isNaN(number) || number <= 0){
+                        swal.showValidationError('请按照要求填写或输入！');
+                        return false;
+                    }
+                    return new Promise((resolve) => {
+                        $.post('__ROOT__/admin/card_user/batch', {cat_id, number}, function (res) {
+                            resolve(res)
+                        }, 'json');
+                    })
+                },
+                allowOutsideClick: () => !swal.isLoading()
+            }).then((result) => {
+                let data = result.value;
+                let message = !data.error_code ? '生成成功' : data.error_message;
+                let icon = !data.error_code ? 1 : 2;
+                layer.alert(message, {icon});
+                table.trigger("reloadGrid");
+            })
+        });
+    });
+    //提交发放表单
+    let formValidate = $('#form-grant').validate({
+        submitHandler: function (form) {
+            layer.load(1, {
+                shade: [0.2, '#f3f3f4']
+            });
+            $.post('__ROOT__/admin/card_user/grant', $(form).serialize(), function (res) {
+                layer.closeAll('loading');
+                if (res.error_code) {
+                    layer.alert(res.error_message, {title: '出错了', icon: 2});
+                } else {
+                    layer.msg('发放成功');
+                    $('#grant_card').modal('hide');
+                }
+            }, 'json')
+        }
+    });
+    //隐藏发放窗口，重置表单
+    $('#grant_card').on('hidden.bs.modal', function (e) {
+        document.getElementById('form-grant').reset();
+        formValidate.resetForm();
+    });
+
+    $.fn.bootstrapSwitch.defaults.onSwitchChange = function (event, state) {
+        let self = $(this);
+        if (self.data('ajaxError') || loading) return false;
+        let id = self.data('id');
+        loading = true;
+        layer.load(1, {
+            shade: [0.2, '#f3f3f4']
+        });
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '__ROOT__/admin/card_user/status',
+            data: {
+                id: id,
+                status: state ? 1 : 0
+            },
+            success: function (msg) {
+                if (msg.error_code) {
+                    self.data('ajaxError', true);
+                    self.bootstrapSwitch('toggleState');
+                    self.bootstrapSwitch('toggleDisabled', true);
+                    layer.alert(msg.error_message);
+                }
+                loading = false;
+                layer.closeAll('loading');
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(errorThrown);
+                loading = false;
+                layer.closeAll('loading');
+            }
+        });
+    };
+</script>
+{/block}

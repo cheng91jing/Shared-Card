@@ -29,11 +29,18 @@ abstract class Base extends Model
         return [
             'page' => $result->currentPage(),
             'rows' => $result->getCollection(),
-            'total' => $result->total(),
-            'records' => $result->lastPage()
+            'total' => $result->lastPage(),
+            'records' => $result->total()
         ];
     }
 
+    /**
+     * 已废弃
+     * JQGrid 分页
+     * @param Query $query
+     *
+     * @return array
+     */
     public static function gridSort(Query $query)
     {
         $sidx = Request::instance()->request('sidx', null);
@@ -45,8 +52,10 @@ abstract class Base extends Model
     }
 
     /*分页*/
-    public static function paginateScope($wheres = [], $scopes = [], $with = [])
+    public static function paginateScope($wheres = [], $scopes = [], $with = [], $order = null)
     {
-        return self::gridSort(static::scope($scopes)->with($with)->where($wheres));
+        $query = static::scope($scopes)->with($with)->where($wheres);
+        if($order !== null) $query->order($order);
+        return self::gridPaginateFormat($query);
     }
 }

@@ -50,6 +50,18 @@ return [
         'icon' => 'fa fa-hand-holding-usd',
         'child' => [
             [
+                'name' => '线下消费',
+                'id' => 'trade-offline',
+                'nav' => true,
+                'href' => 'admin/offline',
+                'permission' => [
+                    [
+                        'name' => '扣款操作',
+                        'id' => 'trade-offline-reduce',
+                    ],
+                ],
+            ],
+            [
                 'name' => '订单管理',
                 'id' => 'trade-order',
                 'nav' => true,
@@ -78,6 +90,18 @@ return [
                     [
                         'name' => '会员卡分类列表',
                         'id' => 'card-category-list',
+                    ],
+                ],
+            ],
+            [
+                'name' => '用户会员卡',
+                'id' => 'card-user',
+                'nav' => true,
+                'href' => 'admin/card_user',
+                'permission' => [
+                    [
+                        'name' => '用户会员卡列表',
+                        'id' => 'card-user-list',
                     ],
                 ],
             ],

@@ -1,0 +1,147 @@
+{extend name="../../common/view/layout_base"}
+{block name="header_resource"}
+<link href="__STATIC__/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
+{/block}
+{block name="back"}
+<div class="row border-bottom white-bg dashboard-header">
+    <a class="btn btn-warning" title="上一页" href="javascript:void(0)" type="button" onclick="window.history.back()">
+        <i class="fa fa-hand-point-left"></i>&nbsp;上一页
+    </a>
+</div>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>会员卡发放</h5>
+            </div>
+            <div class="ibox-content">
+                <form class="form-horizontal" id="card-form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="user_mobile">发放对象</label>
+                        <div class="col-sm-6">
+                            <textarea id="user_mobile" name="user_mobile" class="form-control" required="" aria-required="true"></textarea>
+                            <span class="help-block">输入框填写要发放用户的手机号，多个用户使用<code>,</code>隔开</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" class="btn btn-outline btn-success dim" id="confirm_submit">确认提交
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3 animated" id="admin-info">
+
+    </div>
+</div>
+{/block}
+{block name="footer_resource"}
+<script src="__STATIC__/plugins/validate/jquery.validate.min.js"></script>
+<script src="__STATIC__/plugins/validate/messages_zh.min.js"></script>
+<script src="__STATIC__/plugins/moment/moment.js"></script>
+<script src="__STATIC__/plugins/moment/moment-with-locales.min.js"></script>
+<script src="__STATIC__/plugins/daterangepicker/daterangepicker.js"></script>
+{/block}
+{block name="footer_js"}
+<script>
+    $.validator.setDefaults({
+        highlight: function (e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        }, success: function (e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        }, errorElement: "span", errorPlacement: function (e, r) {
+            // e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+            if (r.is(":radio") || r.is(":checkbox")) {
+                e.appendTo(r.parent().parent().parent())
+            } else if (r.parent().hasClass('input-group')) {
+                e.appendTo(r.parent().parent())
+            } else {
+                e.appendTo(r.parent())
+            }
+        }/*, errorClass: "help-block m-b-none", validClass: "help-block m-b-none"*/
+    });
+    //添加自定义验证
+    $.validator.addMethod("discountNumber", function(value, element, param) {
+        if(isNaN(value)) return false;
+        let number = /^[0-9]+(.[0-9]{1,2})?$/;
+        let period_start = $("input[name='discount_type']:checked").val();
+        if(period_start === '0' && (value < 0 || value > 1)) return false;
+        return this.optional(element) || (number.test(value));
+    }, "请仔细阅读上面的注释，填写正确数字");
+
+    $('#card-form').validate({
+        rules: {
+            period_start: "required",
+            discount_type: "required",
+            period_type: {
+                required: function (e) {
+                    let period_start = $("input[name='period_start']:checked").val();
+                    return period_start === '1' || period_start === '0';
+                }
+            },
+            period_number:{
+                required: function (e) {
+                    let period_start = $("input[name='period_start']:checked").val();
+                    return period_start === '1' || period_start === '0';
+                },
+                digits:true
+            },
+            datetime_range:{
+                required: function (e) {
+                    let period_start = $("input[name='period_start']:checked").val();
+                    return period_start === '2';
+                }
+            },
+            discount_number:{
+                required: true,
+                discountNumber: true
+            }
+        },
+        messages:{
+            period_type:{
+                required: '期限开始类型选择首次消费或开卡日，则期限类型必须选择'
+            },
+            period_number:{
+                required: '期限开始类型选择首次消费或开卡日，则期限数量必须填写'
+            },
+            datetime_range:{
+                required: '期限开始类型选择固定期限，则定期期限必须设置'
+            }
+        },
+        submitHandler: function (form) {
+            $.post('__ROOT__/admin/card/add', $(form).serialize(), function (res) {
+                console.log(res);
+                if (res.error_code) {
+                    swal({
+                        type: 'error',
+                        title: '出错了',
+                        text: res.error_message,
+                        allowOutsideClick: false
+                    })
+                } else {
+                    swal({
+                        type: 'success',
+                        title: '成功',
+                        timer: 3000,
+                        allowOutsideClick: false
+                    }).then(result => {
+                        window.location.href = '__ROOT__/admin/card'
+                    })
+                }
+            }, 'json')
+        },
+        // errorPlacement:function(error, element) {
+        //     if(element.parent().hasClass('input-group')){
+        //         error.appendTo(element.parent().parent());
+        //     }else{
+        //         error.appendTo(element.parent());
+        //     }
+        // }
+    });
+</script>
+{/block}

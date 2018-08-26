@@ -103,11 +103,11 @@
                 status:state ? 1 : 0
             },
             success: function (msg) {
-                if(msg.error){
+                if(msg.error_code){
                     self.data('ajaxError', true);
                     self.bootstrapSwitch('toggleState');
                     self.bootstrapSwitch('toggleDisabled', true);
-                    layer.alert(msg.msg);
+                    layer.alert(msg.error_message);
                 }
                 loading = false;
                 layer.closeAll('loading');

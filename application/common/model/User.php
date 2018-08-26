@@ -29,7 +29,14 @@ use think\Exception;
  */
 class User extends Base
 {
-
+    /**
+     * @return \think\model\relation\HasMany
+     */
+    public function cards()
+    {
+        return $this->hasMany(UserCard::class, 'user_id', 'id');
+    }
+    
     /**
      * 前端用户账户信息创建更新
      * @param string $mobile 手机号

@@ -44,13 +44,17 @@
             shrinkToFit: true,
             rowNum: 10,
             rowList: [10, 20, 30],
-            colNames: ["序号", "名称", "管理员", "状态", "操作"],
+            colNames: ["序号", "名称", "前缀", "面额", "期限开始类型", "优惠类型", "优惠数量","状态","操作"],
             colModel: [
-                {name: "id", index: "id", align:"center",width: 60, sorttype: "int"},
-                {name: "partner_name", index: "partner_name",align:"center", sortable: false, width: 150},
-                {name: "admin.mobile", index: "admin.mobile", align:"center", sortable: false, width: 150},
+                {name: "cat_id", index: "cat_id", align:"center",width: 60, sorttype: "int"},
+                {name: "cat_name", index: "cat_name",align:"center", sortable: false, width: 100},
+                {name: "prefix", index: "prefix",align:"center", sortable: false, width: 70},
+                {name: "denomination", index: "denomination",align:"center", sortable: false, width: 150},
+                {name: "period_start_show", index: "period_start_show", align:"center", sortable: false, width: 100},
+                {name: "discount_type_show", index: "discount_type_show", align:"center", sortable: false, width: 100},
+                {name: "discount_number", index: "discount_number", align:"center", sortable: false, width: 100},
                 {name: "status", index: "status", align:"center", sortable: false, width: 100, formatter:switchFormat2},
-                {name: "id", index: "id", align:"center", width: 150, sortable: false, formatter: formatOperation}
+                {name: "cat_id", index: "cat_id", align:"center", width: 150, sortable: false, formatter: formatOperation}
             ],
             pager: "#pager_list_1",
             viewrecords: true,
@@ -75,10 +79,10 @@
             {multipleSearch: false, multipleGroup: false, showQuery: false} // search options - define multiple search
         );
         function switchFormat2(cellValue, options, rowObject) {
-            return '<input type="checkbox" data-id="' + rowObject.id +'" '+ (cellValue === 1 ? 'checked' : '') +' data-size="mini" data-on-color="success" data-off-color="warning" />';
+            return '<input type="checkbox" data-id="' + rowObject.cat_id +'" '+ (cellValue === 1 ? 'checked' : '') +' data-size="mini" data-on-color="success" data-off-color="warning" />';
         }
         function formatOperation(cellValue, options, rowObject) {
-            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/merchant/add?partner_id=' + cellValue + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/card/add?cat_id=' + cellValue + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
             return operationHtml;
         }
 
@@ -97,17 +101,17 @@
         $.ajax({
             type:'POST',
             dataType:'json',
-            url:'__ROOT__/admin/merchant/status',
+            url:'__ROOT__/admin/card/status',
             data:{
                 id:id,
                 status:state ? 1 : 0
             },
             success: function (msg) {
-                if(msg.error){
+                if(msg.error_code){
                     self.data('ajaxError', true);
                     self.bootstrapSwitch('toggleState');
                     self.bootstrapSwitch('toggleDisabled', true);
-                    layer.alert(msg.msg);
+                    layer.alert(msg.error_message);
                 }
                 loading = false;
                 layer.closeAll('loading');
