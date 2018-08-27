@@ -78,6 +78,10 @@ class Order extends Base
     protected $append             = [];
 
 
+    public static function offlineOrder()
+    {
+        
+    }
 
     /**
      * 生成订单号

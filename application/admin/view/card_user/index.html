@@ -28,8 +28,6 @@
 </div>
 {/block}
 {block name="footer_resource"}
-<script src="__STATIC__/plugins/validate/jquery.validate.min.js"></script>
-<script src="__STATIC__/plugins/validate/messages_zh.min.js"></script>
 <script src="__STATIC__/plugins/bootstrap-switch/bootstrap-switch.min.js"></script>
 {/block}
 {block name="footer_js"}
@@ -75,22 +73,6 @@
     </div>
 </div>
 <script>
-    $.validator.setDefaults({
-        highlight: function (e) {
-            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
-        }, success: function (e) {
-            e.closest(".form-group").removeClass("has-error").addClass("has-success")
-        }, errorElement: "span", errorPlacement: function (e, r) {
-            // e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
-            if (r.is(":radio") || r.is(":checkbox")) {
-                e.appendTo(r.parent().parent().parent())
-            } else if (r.parent().hasClass('input-group')) {
-                e.appendTo(r.parent().parent())
-            } else {
-                e.appendTo(r.parent())
-            }
-        }/*, errorClass: "help-block m-b-none", validClass: "help-block m-b-none"*/
-    });
     let loading = false;
     $(document).ready(function () {
         let table = $("#table_list_1");

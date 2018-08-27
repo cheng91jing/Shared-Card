@@ -3,6 +3,8 @@
 namespace app\common\model;
 
 use app\common\library\EncryptAndDecrypt;
+use app\common\library\totp\Base32;
+use app\common\library\TOTPAuth;
 use think\Db;
 use think\Exception;
 
@@ -31,6 +33,7 @@ class UserCard extends Base
         'enable_show',
         //        'activating_show',
     ];
+    const CARD_NUMBER_TRANSFORM = '6790348512';
 
     const UCS_INVALID = 0;
     const UCS_VALID   = 1;
@@ -238,6 +241,56 @@ class UserCard extends Base
     }
 
     /**
+     * 获取会员卡付款码
+     */
+    public function getPaymentCode()
+    {
+        $secret = self::getSecret($this);
+        $dynamic_code = TOTPAuth::getDynamicCode($secret);
+        $card_number_transform = $this->cat_id . substr($this->card_number, -8);
+        $transform = self::getTransformNumber($card_number_transform);
+        return $transform . $dynamic_code;
+    }
+
+    /**
+     * 校验会员卡的付款码
+     *
+     * @param $payment_code
+     *
+     * @return \app\common\model\UserCard
+     * @throws \think\exception\DbException
+     */
+    public static function verifyPaymentCode($payment_code)
+    {
+        //转换的会员卡编号
+        $transform_number = substr($payment_code, 0, -6);
+        //动态口令
+        $dynamic_code = substr($payment_code, -6);
+        //原始会员卡编号
+        $original = self::getOriginalNumber($transform_number);
+        //会员卡类型ID
+        $cat_id = substr($original, 0, 1);
+        $cat = CardCategory::get($cat_id);
+        if(empty($cat)) return false;
+        $card_number = $cat->prefix . substr($original, 1);
+        $card = self::get(['card_number' => $card_number]);
+        if(empty($card)) return false;
+        $secret = self::getSecret($card);
+        if(TOTPAuth::verifySecret($secret, $dynamic_code)) return $card;
+        return false;
+    }
+
+    /**
+     * 获取会员卡秘钥
+     * @param \app\common\model\UserCard $card
+     * @return string
+     */
+    public static function getSecret(UserCard $card)
+    {
+        return strtoupper($card->card_number . $card->activating_code);
+    }
+
+    /**
      * 判断用户下是否有可用的会员卡
      * @param $user_id
      *
@@ -252,12 +305,38 @@ class UserCard extends Base
         return !empty($exist_card) ? true : false;
     }
 
+    /**
+     * 获取字符串对应转换后的数字字符串
+     * @param $card_number
+     * @return string
+     */
+    public static function getTransformNumber($card_number)
+    {
+        $arr = array_map(function ($v){
+            return stripos(self::CARD_NUMBER_TRANSFORM, $v);
+        }, str_split($card_number));
+        return implode($arr);
+    }
+
+    /**
+     * 获取原始会员卡ID
+     * @param $transform_str
+     * @return string
+     */
+    public static function getOriginalNumber($transform_str)
+    {
+        $arr = array_map(function ($v){
+            return substr(self::CARD_NUMBER_TRANSFORM, $v, 1);
+        }, str_split($transform_str));
+        return implode($arr);
+    }
+
     //生成会员编码
     public static function generatorNumber($prefix)
     {
         $last_card  = (new self)->order('id DESC')->find();
         $number     = ! empty($last_card) ? intval($last_card->id) + 1 : 1;
         $number_str = str_pad($number, 6, '0', STR_PAD_LEFT);
-        return $prefix . date('Y') . $number_str;
+        return $prefix . date('y') . $number_str;
     }
 }

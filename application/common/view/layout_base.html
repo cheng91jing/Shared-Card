@@ -43,6 +43,8 @@
     <script src="__STATIC__/plugins/jqgrid/grid.locale-cn.js"></script>
     <script src="__STATIC__/plugins/jqgrid/jquery.jqGrid.min.js"></script>
     <script src="__STATIC__/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="__STATIC__/plugins/validate/jquery.validate.min.js"></script>
+    <script src="__STATIC__/plugins/validate/messages_zh.min.js"></script>
 {if condition="$Request.isMobile"}
 <script src="__STATIC__/plugins/layer/mobile/layer.js"></script>
 {else /}
@@ -51,6 +53,25 @@
     <!--<script src="js/plugins/peity/jquery.peity.min.js"></script>-->
     <!--<script src="js/content.min.js?v=1.0.0"></script>-->
     {block name="footer_resource"}{/block}
+<script>
+    $.validator.setDefaults({
+        highlight: function (e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        }, success: function (e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        }, errorElement: "span", errorPlacement: function (e, r) {
+            // e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+            if (r.is(":radio") || r.is(":checkbox")) {
+                e.appendTo(r.parent().parent().parent())
+            } else if (r.parent().hasClass('input-group')) {
+                e.appendTo(r.parent().parent())
+            } else {
+                e.appendTo(r.parent())
+            }
+        }/*, errorClass: "help-block m-b-none", validClass: "help-block m-b-none"*/
+    });
+
+</script>
     {block name="footer_js"}{/block}
 </body>
 </html>

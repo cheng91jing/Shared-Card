@@ -11,6 +11,7 @@ namespace app\common\library;
 
 class EncryptAndDecrypt
 {
+
     public static function convBase($numberInput, $fromBaseInput, $toBaseInput)
     {
         if ($fromBaseInput == $toBaseInput) return $numberInput;
@@ -71,6 +72,26 @@ class EncryptAndDecrypt
         } else $s = $q;
 
         return $s;
+    }
+
+    public static function strToNumberEncode($s)
+    {
+        preg_match_all('/([a-z]+)|([0-9]+)|([^0-9a-z]+)/i', $s, $t);
+        $r = [];
+        foreach ($t[0] as $v) {
+            foreach (str_split($v, 1) as $c)
+                $r[] = (ord($c) > 127 ? 1255 : 999) - ord($c);
+        }
+        return implode('', $r);
+    }
+
+    public static function strToNumberDecode($s)
+    {
+        preg_match_all('/1?\d{3}/', $s, $t);
+        $r = '';
+        foreach ($t[0] as $v)
+            $r .= chr(($v{0} == 1 ? 1255 : 999) - $v);
+        return $r;
     }
 
 }
