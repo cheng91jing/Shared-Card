@@ -1,13 +1,13 @@
 {extend name="../../common/view/layout_base"}
 {block name="main"}
-<div class="row">
-    <div class="col-sm-12">
-        <blockquote class="text-warning">
-            <h2>线下会员卡消费主页</h2>
-        </blockquote>
-        <hr>
-    </div>
-</div>
+<!--<div class="row">-->
+    <!--<div class="col-sm-12">-->
+        <!--<blockquote class="text-warning">-->
+            <!--<h2>线下会员卡消费主页</h2>-->
+        <!--</blockquote>-->
+        <!--<hr>-->
+    <!--</div>-->
+<!--</div>-->
 <div class="row">
     <div class="col-sm-4">
         <div class="ibox">
@@ -168,7 +168,7 @@
         let number = /^[0-9]+(.[0-9]{1,2})?$/;
         return this.optional(element) || (number.test(value));
     }, '<i class="fa fa-times-circle"></i>只能填写最多2位小数点，大于0的数字！');
-    $("#form-offline").validate({
+    let formValid = $("#form-offline").validate({
         rules: {
             goods_price:{
                 isPrice: !0
@@ -197,7 +197,24 @@
         },
         submitHandler: form => {
             $.post('__ROOT__/admin/offline/deduction', $(form).serialize(), function (res) {
-                console.log(res);
+                if(res.error_code){
+                    swal({
+                        type: 'error',
+                        title: '出错了',
+                        text: res.error_message,
+                        allowOutsideClick: false
+                    })
+                }else{
+                    swal({
+                        type: 'success',
+                        title: '成功',
+                        timer: 3000,
+                        allowOutsideClick: false
+                    }).then(result => {
+                        document.getElementById('form-offline').reset();
+                        formValid.resetForm();
+                    })
+                }
             }, 'json')
         }
     });

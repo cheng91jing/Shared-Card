@@ -257,7 +257,7 @@ class UserCard extends Base
      *
      * @param $payment_code
      *
-     * @return \app\common\model\UserCard
+     * @return UserCard|bool
      * @throws \think\exception\DbException
      */
     public static function verifyPaymentCode($payment_code)
@@ -329,6 +329,77 @@ class UserCard extends Base
             return substr(self::CARD_NUMBER_TRANSFORM, $v, 1);
         }, str_split($transform_str));
         return implode($arr);
+    }
+
+    /**
+     * 订单消费
+     *
+     * @param Order $order
+     *
+     * @return float|int
+     * @throws Exception
+     * @throws \think\exception\DbException
+     */
+    public function orderDeductCard(Order $order)
+    {
+        $cat = CardCategory::get($this->cat_id);
+        if(empty($cat)) throw new Exception('未知的会员卡类型！');
+
+        if($cat->discount_type == CardCategory::DT_DISCOUNT){
+            //折扣
+            $discount = (1 - floatval($cat->discount_number));
+            $pay_balance = $order->total_money * ($discount > 1 ? 1 : ($discount < 0 ? 0 : $discount));
+            $max_pay = floor($this->balance / $discount);
+        }else{
+            $discount = floatval($cat->discount_number);
+            //直减
+            $pay_balance = $order->total_money - ($discount < 0 ? 0 : $discount);
+            if($pay_balance < 0) $pay_balance = $order->total_money;
+            $max_pay = $this->balance + ($discount < 0 ? 0 : $discount);
+        }
+        $pay_balance = round($pay_balance, 2);
+        if($pay_balance > $this->balance)
+            throw new Exception("当前会员卡余额不足，最多可支付 {$max_pay}");
+
+        if(!$this->enable) $this->enableCard();
+        $this->balance -= $pay_balance;
+        $this->save();
+
+        return $pay_balance;
+    }
+
+    /**
+     * 启用
+     */
+    public function enableCard()
+    {
+        if(!! $this->enable) return;
+        $cat = CardCategory::get($this->cat_id);
+        if($cat->period_start !== CardCategory::PS_REGULAR){
+            $this->regular_start = date('Y-m-d H:i:s');
+            if($cat->period_type == CardCategory::PT_DAY){
+                $end_time = strtotime("+{$cat->period_number} day");
+            }else{
+                $end_time = strtotime("+{$cat->period_number} month");
+            }
+            $this->regular_end = date('Y-m-d H:i:s', $end_time);
+        }
+        $this->enable = self::UCE_ENABLE;
+        $this->save();
+    }
+
+    /**
+     * 判断该卡是否可用
+     * @return bool
+     */
+    public function isInvalid()
+    {
+        if(!$this->status) return true;
+        if(!$this->activating_status) return true;
+        $regular_start_timestamp = !empty($this->regular_start) ? strtotime($this->regular_start) : 0;
+        $regular_end_timestamp = !empty($this->regular_end) ? strtotime($this->regular_end) : 0;
+        if(!!$this->enable && ($regular_start_timestamp > time() || $regular_end_timestamp < time())) return true;
+        return false;
     }
 
     //生成会员编码

@@ -2,6 +2,7 @@
 
 namespace app\common\model;
 
+use app\common\library\AuthHandler;
 use think\Db;
 use think\Exception;
 
@@ -77,10 +78,69 @@ class Order extends Base
     protected $updateTime         = false;
     protected $append             = [];
 
-
-    public static function offlineOrder()
+    /**
+     * 线下付款
+     * @param array $param
+     *
+     * @throws Exception
+     */
+    public static function offlineOrder(array $param)
     {
-        
+        Db::startTrans();
+        try{
+            if(!isset($param['order_type']) || strlen($param['order_type']) == 0) throw new Exception('缺少订单类型参数！');
+            if(empty($param['total_money']) || !is_numeric($param['total_money']) || $param['total_money'] <= 0 ||
+                empty($param['goods_price']) || !is_numeric($param['goods_price']) || $param['goods_price'] <= 0 ||
+                empty($param['goods_number']) || !is_numeric($param['goods_number']) || $param['goods_number'] <= 0)
+                throw new Exception('参数不合法');
+            if(empty($param['payment_code'])) throw new Exception('请输入付款码！');
+            //判断合作商
+            $admin = AuthHandler::$user;
+            if(empty($admin)) throw new Exception('管理员未登陆！');
+            $partner = Partner::get(['admin_id' => $admin->id]);
+            if(empty($partner) || ! $partner->status) throw new Exception('当前管理员不是商家，不可发起退款！');
+            //获取用户
+            $card = UserCard::verifyPaymentCode($param['payment_code']);
+            if(!$card) throw new Exception('付款码已失效！');
+            if($card->isInvalid()) throw new Exception('该会员卡不可使用！');
+            $user = User::get($card->user_id);
+            if(empty($user)) throw new Exception('未找到用户！');
+
+            $order = new static();
+            $order->partner_id = $partner->id;
+            $order->offline_admin = $admin->id;
+            $order->user_id = $user->id;
+            $order->card_id = $card->id;
+            $order->total_money = round($param['total_money'], 2);
+            $order->goods_price = round($param['goods_price'], 2);
+            $order->goods_number = intval($param['goods_number']);
+            $order->create_time = date('Y-m-d H:i:s');
+            switch ($param['order_type']){
+                case self::OT_OFFLINE_REDUCE:   //直扣
+                    if(empty($param['remark'])) throw new Exception('线下直扣，备注信息必须填写');
+                    $order->offline_note = $param['remark'];
+                    break;
+                case self::OT_OFFLINE_GOODS:    //商品
+                    throw new Exception('暂未开放！');
+                    break;
+                default:
+                    throw new Exception('未知的订单类型！');
+            }
+            $order->order_sn = self::generateOrderSn($param['order_type']);
+            //扣款操作
+            $pay_balance = $card->orderDeductCard($order);
+            $order->card_money = $pay_balance;
+            $order->order_status = Order::OS_FINISH;
+            $order->pay_status = Order::PS_PAID;
+            $order->pay_time = date('Y-m-d');
+            $order->end_time = date('Y-m-d');
+            $order->save();
+
+            Db::commit();
+        }catch (Exception $e){
+            Db::rollback();
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**

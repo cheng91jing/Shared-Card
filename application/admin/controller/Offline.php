@@ -27,7 +27,7 @@ class Offline extends AdminBase
     {
         try{
             if(!$this->request->isPost()) throw new Exception('请求方式错误!');
-
+            Order::offlineOrder($this->request->post('', '', 'trim'));
             $this->setReturnJsonData($this->request->post());
         }catch (Exception $e){
             $this->setReturnJsonError($e->getMessage());

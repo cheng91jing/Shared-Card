@@ -46,6 +46,7 @@ class CardUser extends AdminBase
         if(!$user_card->activating_status){
             $user_card->password = UserCard::getCardPassword($user_card);
         }
+        dump($user_card->getPaymentCode());
         return $this->fetch('info', compact('user_card'));
     }
 
