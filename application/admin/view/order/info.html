@@ -1,0 +1,199 @@
+{extend name="../../common/view/layout_base"}
+{block name="back"}
+<div class="row border-bottom white-bg dashboard-header">
+    <a class="btn btn-warning" title="上一页" href="javascript:void(0)" type="button" onclick="window.history.back()">
+        <i class="fa fa-hand-point-left"></i>&nbsp;上一页
+    </a>
+</div>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading">订单基础信息</div>
+            <div class="panel-body">
+                <form class="form-horizontal" id="">
+                    <input type="hidden" name="id" id="id" value="{$order.id ?? ''}">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">订单号</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.order_sn ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">商家</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.partner.partner_name ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">买家</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.user.mobile ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">订单类型</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.order_type_show ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">订单状态</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.order_status_show ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">付款状态</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.pay_status_show ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">创建时间</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.create_time}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">付款时间</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.pay_time}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">完成时间</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.end_time}</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="panel panel-info">
+            <div class="panel-heading">订单商品信息</div>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    {neq name="$order.order_type" value="2"}
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">管理员</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.admin.username ?? ''}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">管理员备注</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.offline_note ?? ''}</p>
+                        </div>
+                    </div>
+                    {/neq}
+                    {notempty name="$order.goods_id"}
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">商品名称</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">X商品名称占位X</p>
+                        </div>
+                    </div>
+                    {/notempty}
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">总金额</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.total_money|number_format}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">商品单价</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.goods_price|number_format}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">数量</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.goods_number}</p>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">余额支付</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.card_money|number_format}</p>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="col-sm-4 control-label">现金支付</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">{$order.cash_money|number_format}</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {notempty name="$order.card"}
+    <div class="col-sm-3">
+        <div class="panel panel-success">
+            <div class="panel-heading">使用的会员卡</div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        {$order.card.cat.cat_name ?? ''}
+                        <span class="badge">名称</span>
+                    </li>
+                    <li class="list-group-item">
+                        {$order.card.cat.discount_type_show ?? ''}
+                        <span class="badge">优惠类型</span>
+                    </li>
+                    <li class="list-group-item">
+                        {eq name="$order.card.cat.discount_type" value="1"}
+                        {$order.card.cat.discount_number|number_format}
+                        {else /}
+                        {$order.card.cat.discount_number * 100}%
+                        {/eq}
+                        <span class="badge">优惠额度</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {/notempty}
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    $('#card-form').validate({
+        submitHandler: function (form) {
+            layer.alert('暂不支持修改');
+            return false;
+            // $.post('__ROOT__/admin/card/add', $(form).serialize(), function (res) {
+            //     if (res.error_code) {
+            //         swal({
+            //             type: 'error',
+            //             title: '出错了',
+            //             text: res.error_message,
+            //             allowOutsideClick: false
+            //         })
+            //     } else {
+            //         swal({
+            //             type: 'success',
+            //             title: '成功',
+            //             timer: 3000,
+            //             allowOutsideClick: false
+            //         }).then(result => {
+            //             window.location.href = '__ROOT__/admin/card'
+            //         })
+            //     }
+            // }, 'json')
+        },
+    });
+    $(function () {
+    });
+</script>
+{/block}

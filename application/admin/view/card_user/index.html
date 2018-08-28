@@ -94,7 +94,7 @@
                 {name: "cat.cat_name", index: "cat.cat_name", align: "center", sortable: false, width: 70},
                 {name: "status", index: "status", align: "center", sortable: false, width: 100, formatter: switchFormat2},
                 {name: "enable_show", index: "enable_show", align: "center", sortable: false, width: 50},
-                {name: "regular_range", index: "regular_range", align: "center", sortable: false, width: 150, formatter: regularFormat},
+                {name: "regular_range", index: "regular_range", align: "center", sortable: false, width: 100, formatter: regularFormat},
                 {name: "open_time", index: "open_time", align: "center", sortable: false, width: 100},
                 {name: "denomination", index: "denomination", align: "center", sortable: false, width: 100},
                 {name: "balance", index: "balance", align: "center", sortable: false, width: 100},
@@ -123,7 +123,7 @@
             {multipleSearch: false, multipleGroup: false, showQuery: false} // search options - define multiple search
         );
         function regularFormat(cellValue, options, rowObject) {
-            return !!rowObject.regular_start ? rowObject.regular_start + ' - ' + rowObject.regular_end : '暂无期限';
+            return !!rowObject.regular_start ? rowObject.regular_start + ' 至 ' + rowObject.regular_end : '暂无期限';
         }
 
         function userFormat(cellValue, options, rowObject) {

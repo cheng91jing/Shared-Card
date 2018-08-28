@@ -14,7 +14,7 @@ class Order extends AdminBase
     public function index()
     {
         if ($this->request->isAjax()) {
-            $data = OrderModel::paginateScope();
+            $data = OrderModel::paginateScope([], [], ['user', 'partner'], 'id DESC');
             return json($data);
         }
         return $this->fetch();
@@ -27,7 +27,7 @@ class Order extends AdminBase
 
 
 
-        return $this->fetch('info', compact('cat'));
+        return $this->fetch('info', compact('order'));
     }
 
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-08-23 10:15:55
+-- Generation Time: 2018-08-28 08:45:09
 -- 服务器版本： 10.1.25-MariaDB
 -- PHP Version: 7.1.7
 
@@ -48,7 +48,7 @@ CREATE TABLE `card_admin_user` (
 --
 
 INSERT INTO `card_admin_user` (`id`, `username`, `mobile`, `partner_id`, `identity_id`, `permission_ids`, `password`, `auth_code`, `login_code`, `create_time`, `login_time`, `login_ip`) VALUES
-(2, 'admin', '18423031505', 0, 0, 'all', '$2y$10$BdRZOOnT6NvpokaORtxpX.r8gPdLMmnvNXDCFSP06cPYCyQvlSjme', '5,24c4fb*v', '{c;SLwe7dR', '2018-08-21 06:22:19', '2018-08-23 01:14:21', '0.0.0.0');
+(2, 'admin', '18423031505', 0, 0, 'all', '$2y$10$BdRZOOnT6NvpokaORtxpX.r8gPdLMmnvNXDCFSP06cPYCyQvlSjme', '5,24c4fb*v', 'O]JZ+Bh?ro', '2018-08-21 06:22:19', '2018-08-28 01:42:26', '0.0.0.0');
 
 --
 -- Indexes for dumped tables

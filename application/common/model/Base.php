@@ -51,7 +51,15 @@ abstract class Base extends Model
         return self::gridPaginateFormat($query);
     }
 
-    /*分页*/
+    /**
+     * 分页
+     * @param array $wheres 条件数组
+     * @param array $scopes 查询范围
+     * @param array $with 关联预载入
+     * @param null|string $order 排序
+     *
+     * @return array
+     */
     public static function paginateScope($wheres = [], $scopes = [], $with = [], $order = null)
     {
         $query = static::scope($scopes)->with($with)->where($wheres);
