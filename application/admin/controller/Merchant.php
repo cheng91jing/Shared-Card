@@ -26,7 +26,9 @@ class Merchant extends AdminBase
     public function add($partner_id = null)
     {
         if (empty($partner_id)) {
-            $partner = new Partner();
+            $partner = new Partner([
+                'admin_id' => 0
+            ]);
         } else {
             $partner = Partner::get($partner_id);
         }
