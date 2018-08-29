@@ -33,6 +33,6 @@ class TOTPAuth
     public static function verifySecret($secret, $dynamic)
     {
         $base32 = str_replace('=', '', Base32::encode($secret));
-        return Google2FA::verify_key($base32, $dynamic);
+        return Google2FA::verify_key($base32, $dynamic, 1); //只检查当前，不存在时间差
     }
 }

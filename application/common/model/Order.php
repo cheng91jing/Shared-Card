@@ -143,7 +143,7 @@ class Order extends Base
             $partner = Partner::get(['admin_id' => $admin->id]);
             if (empty($partner) || !$partner->status) throw new Exception('当前管理员不是商家，不可发起退款！');
             //获取用户
-            $card = UserCard::verifyPaymentCode($param['payment_code']);
+            $card = UserCard::verifyPaymentCode1($param['payment_code']);
             if (!$card) throw new Exception('付款码已失效！');
             if ($card->isInvalid()) throw new Exception('该会员卡不可使用！');
             $user = User::get($card->user_id);

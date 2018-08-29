@@ -34,6 +34,8 @@ class UserCard extends Base
         //        'activating_show',
     ];
     const CARD_NUMBER_TRANSFORM = '6790348512';
+    //动态码最大值，根据动态码的最大位数【建议为7位才能生成18位数字】
+    const MAX_DYNAMIC_NUMBER = '9999999';
 
     const UCS_INVALID = 0;
     const UCS_VALID   = 1;
@@ -112,7 +114,7 @@ class UserCard extends Base
         $userCard->user_id = $user->id;
         $userCard->cat_id  = $cat->cat_id;
         //检测该用户下是否有能使用的会员卡
-        if (self::existsCard($user->id)) throw new Exception("用户：{$user->mobile} 已经有会员卡了");
+        if (!! self::getExistsCard($user->id)) throw new Exception("用户：{$user->mobile} 已经有会员卡了");
         if ($cat->isInvalid()) throw new Exception("会员卡类型：{$cat->cat_name} 不可用!");
 
         $userCard->status = self::UCS_VALID;
@@ -187,7 +189,7 @@ class UserCard extends Base
         if(! self::verifyCardPassword($card, $password)) throw new Exception('卡密错误！');
         $cat = CardCategory::get($card->cat_id);
         if($cat->isInvalid()) throw new Exception('当前会员卡类型无效，不可激活！');
-        if(self::existsCard($user->id)) throw new Exception('该用户已有正在使用的会员卡！');
+        if(!! self::getExistsCard($user->id)) throw new Exception('该用户已有正在使用的会员卡！');
 
         $card->user_id = $user->id;
         $card->user_id = $user->id;
@@ -241,68 +243,129 @@ class UserCard extends Base
     }
 
     /**
-     * 获取会员卡付款码
+     * 获取付款码 方案2 （建议动态码位数位9位）
+     * @return string
      */
-    public function getPaymentCode()
+    public function getPaymentCode1()
     {
-        $secret = self::getSecret($this);
-        $dynamic_code = TOTPAuth::getDynamicCode($secret);
-        $card_number_transform = $this->cat_id . substr($this->card_number, -8);
-        $transform = self::getTransformNumber($card_number_transform);
-        return $transform . $dynamic_code;
+        try{
+            $user = User::get($this->user_id);
+            if(! $user || empty($user->login_code)) throw new Exception('未知的用户或者用户未登陆！');
+            $secret = self::getSecret($this, $user->login_code);
+            $dynamic_code = TOTPAuth::getDynamicCode($secret);
+            $card_number_transform = $this->cat_id . substr($this->card_number, -8);
+            $transform = self::getTransformNumber($card_number_transform);
+            return $transform . $dynamic_code;
+        }catch (Exception $e){
+
+        }
+        return '';
     }
 
     /**
-     * 校验会员卡的付款码
+     * 获取付款码 方案2（建议动态码生成位数位7位 才能生成18位码）
+     * @return string
+     */
+    public function getPaymentCode2()
+    {
+        try{
+            $user = User::get($this->user_id);
+            if(! $user || empty($user->login_code)) throw new Exception('未知的用户或者用户未登陆！');
+            $secret = self::getSecret($this, $user->login_code);
+            $dynamic_code = TOTPAuth::getDynamicCode($secret);
+            //使用用户手机号 * 动态码位数的最大值 + 动态码
+            $payment_code = intval($user->mobile) * self::MAX_DYNAMIC_NUMBER + intval($dynamic_code);
+            return strval($payment_code);
+        }catch (Exception $e){
+
+        }
+        return '';
+    }
+
+    /**
+     * 校验会员卡的付款码 方案1 （建议动态码位数位9位）
      *
      * @param $payment_code
      *
      * @return UserCard|bool
-     * @throws \think\exception\DbException
      */
-    public static function verifyPaymentCode($payment_code)
+    public static function verifyPaymentCode1($payment_code)
     {
-        //转换的会员卡编号
-        $transform_number = substr($payment_code, 0, -6);
-        //动态口令
-        $dynamic_code = substr($payment_code, -6);
-        //原始会员卡编号
-        $original = self::getOriginalNumber($transform_number);
-        //会员卡类型ID
-        $cat_id = substr($original, 0, 1);
-        $cat = CardCategory::get($cat_id);
-        if(empty($cat)) return false;
-        $card_number = $cat->prefix . substr($original, 1);
-        $card = self::get(['card_number' => $card_number]);
-        if(empty($card)) return false;
-        $secret = self::getSecret($card);
-        if(TOTPAuth::verifySecret($secret, $dynamic_code)) return $card;
+        try{
+            $transform_number = substr($payment_code, 0, -9);
+            //动态口令
+            $dynamic_code = substr($payment_code, -9);
+            //原始会员卡编号
+            $original = self::getOriginalNumber($transform_number);
+            //会员卡类型ID
+            $cat_id = substr($original, 0, 1);
+            $cat = CardCategory::get($cat_id);
+            if(empty($cat)) return false;
+            $card_number = $cat->prefix . substr($original, 1);
+            $card = self::get(['card_number' => $card_number]);
+            if(empty($card)) return false;
+            $user = User::get($card->user_id);
+            if(! $user || empty($user->login_code)) throw new Exception('未知的用户或者用户未登陆！');
+            $secret = self::getSecret($card, $user->login_code);
+            if(TOTPAuth::verifySecret($secret, $dynamic_code)) return $card;
+        }catch (Exception $e){
+
+        }
+        return false;
+    }
+
+    /**
+     * 校验会员卡的付款码 方案2 （建议动态码生成位数位7位 才能生成18位码）
+     * @param $payment_code
+     *
+     * @return UserCard|bool
+     */
+    public static function verifyPaymentCode2($payment_code)
+    {
+        try{
+            //获取动态码和用户手机号
+            $user_mobile = intval($payment_code / self::MAX_DYNAMIC_NUMBER);
+            $dynamic_code = intval($payment_code % self::MAX_DYNAMIC_NUMBER);
+            //获取用户最后有效的会员卡
+            $user = User::get(['mobile' => $user_mobile]);
+            if(empty($user)) return false;
+            $card = self::getExistsCard($user->id);
+            if(empty($card)) return false;
+            $secret = self::getSecret($card, $user->login_code);
+            if(TOTPAuth::verifySecret($secret, $dynamic_code)) return $card;
+        }catch (Exception $e){
+
+        }
         return false;
     }
 
     /**
      * 获取会员卡秘钥
+     *
      * @param \app\common\model\UserCard $card
+     * @param $user_login_code string 用户登陆鉴权码
+     *
      * @return string
      */
-    public static function getSecret(UserCard $card)
+    public static function getSecret(UserCard $card, $user_login_code)
     {
-        return strtoupper($card->card_number . $card->activating_code);
+        if(! $user_login_code) return '';
+        return strtoupper($user_login_code . $card->card_number . $card->activating_code);
     }
 
     /**
      * 判断用户下是否有可用的会员卡
      * @param $user_id
      *
-     * @return bool
+     * @return bool|UserCard
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public static function existsCard($user_id)
+    public static function getExistsCard($user_id)
     {
         $exist_card = self::scope(['valid'])->where('user_id', $user_id)->find();
-        return !empty($exist_card) ? true : false;
+        return !empty($exist_card) ? $exist_card : false;
     }
 
     /**
