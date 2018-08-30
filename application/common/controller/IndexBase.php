@@ -18,9 +18,12 @@ namespace app\common\controller;
 class IndexBase extends Base
 {
 
+    protected $user_model = '\app\common\model\User';
+
     public function _initialize()
     {
         //TODO: 前端用户验证等
         parent::_initialize();
+        if(! $this->request->isMobile()) $this->throwPageException('访问出错！');
     }
 }

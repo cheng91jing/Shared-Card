@@ -14,7 +14,9 @@ namespace app\common\controller;
 use app\common\library\APIFormatResponse;
 use app\common\library\AuthHandler;
 use app\common\library\PermissionHandler;
+use app\common\model\BaseUser;
 use think\Controller;
+use think\Exception;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
 use think\Response;
@@ -47,10 +49,105 @@ abstract class Base extends Controller
      */
     public $jsonReturn = null;
 
+    /**
+     * @var string  登录失效的跳转链接
+     */
+    protected $logout_redirect = null;
+
+    /**
+     * @var string 用户模型名称(默认为前端User模型)
+     */
+    protected $user_model = '\app\common\model\User';
+
+
+
     public function _initialize()
     {
         //设置API返回数据格式类，用作后台AJAX，或者前端API等
         $this->jsonReturn = new APIFormatResponse();
+        //用户自动登陆
+        $this->autoLogin();
+    }
+
+    /**
+     * 用户自动登录操作
+     */
+    protected function autoLogin()
+    {
+        $session_user = Session::get('user');
+        if($session_user && !empty($session_user['id']) && !empty($session_user['access_token'])){
+            try{
+                //使用用户模型获取用户数据
+                $user = ($this->user_model)::get($session_user['id']);
+                if(empty($user)) throw new Exception('未知用户');
+                $approved = AuthHandler::verify($user->id, $session_user['access_token'], [$user->auth_code, $user->login_code]);
+                if(!$approved) throw new Exception('登陆验证失败');
+                $this->initUserInfo($user);
+            }catch (Exception $e){
+            }
+        }
+    }
+
+    /**
+     * 检查登录状态 并跳转到当前模型的 login 控制器 index 方法
+     */
+    protected function checkLogin()
+    {
+        if(! $this->isLogin){
+            if($this->request->isAjax()){
+                $this->throwJsonException($this->setReturnJsonError('登录已失效', -1)->transformArray());
+            }else{
+                //清空登录状态
+                $this->clearLogin();
+                //跳转
+                $redirect_url = $this->logout_redirect !== null ? $this->logout_redirect : $this->request->module() .'/login/index';
+                $this->throwRedirectException($redirect_url);
+            }
+        }
+    }
+
+    /**
+     * 手动登录
+     * @param \app\common\model\BaseUser $user
+     *
+     * @throws \think\Exception
+     */
+    protected function login(BaseUser $user)
+    {
+        //用户登陆数据更新
+        $user = $user->login();
+        //记录session
+        $login_session = [
+            'id' => $user->id,
+            'access_token' => AuthHandler::generateHash($user->id, [$user->login_code, $user->auth_code]),
+        ];
+        Session::set('user', $login_session);
+        $this->initUserInfo($user);
+    }
+
+    //清除登陆状态
+    protected function clearLogin()
+    {
+        $this->user = null;
+        $this->isLogin = false;
+        Session::clear();
+    }
+
+    //判断权限
+    protected function can($action)
+    {
+        if($this->isLogin){
+            return PermissionHandler::can($action);
+        }
+        return false;
+    }
+
+    //系统初始化用户信息，权限等
+    protected function initUserInfo(BaseUser $user)
+    {
+        $this->isLogin = true;
+        $this->user = $user;
+        AuthHandler::$user = $user;
     }
 
     /**
@@ -80,31 +177,6 @@ abstract class Base extends Controller
     protected function throwPageException($message = '', $statusCode = 404)
     {
         throw new HttpException($statusCode, $message);
-    }
-
-    //判断权限
-    protected function can($action)
-    {
-        if($this->isLogin){
-            return PermissionHandler::can($action);
-        }
-        return false;
-    }
-
-    //系统初始化用户信息，权限等
-    protected function initUserInfo($user)
-    {
-        $this->isLogin = true;
-        $this->user = $user;
-        AuthHandler::$user = $user;
-    }
-
-    //清除登陆状态
-    protected function clearLogin()
-    {
-        $this->user = null;
-        $this->isLogin = false;
-        Session::clear();
     }
 
     /**

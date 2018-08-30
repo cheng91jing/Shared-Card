@@ -10,7 +10,8 @@
  * Email: 654807719@qq.com
  */
 return [
-    'aaa' => [
-        'b' => 'c'
-    ]
+    'aliyun_sms' => [
+        'access_key' => '25050090',
+        'access_key_secret' => '03fdd24b34b6ef5dcc6f1192f30071e3',
+    ],
 ];

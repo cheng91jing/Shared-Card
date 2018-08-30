@@ -1,0 +1,122 @@
+{extend name="../../common/view/layout_frontend"}
+{block name="title"}- 登录{/block}
+{block name="header_style"}
+<style>
+    .tab-content {
+        /*border: 1px solid #ddd;*/
+        /*border-top-color: transparent;*/
+        padding: 30px 10px;
+    }
+    .nav-tabs{
+        border: none;
+    }
+    .nav-tabs li.active a {
+        color: #f23030 !important;
+        font-size: 1.5rem;
+    }
+
+    .nav-tabs li a {
+        color: #a2a2a2 !important;
+    }
+</style>
+{/block}
+{block name="back"}
+<nav class="navbar navbar-default" style="background-color:#f23030; border:none;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="" style="color:#fff;">
+                <i class="glyphicon glyphicon-chevron-left"></i> 登录
+            </a>
+        </div>
+    </div>
+</nav>
+{/block}
+{block name="main"}
+<div class="container" style="padding: 20% 15px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">会员登录/注册</h3>
+        </div>
+        <div class="panel-body">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation"  class="active hide">
+                    <a href="#code-login" aria-controls="password-login" role="tab"
+                       data-toggle="tab">短信登录/注册</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="code-login">
+                    <form id="sms-form">
+                        <div class="alert alert-info" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>注意！</strong>如果用户没有账号，则会直接注册!
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="sms_mobile">手机号</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">+86</span>
+                                <input type="text" class="form-control" placeholder="请输入手机号" name="sms_mobile"
+                                       rangelength="[11,11]"
+                                       maxlength="11"
+                                       digits="true"
+                                       required
+                                       id="sms_mobile">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-warning" id="sms_button"
+                                            type="button">获取验证码</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="sms_code">验证码</label>
+                            <input type="text" class="form-control"
+                                   maxlength="6"
+                                   required
+                                   placeholder="请输入收到的验证码" name="sms_code"
+                                   id="sms_code">
+                        </div>
+                        <button type="submit" class="btn btn-success">登录/注册</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    $("#com-form").validate({
+        submitHandler: f => {
+            console.log(f);
+        }
+    });
+    $("#sms-form").validate({
+        submitHandler: f => {
+            console.log(f);
+        }
+    });
+    //发送验证码
+    $("#sms_button").on('click', function (e) {
+        let sms_mobile = $.trim($("#sms_mobile").val());
+        if(sms_mobile.length !== 11 || isNaN(sms_mobile)){
+            layer.open({
+                content: '请输入长度11位的手机号！',
+                btn: '知道了'
+            })
+        }
+        axios.post('__ROOT__/api/send_code/mobile', {sms_mobile}).then(res => {
+            if(!! res.data.error_code){
+                layer.open({
+                    content: res.data.error_message,
+                    skin: 'msg',
+                    time: 2
+                })
+            }else{
+                //开始倒计时
+            }
+        }).catch(error => {
+            console.log(error)
+        });
+    })
+</script>
+{/block}

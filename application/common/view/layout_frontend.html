@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>启程共享卡 {block name="title"}{/block}</title>
+    <link rel="shortcut icon" href="__ROOT__/favicon.ico">
+    <link href="__STATIC__/plugins/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="__STATIC__/plugins/font-awesome/font-awesome.mini.css" rel="stylesheet">
+    <link href="__STATIC__/plugins/animate/animate.css" rel="stylesheet">
+    <link href="__STATIC__/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <link href="__STATIC__/plugins/layer/mobile/need/layer.css" rel="stylesheet">
+    {block name="header_resource"}{/block}
+    {block name="header_style"}{/block}
+
+
+</head>
+
+<body>
+{block name="back"}{/block}
+{block name="main"}主体{/block}
+    <script src="__STATIC__/plugins/jq/jquery.min.js"></script>
+    <script src="__STATIC__/plugins/bootstrap/bootstrap.min.js"></script>
+    <script src="__STATIC__/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="__STATIC__/plugins/validate/jquery.validate.min.js"></script>
+    <script src="__STATIC__/plugins/validate/messages_zh.min.js"></script>
+    <script src="__STATIC__/plugins/layer/mobile/layer.js"></script>
+    <script src="__STATIC__/plugins/axios/axios.min.js"></script>
+    {block name="footer_resource"}{/block}
+<script>
+    $.validator.setDefaults({
+        highlight: function (e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        }, success: function (e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        }, errorElement: "span", errorPlacement: function (e, r) {
+            // e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+            if (r.is(":radio") || r.is(":checkbox")) {
+                e.appendTo(r.parent().parent().parent())
+            } else if (r.parent().hasClass('input-group')) {
+                e.appendTo(r.parent().parent())
+            } else {
+                e.appendTo(r.parent())
+            }
+        }/*, errorClass: "help-block m-b-none", validClass: "help-block m-b-none"*/
+    });
+
+</script>
+    {block name="footer_js"}{/block}
+</body>
+</html>

@@ -1,0 +1,122 @@
+@charset "utf-8";
+body,h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 { margin: 0px ; font-family:"Microsoft Yahei","微软雅黑", Arial,"宋体","sans-serif";; }
+
+html { -webkit-text-size-adjust:none;}
+a { text-decoration:none; cursor:pointer;}
+a:hover { text-decoration: none;}
+img {border: 0;}
+
+.huibg { background: #EEEEEE;}
+
+
+/*新增会员中心CSS*/
+
+.vipcenter { padding: 0px;}
+.vipcenter .vipheader { padding: 1rem 0 0; background: #fff}
+.vipcenter .vipheader .touxiang { width: 72px; height: 72px; margin: 0px auto; border-radius: 100%; border: 2px solid #fff;}
+.vipcenter .vipheader .touxiang img { border-radius: 100%; width: 100%;}
+.vipcenter .vipheader .name { font-size: 1.4em; text-align: center; color: #fff; line-height: 2em;}
+.vipcenter .vipheader .gztt { font-size: 1em; text-align: center; color: #fff;}
+.vipcenter .vipsan { color: #969595; padding: 14px 0; background: #fff; overflow: auto; margin-bottom: 1.5rem;}
+.vipcenter .vipsan div { border-right:1px solid #ccc;}
+.vipcenter .vipsan div:last-child { border: 0px;}
+.vipcenter .vipsan a { color: #969595; }
+.vipcenter .vipsan h4 {color: #6bcf6d; font-size: 1em; line-height: 1.5em;}
+.vipcenter .vipsan span {font-size: 2rem;}
+.vipcenter .vipsan p {padding: 0px; margin: 5px 0 0;}
+.vipcenter .vipsan p i {font-size: 1.2rem;}
+/*
+.vipcenter .vipul { background: #fff; padding: 0px; margin: 0px; border-width: 1px 0;}
+.vipcenter .vipul li { padding: 0px 0px; overflow: auto; border-bottom:1px solid #e8e8e8; position: relative;}
+.vipcenter .vipul li:last-child { border: 0px;}
+.vipcenter .vipul li a { color: #666; display:block; padding: 15px 10px; height: 50px; position: relative;  width: 100%;}
+.vipcenter .vipul li .rizi { position: absolute; right: 10px;}
+.vipcenter .vipul li .lvzi { color: #00B285;}
+.vipcenter .vipul li .redzi { color: red;}
+.vipcenter .vipul li .lzz { float: left;}
+.vipcenter .vipul li .icc { float: left; padding-right: 1em; display: block;}
+.vipcenter .vipul li:nth-child(10n+1) .icc { color: #00B285;}
+.vipcenter .vipul li:nth-child(10n+2) .icc { color: #00A1DF;}
+.vipcenter .vipul li:nth-child(10n+3) .icc { color: #FF8000;}
+.vipcenter .vipul li:nth-child(10n+4) .icc { color: #FF4D4D;}
+.vipcenter .vipul li:nth-child(10n+5) .icc { color: #00468C;}
+
+
+.guanzhu { background: #fff;}
+.guanzhu .iconfont { border: 0px; background: none; color: 333; padding: 5px; top: 8px;  right: 10px; position: absolute; color: #666;}
+.guanzhu .ewm { width: 80%; padding: 2em 1em; margin: 0px 10%; }
+.guanzhu img { width: 100%;}
+*/
+.footnav { width: 100%; position: fixed; border-top: 1px solid #ccc; padding: 5px 0px; bottom: 0px; left: 0px; background: #fff;}
+.footnav a { color: #666;}
+.footnav p { margin: 0px; padding: 0px; font-size: 0.8em;}
+.footnav .iconfont { font-size: 1.4em;}
+.footnav div { border-right:1px solid #ccc;}
+.footnav div:last-child { border: 0px;}
+
+.list-group-item{
+    border-left: none;
+    border-right: none;
+    border-color: #eeeded;
+    padding: 12px 15px;
+}
+.list-group-item:first-child{
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.list-group-item:last-child{
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.col-padding-none{
+    padding-left: 0;
+    padding-right: 0;
+}
+.list-group a { 
+    color: #969595;
+}
+.nav-list span{
+    color: #525252;
+    font-size: 1.5rem;
+}
+.member-code{
+    display: block;
+    height:30%;
+    position: absolute;
+    bottom: 10%;
+    right:7%;
+    padding: 0;
+}
+.user-mobile{
+    color: #fff;
+    position: absolute;
+    top: 15%;
+    left: 23.5%;
+    font-size: 1.4rem;
+}
+.vipcenter .vipheader .vip-card{
+    position:relative; 
+    height:14rem;
+    background: url(../images/card_ordinary.png) 
+    no-repeat;background-size: 100% 100%;
+ }
+@media screen and (min-width: 750px){
+    .vipcenter .vipheader .vip-card{ 
+        height:29rem; 
+    }
+    .user-mobile{
+        font-size: 3rem;
+    }
+}
+@media screen and (min-width: 970px){
+    .vipcenter .vipheader .vip-card{ 
+        height:33rem; 
+    }
+}
+@media screen and (min-width: 1170px){
+    .vipcenter .vipheader .vip-card{ 
+        height:40rem;
+    }
+}

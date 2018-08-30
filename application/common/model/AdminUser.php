@@ -32,7 +32,7 @@ use think\Request;
  * @property string $login_time 上次登录时间
  * @property string $login_ip 登录IP
  */
-class AdminUser extends Base
+class AdminUser extends BaseUser
 {
     //商家
     public function partners()
@@ -58,17 +58,5 @@ class AdminUser extends Base
             }
         }
         return false;
-    }
-
-    //用户登陆
-    public function login()
-    {
-        //生成登陆鉴权码
-        $this->login_code = generate_rand_str(10, true);
-        $this->login_ip   = Request::instance()->ip();
-        $this->login_time = date('Y-m-d H:i:s');
-        $this->save();
-
-        return $this;
     }
 }

@@ -19,6 +19,8 @@ class Login extends AdminBase
 {
     public function index()
     {
+        //已经登录的用户不能访问登录页，跳转到首页
+        if($this->isLogin) $this->redirect( 'admin/layout/index');
         if($this->request->isPost()){
             $username = $this->request->post('username', null);
             $password = $this->request->post('password', null);

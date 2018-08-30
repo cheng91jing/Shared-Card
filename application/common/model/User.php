@@ -27,7 +27,7 @@ use think\Exception;
  * @property string $login_time 上次登录时间
  * @property string $login_ip 登录IP
  */
-class User extends Base
+class User extends BaseUser
 {
     /**
      * @return \think\model\relation\HasMany
