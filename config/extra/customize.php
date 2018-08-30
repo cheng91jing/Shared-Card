@@ -9,9 +9,15 @@
  * Time: 10:30
  * Email: 654807719@qq.com
  */
+
+use think\Env;
+
 return [
+    /**
+     * 阿里云短信配置
+     */
     'aliyun_sms' => [
-        'access_key' => '25050090',
-        'access_key_secret' => '03fdd24b34b6ef5dcc6f1192f30071e3',
+        'access_key' => Env::get('aliyun_sms_key', null),
+        'access_key_secret' => Env::get('aliyun_sms_secret', null),
     ],
 ];

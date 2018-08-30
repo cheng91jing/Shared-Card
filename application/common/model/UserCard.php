@@ -3,7 +3,6 @@
 namespace app\common\model;
 
 use app\common\library\EncryptAndDecrypt;
-use app\common\library\totp\Base32;
 use app\common\library\TOTPAuth;
 use think\Db;
 use think\Exception;
@@ -26,6 +25,7 @@ use think\Exception;
  * @property string activating_code 激活鉴权码
  * @property float denomination 面额
  * @property float balance 余额
+ * @property CardCategory|null $cat
  */
 class UserCard extends Base
 {
@@ -86,7 +86,7 @@ class UserCard extends Base
         $query->where([
             'status'            => self::UCS_VALID,
             'activating_status' => self::UCA_ACTIVATION,
-        ])->where("IF(enable = " . self::UCE_ENABLE . ", regular_start < '{$now}' AND regular_end > '{$now}', 1 = 1)");
+        ])->where("IF(enable = " . self::UCE_ENABLE . ", IF(regular_start > '{$now}', 1 = 1, regular_start < '{$now}' AND regular_end > '{$now}'), 1 = 1)");
     }
 
     public function user()
@@ -243,7 +243,7 @@ class UserCard extends Base
     }
 
     /**
-     * 获取付款码 方案2 （建议动态码位数位9位）
+     * 获取付款码 方案1 （建议动态码位数位9位）
      * @return string
      */
     public function getPaymentCode1()

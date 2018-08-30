@@ -45,15 +45,32 @@ class User extends BaseUser
      */
     public function account($mobile)
     {
-        if(empty($mobile)) throw new Exception('未填写手机号');
-        if(!empty($this->mobile) && $this->getAttr('mobile') !== $mobile){
+        if(empty($this->mobile) || $this->getAttr('mobile') !== $mobile){
             $user_mobile = self::get(['mobile' => $mobile]);
             if($user_mobile) throw new Exception('手机号已被使用！');
         }
         $this->mobile = $mobile;
-        if(empty($this->auth_code))
-            $this->auth_code = generate_rand_str(10, true);
+        $this->auth_code = generate_rand_str(10, true);
+        if(! $this->create_time) $this->create_time = date('Y-m-d H:i:s');
         $this->save();
         return $this;
+    }
+
+    /**
+     * 校验手机号与验证码用户
+     * @param $mobile
+     * @param $code
+     *
+     * @return $this|null|static
+     * @throws Exception
+     * @throws \think\exception\DbException
+     */
+    public static function verifyMobileCode($mobile, $code)
+    {
+        $user = self::get(['mobile' => $mobile]);
+        if(empty($user)) $user = (new self)->account($mobile);
+        //验证短信验证码
+        if(! SendSms::checkCode($mobile, $code)) throw new Exception('验证码错误！');
+        return $user;
     }
 }

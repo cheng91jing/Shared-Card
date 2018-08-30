@@ -15,6 +15,7 @@ use app\common\library\APIFormatResponse;
 use app\common\library\AuthHandler;
 use app\common\library\PermissionHandler;
 use app\common\model\BaseUser;
+use Carbon\Carbon;
 use think\Controller;
 use think\Exception;
 use think\exception\HttpException;
@@ -35,7 +36,7 @@ abstract class Base extends Controller
     public $isLogin = false;
 
     /**
-     * @var mixed|\app\common\model\AdminUser 登录用户数据
+     * @var mixed|\app\common\model\BaseUser|\app\common\model\AdminUser|\app\common\model\User 登录用户数据
      */
     public $user = null;
 
@@ -67,6 +68,8 @@ abstract class Base extends Controller
         $this->jsonReturn = new APIFormatResponse();
         //用户自动登陆
         $this->autoLogin();
+        //设置 Carbon 包的语言环境
+        Carbon::setLocale('zh');
     }
 
     /**

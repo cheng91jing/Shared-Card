@@ -1,90 +1,100 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="keywords" content="共享卡">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>启程共享卡 - 个人中心</title>
-  <link rel="shortcut icon" href="__ROOT__/favicon.ico">
-  <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-  <link href="__STATIC__/css/center/style.css" rel="stylesheet">
-  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="https://cdn.bootcss.com/limonte-sweetalert2/7.21.1/sweetalert2.all.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="keywords" content="共享卡">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>启程共享卡 - 个人中心</title>
+    <link rel="shortcut icon" href="__ROOT__/favicon.ico">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="__STATIC__/css/center/style.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/limonte-sweetalert2/7.21.1/sweetalert2.all.min.js"></script>
 </head>
 
 <body class="huibg">
-  <div class="vipcenter">
+<div class="vipcenter">
     <div class="vipheader">
-      <!-- <a href="userinfo.html">
-        <div class="touxiang"><img src="images/tx.jpg" alt=""></div>
-        <div class="name">熊猫天堂</div>
-        <div class="gztt">认证会员，已关注</div>
-      </a> -->
-      <div class="vip-card" style="background-image: url(__STATIC__/img/center/card_diamond.png)">
-        <div class="user-mobile pull-left">184xxxx1505</div>
-        <a href="code.html" class="member-code pull-right"><img style="max-height:100%" class="img-responsive" src="__STATIC__/img/center/member_code.png" alt=""></a>
-      </div>
+        <div class="vip-card" style="background-image: url({$card_image})">
+            <div class="user-mobile pull-left">184xxxx1505</div>
+            <a href="code.html" class="member-code pull-right"><img style="max-height:100%" class="img-responsive"
+                                                                    src="__STATIC__/img/center/member_code.png" alt=""></a>
+        </div>
     </div>
     <div class="vipsan">
-      <div class="col-xs-4 text-center col-padding-none">
-          <h4><span>100000</span> 元</h4>
-          <p>余额&nbsp;<i class="glyphicon glyphicon-menu-right"></i></p>
-      </div>
-      <div class="col-xs-4 text-center col-padding-none">
-        <h4><span>9999</span> 天</h4>
-        <p>有效期&nbsp;<i class="glyphicon glyphicon-menu-right"></i></p>
-      </div>
-      <div class="col-xs-4 text-center col-padding-none">
-        <a href="javascript:void(0)" id="card">
-          <h4><span>8</span> 折</h4>
-          <p>餐饮优惠&nbsp;<i class="glyphicon glyphicon-menu-right"></i></p>
+        <div class="col-xs-4 text-center col-padding-none">
+            <h4>
+                {notempty name="card"}
+                <span>{$card->balance}</span>&nbsp;元
+                {else /}
+                无
+                {/notempty}
+            </h4>
+            <p>余额&nbsp;<i class="glyphicon glyphicon-menu-right"></i></p>
         </div>
-      </a>
+        <div class="col-xs-4 text-center col-padding-none">
+            <h4>
+                {empty name="regular_days"}
+                    {$regular}
+                {else /}
+                    <span>{$regular}</span>&nbsp;天
+                {/empty}
+            </h4>
+            <p>有效期&nbsp;<i class="glyphicon glyphicon-menu-right"></i></p>
+        </div>
+        <div class="col-xs-4 text-center col-padding-none">
+            <a href="javascript:void(0)" id="card">
+                <h4>
+                    <span>8</span> 折
+                </h4>
+                <p>餐饮优惠&nbsp;<i class="glyphicon glyphicon-menu-right"></i></p>
+            </a>
+        </div>
     </div>
     <div class="list-group nav-list">
         <a href="#" class="list-group-item">
-          <span>激活/有效期</span>
-          <span class="glyphicon glyphicon-menu-right pull-right"></span>
+            <span>激活/有效期</span>
+            <span class="glyphicon glyphicon-menu-right pull-right"></span>
         </a>
         <a href="#" class="list-group-item">
-          <span>个人信息</span>
-          <span class="glyphicon glyphicon-menu-right pull-right"></span>
+            <span>个人信息</span>
+            <span class="glyphicon glyphicon-menu-right pull-right"></span>
         </a>
         <a href="#" class="list-group-item">
-          <span>消费记录</span>
-          <span class="glyphicon glyphicon-menu-right pull-right"></span>
+            <span>消费记录</span>
+            <span class="glyphicon glyphicon-menu-right pull-right"></span>
         </a>
-      </div>
-  </div>
-  <!-- <div class="footnav">
-    <div class="col-xs-3 text-center"><a href="index.html"><i class="iconfont icon-shop"></i><p>积分商城</p></a></div>
-    <div class="col-xs-3 text-center"><a href="#"><i class="iconfont icon-huodongfj"></i><p>活动中心</p></a></div>
-    <div class="col-xs-3 text-center"><a href="ddcenter.html"><i class="iconfont icon-liebiao"></i><p>订单中心</p></a></div>
-    <div class="col-xs-3 text-center"><a href="mendian.html"><i class="iconfont icon-dizhi"></i><p>附近门店</p></a></div>
-  </div> -->
-  <script>
+    </div>
+</div>
+<!-- <div class="footnav">
+  <div class="col-xs-3 text-center"><a href="index.html"><i class="iconfont icon-shop"></i><p>积分商城</p></a></div>
+  <div class="col-xs-3 text-center"><a href="#"><i class="iconfont icon-huodongfj"></i><p>活动中心</p></a></div>
+  <div class="col-xs-3 text-center"><a href="ddcenter.html"><i class="iconfont icon-liebiao"></i><p>订单中心</p></a></div>
+  <div class="col-xs-3 text-center"><a href="mendian.html"><i class="iconfont icon-dizhi"></i><p>附近门店</p></a></div>
+</div> -->
+<script>
     /**
-    * 优惠说明弹窗
-    */
-    $("#card").on('click', function(e){
-      console.log(1)
-      swal({
-        width:'70%',
-        title: '优惠说明',
-        html: `
+     * 优惠说明弹窗
+     */
+    $("#card").on('click', function (e) {
+        console.log(1)
+        swal({
+            width: '70%',
+            title: '优惠说明',
+            html: `
         <ol style="text-align: left;">
           <li>第一条事项</li>
           <li>第二条事项</li>
           <li>第三条事项</li>
         </ol>
         `,
-        showCloseButton: true,
-        showConfirmButton: false
-      })
+            showCloseButton: true,
+            showConfirmButton: false
+        })
     });
-  </script>
+</script>
 </body>
 </html>

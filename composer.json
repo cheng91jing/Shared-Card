@@ -2,7 +2,9 @@
     "type": "project",
     "require": {
         "php": ">=5.5.7",
-        "topthink/framework": "5.0.*"
+        "topthink/framework": "5.0.*",
+        "guzzlehttp/guzzle": "^6.3",
+        "nesbot/carbon": "^1.32"
     },
     "autoload": {
         "psr-4": {
