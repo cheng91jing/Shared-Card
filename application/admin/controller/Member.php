@@ -23,6 +23,7 @@ class Member extends AdminBase
 
     public function add($user_id = null)
     {
+        throw new Exception('已关闭后台会员新增功能');
         if (empty($user_id)) {
             $user = new User();
         } else {
@@ -31,8 +32,7 @@ class Member extends AdminBase
         if ($this->request->isAjax()) {
             try {
                 $mobile = $this->request->post('mobile', null, 'trim');
-                $password = $this->request->post('new_password', null);
-                $user->account($mobile, $password);
+                $user->account($mobile);
             } catch (Exception $e) {
                 $this->setReturnJsonError($e->getMessage());
             }

@@ -31,7 +31,6 @@ SET time_zone = "+00:00";
 CREATE TABLE `card_user` (
   `id` int(11) NOT NULL,
   `mobile` varchar(11) NOT NULL COMMENT '用户手机号',
-  `password` varchar(255) NOT NULL COMMENT '密码',
   `auth_code` varchar(10) NOT NULL COMMENT '鉴权码',
   `login_code` varchar(10) DEFAULT NULL COMMENT '登录码',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
@@ -43,8 +42,8 @@ CREATE TABLE `card_user` (
 -- 转存表中的数据 `card_user`
 --
 
-INSERT INTO `card_user` (`id`, `mobile`, `password`, `auth_code`, `login_code`, `create_time`, `login_time`, `login_ip`) VALUES
-(3, '18423031505', '$2y$10$oNet9HAx1X4Np8hS9gUPy.vam3VB6LbOIWCctgGcJAfJvuLjVSUxW', 'myc@q1\\d&r', NULL, '2018-08-23 07:37:24', NULL, NULL);
+INSERT INTO `card_user` (`id`, `mobile`, `auth_code`, `login_code`, `create_time`, `login_time`, `login_ip`) VALUES
+(3, '18423031505', 'myc@q1\\d&r', NULL, '2018-08-23 07:37:24', NULL, NULL);
 
 --
 -- Indexes for dumped tables
