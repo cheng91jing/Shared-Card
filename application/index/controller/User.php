@@ -2,6 +2,7 @@
 namespace app\index\controller;
 
 use app\common\controller\IndexBase;
+use app\common\library\Barcode;
 use app\common\model\UserCard;
 use Carbon\Carbon;
 use think\Exception;
@@ -23,8 +24,9 @@ class User extends IndexBase
      */
     public function center()
     {
+        $user = $this->user;
         //获取用户会员卡
-        $card = UserCard::getExistsCard($this->user->id);
+        $card = UserCard::getExistsCard($user->id);
         //会员卡图片
         $card_image = !empty($card->cat->image) ? $card->cat->image : '/static/img/center/card_ordinary.png';
         //计算期限
@@ -38,6 +40,44 @@ class User extends IndexBase
             $regular_days = true;
         }
 
-        return $this->fetch('', compact('card', 'card_image', 'regular', 'regular_days'));
+        return $this->fetch('', compact('user', 'card', 'card_image', 'regular', 'regular_days'));
+    }
+
+    public function code()
+    {
+        $user = $this->user;
+        //获取用户会员卡
+        $card = UserCard::getExistsCard($user->id);
+
+        return $this->fetch('', compact('user', 'card'));
+    }
+
+    public function paymentCode()
+    {
+        try{
+            if(! $this->request->isPost()) throw new Exception('请求失败！');
+            $user = $this->user;
+            //获取用户会员卡
+            $card = UserCard::getExistsCard($user->id);
+            if(empty($card)) throw new Exception('您还没有会员卡！');
+            $payment_code = $card->getPaymentCode1();
+            if(empty($payment_code)) throw new Exception('生成付款码失败！');
+            $bar = Barcode::getBarCode($payment_code);
+            $qr = Barcode::getQrCode($payment_code);
+            if(empty($bar) || empty($qr)) throw new Exception('生成失败！');
+            $head_string = substr($payment_code, 0, 12);
+            $tail_string = substr($payment_code, -6);
+            $head_str = implode(' ', str_split($head_string, 4));
+
+            $this->setReturnJsonData([
+                'bar' => $bar,
+                'qr' => $qr,
+                'code' => $head_str . ' ' . $tail_string,
+                'init_code' => '**** **** **** ' . $tail_string
+            ]);
+        }catch (Exception $e){
+            $this->setReturnJsonError($e->getMessage());
+        }
+        return json($this->jsonReturn);
     }
 }

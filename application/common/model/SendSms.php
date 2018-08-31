@@ -60,7 +60,11 @@ class SendSms extends Model
     public static function checkCode($mobile, $code)
     {
         $sms = self::get(['phone' => $mobile]);
-        return (empty($sms) || $sms->code != $code || (time() - $sms->last_time) > self::VALID_INTERVAL) ? false : true;
+        if(empty($sms) || $sms->code != $code || (time() - $sms->last_time) > self::VALID_INTERVAL)
+            return false;
+        $sms->code = '';
+        $sms->save();
+        return true;
     }
 
     /**

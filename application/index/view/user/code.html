@@ -1,0 +1,100 @@
+{extend name="../../common/view/layout_frontend"}
+{block name="title"}- 付款码{/block}
+{block name="header_style"}
+<style>
+    body {
+        background: #f23030;
+    }
+</style>
+{/block}
+{block name="back"}
+<nav class="navbar navbar-default" style="background-color:#f23030; border:none;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="javascript:void(0)" onclick="window.history.back();" style="color:#fff;">
+                <i class="glyphicon glyphicon-chevron-left"></i> 付款码
+            </a>
+        </div>
+    </div>
+</nav>
+{/block}
+{block name="main"}
+<div class="container">
+    <div class="row">
+        <div class="" style="width: 95%;margin: 10% auto;">
+            <div class="panel panel-default " style="border-radius: 10px;">
+                <div class="panel-heading text-center "
+                     style="border-radius: 10px 10px 0 0;border-bottom: none;font-size: 1.7rem;color: #f23030;">
+                    {$card->cat->cat_name}会员：{$user->mobile_show}
+                </div>
+                <div class="panel-body text-center">
+                    <div class="hide" id="code_show">
+                        <p class="center-block" style="margin-top: 2rem;">
+                            <span id="payment_code_number">**** **** **** ******</span>
+                            <span id="look_number">查看数字</span>
+                        </p>
+                        <div class="">
+                            <img class="center-block" src="" alt="" id="bar">
+                        </div>
+                        <div style="margin-top: 2rem;">
+                            <img class="center-block" src="data:image/png;base64," alt="" id="qr">
+                        </div>
+                    </div>
+                    <div class="show" id="confirm">
+                        <!--<button type="button" class="btn btn-success" id="get_payment_code">获取付款码</button>-->
+                        <button type="button" class="btn btn-success">获取中...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    $(function () {
+        let code = null;
+        let countdown = null;
+        $("#look_number").on('click', function (e) {
+            if(code !== null) $("#payment_code_number").html(code);
+        });
+        // $("#get_payment_code").on('click', function (e) {
+        //     swal({
+        //         type: 'warning',
+        //         title: '获取你的付款码',
+        //         confirmButtonText: '<i class="fa fa-check"></i> &nbsp;确认获取',
+        //         text: '请勿将付款码展示给他人，每30秒生成一次，一分钟内有效！',
+        //         showLoaderOnConfirm: true,
+        //         preConfirm: () => {
+        //             return start();
+        //         }
+        //     })
+        // });
+        getCode();
+        function getCode() {
+            return axios.post('__ROOT__/index/user/paymentcode')
+                .then(res => {
+                    if(!res.data.error_code){
+                        $("#bar").attr('src', `data:image/png;base64,${res.data.data.bar}`);
+                        $("#qr").attr('src', `data:image/png;base64,${res.data.data.qr}`);
+                        $("#payment_code_number").html(res.data.data.init_code);
+                        code = res.data.data.code;
+                        $("#code_show").removeClass('hide').addClass('show');
+                        $("#confirm").removeClass('show').addClass('hide');
+                        if(countdown === null){
+                            countdown = setInterval(() => {
+                                getCode();
+                            }, 30000);
+                        }
+                        // swal.close();
+                    }else{
+                        layer.open({
+                            content: res.data.error_message
+                            ,btn: '我知道了'
+                        })
+                    }
+                });
+        }
+    });
+</script>
+{/block}

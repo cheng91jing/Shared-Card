@@ -9,6 +9,10 @@
 // | Author: 流年 <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+function web_token(){
+    return \app\common\library\ApiAuthHandler::getWebToken();
+}
+
 // 应用公共文件
 function generate_rand_str($length = 32, $inSymbol = false){
     $str = '';

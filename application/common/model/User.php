@@ -27,6 +27,15 @@ use think\Exception;
  */
 class User extends BaseUser
 {
+    protected $append = [
+        'mobile_show'
+    ];
+
+    public function getMobileShowAttr($value, $data)
+    {
+        return $this->mobile ? substr_replace($this->mobile, '****', 3, 4) : '';
+    }
+
     /**
      * @return \think\model\relation\HasMany
      */

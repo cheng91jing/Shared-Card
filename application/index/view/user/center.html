@@ -18,10 +18,13 @@
 <body class="huibg">
 <div class="vipcenter">
     <div class="vipheader">
-        <div class="vip-card" style="background-image: url({$card_image})">
-            <div class="user-mobile pull-left">184xxxx1505</div>
-            <a href="code.html" class="member-code pull-right"><img style="max-height:100%" class="img-responsive"
-                                                                    src="__STATIC__/img/center/member_code.png" alt=""></a>
+        <div class="vip-card" style="background-image: url(__ROOT__{$card_image})">
+            <div class="user-mobile pull-left">{$user->mobile_show}</div>
+            {notempty name="card"}
+            <a href="__ROOT__/index/user/code" class="member-code pull-right">
+                <img style="max-height:100%" class="img-responsive" src="__STATIC__/img/center/member_code.png" alt="">
+            </a>
+            {/notempty}
         </div>
     </div>
     <div class="vipsan">
@@ -59,10 +62,10 @@
             <span>激活/有效期</span>
             <span class="glyphicon glyphicon-menu-right pull-right"></span>
         </a>
-        <a href="#" class="list-group-item">
-            <span>个人信息</span>
-            <span class="glyphicon glyphicon-menu-right pull-right"></span>
-        </a>
+        <!--<a href="#" class="list-group-item">-->
+            <!--<span>个人信息</span>-->
+            <!--<span class="glyphicon glyphicon-menu-right pull-right"></span>-->
+        <!--</a>-->
         <a href="#" class="list-group-item">
             <span>消费记录</span>
             <span class="glyphicon glyphicon-menu-right pull-right"></span>

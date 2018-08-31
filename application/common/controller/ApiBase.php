@@ -9,6 +9,7 @@
  */
 
 namespace app\common\controller;
+use app\common\library\ApiAuthHandler;
 use app\common\model\BaseUser;
 
 /**
@@ -25,6 +26,23 @@ class ApiBase extends Base
     {
         //TODO: 前端用户验证等
         parent::_initialize();
+        $this->authorization();
+    }
+
+    /**
+     * 验证授权
+     */
+    protected function authorization()
+    {
+        if($web_token = $this->request->header('WEB-CSRF-TOKEN')){
+            //前端网页调用API鉴权
+            if(! ApiAuthHandler::verifyWebToken($web_token))
+                $this->throwJsonException($this->setReturnJsonError('非法请求！')->transformArray());
+        }elseif ($this->request->has('access_token')){
+            //用户校验
+        }else{
+            $this->throwJsonException($this->setReturnJsonError('非法请求！')->transformArray());
+        }
     }
 
     /**

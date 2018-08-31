@@ -140,8 +140,9 @@
         let b = $("#sms_button");
         max = 60;
         interval = setInterval(() => {
+            --max;
             if(max > 0){
-                if(b.attr('disabled') === 'undefined') b.prop('disabled', true);
+                if(typeof b.attr('disabled') === 'undefined') b.prop('disabled', true);
                 b.html(`${max} 秒`);
             }else{
                 clearInterval(interval);
