@@ -14,10 +14,17 @@ class Merchant extends AdminBase
         'checkLogin',
     ];
 
+    protected function _initialize()
+    {
+        parent::_initialize();
+        if($this->role->is_partner) $this->throwPageException('商家身份无权访问');
+    }
+
+
     public function index()
     {
         if ($this->request->isAjax()) {
-            $data = Partner::paginateScope([], [], ['admin']);
+            $data = Partner::paginateScope();
             return json($data);
         }
         return $this->fetch();
@@ -34,9 +41,8 @@ class Merchant extends AdminBase
         }
         if ($this->request->isAjax()) {
             try {
-                $admin_mobile = $this->request->post('admin_mobile', null, 'trim');
                 $partner_name = $this->request->post('partner_name', null, 'trim');
-                $partner->InfoBase(['admin_mobile' => $admin_mobile, 'partner_name' => $partner_name]);
+                $partner->InfoBase(['partner_name' => $partner_name]);
             } catch (Exception $e) {
                 $this->setReturnJsonError($e->getMessage());
             }
@@ -46,18 +52,19 @@ class Merchant extends AdminBase
         return $this->fetch('info', compact('partner'));
     }
 
-    public function search($admin_mobile)
-    {
-        try{
-            $admin = AdminUser::get(['mobile' => $admin_mobile]);
-            $partners = $admin->partners()->column('partner_name');
-            if(empty($admin)) throw new Exception('未找到该用户');
-            $this->setReturnJsonData(['admin' => $admin, 'partners' => $partners]);
-        }catch (Exception $e){
-            $this->setReturnJsonError($e->getMessage());
-        }
-        return json($this->jsonReturn);
-    }
+//    public function search($admin_mobile)
+//    {
+//        try{
+//            $admin = AdminUser::get(['mobile' => $admin_mobile]);
+//            if(empty($admin)) throw new Exception('未找到该用户');
+//            $partner = $admin->partner()->column('partner_name');
+//            if(!$admin->role || ! $admin->role->is_partner) throw new Exception('管理员身份不符！');
+//            $this->setReturnJsonData(compact('admin', 'partner', 'role'));
+//        }catch (Exception $e){
+//            $this->setReturnJsonError($e->getMessage());
+//        }
+//        return json($this->jsonReturn);
+//    }
 
     public function status($id, $status)
     {

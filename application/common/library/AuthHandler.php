@@ -15,7 +15,7 @@ use think\Exception;
 class AuthHandler
 {
     /**
-     * @var null|\app\common\model\AdminUser 全局用户模型
+     * @var null|\app\common\model\AdminUser|\app\common\model\User 全局用户模型
      */
     public static $user = null;
 

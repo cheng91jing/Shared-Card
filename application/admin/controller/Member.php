@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminBase;
+use app\common\library\PermissionHandler;
 use app\common\model\User;
 use think\Exception;
 
@@ -11,6 +12,12 @@ class Member extends AdminBase
     protected $beforeActionList = [
         'checkLogin',
     ];
+
+    protected function _initialize()
+    {
+        parent::_initialize();
+        if($this->role->is_partner) $this->throwPageException('商家身份无权访问！');
+    }
 
     public function index()
     {

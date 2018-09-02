@@ -44,6 +44,38 @@ return [
         ]
     ],
     [
+        'name' => '商品',
+        'id' => 'goods',
+        'nav' => true,
+        'icon' => 'fa fa-shopping-cart',
+        'child' => [
+            [
+                'name' => '商品管理',
+                'id' => 'goods-goods',
+                'nav' => true,
+                'href' => 'admin/goods',
+                'permission' => [
+                    [
+                        'name' => '商品列表',
+                        'id' => 'goods-goods-list',
+                    ],
+                ],
+            ],
+            [
+                'name' => '商品分类',
+                'id' => 'goods-category',
+                'nav' => true,
+                'href' => 'admin/goods_cat',
+                'permission' => [
+                    [
+                        'name' => '商品分类列表',
+                        'id' => 'goods-category-list',
+                    ],
+                ],
+            ],
+        ]
+    ],
+    [
         'name' => '交易',
         'id' => 'trade',
         'nav' => true,

@@ -1,0 +1,112 @@
+{extend name="../../common/view/layout_base"}
+{block name="back"}
+<div class="row border-bottom white-bg dashboard-header">
+    <a class="btn btn-warning" title="上一页" href="javascript:void(0)" type="button" onclick="window.history.back()">
+        <i class="fa fa-hand-point-left"></i>&nbsp;上一页
+    </a>
+</div>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-8">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>管理员操作 <span class="text-warning">【{$admin.id ? '修改' : '新增'}】</span></h5>
+            </div>
+            <div class="ibox-content">
+                <form class="form-horizontal" id="card-form">
+                    <input type="hidden" name="admin_id" id="admin_id" value="{$admin.id ?? ''}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户名：</label>
+                        <div class="col-sm-6">
+                            <input id="username" value="{$admin.username ?? ''}" name="username"
+                                   required
+                                   rangelength="[2,20]"
+                                   maxlength="20"
+                                   class="form-control" placeholder="填写管理员账号" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="mobile">手机号：</label>
+                        <div class="col-sm-6">
+                            <input id="mobile" value="{$admin.mobile ?? ''}"
+                                   rangelength="[11,11]"
+                                   digits="true"
+                                   required
+                                   name="mobile" class="form-control" placeholder="填写管理员手机号" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="identity_id">身份：</label>
+                        <div class="col-sm-6">
+                            <select id="identity_id" required name="identity_id" class="form-control">
+                                <option value="">请选择管理员身份</option>
+                                {foreach $identity_arr as $identity}
+                                <option value="{$identity->identity_id}" {if condition="!empty($admin.id) && $identity.identity_id == $admin.identity_id"}selected{/if}>
+                                    {$identity->identity_name}{eq name="$identity.is_partner" value="1"}【商家】{/eq}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码：</label>
+                        <div class="col-sm-6">
+                            <input id="password" name="password"
+                                   rangelength="[6,20]"
+                                   class="form-control" type="password" placeholder="登陆后台密码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">确认密码：</label>
+                        <div class="col-sm-6">
+                            <input id="confirm_password" name="confirm_password"
+                                   equalTo="#password"
+                                   placeholder="确认密码" class="form-control" type="password">
+                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 请再次输入您的密码</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6">
+                            <button type="submit" class="btn btn-outline btn-success dim" id="confirm_submit">确认提交
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_resource"}
+<script src="__STATIC__/plugins/moment/moment.js"></script>
+<script src="__STATIC__/plugins/moment/moment-with-locales.min.js"></script>
+<script src="__STATIC__/plugins/daterangepicker/daterangepicker.js"></script>
+{/block}
+{block name="footer_js"}
+<script>
+
+    $('#card-form').validate({
+        submitHandler: function (form) {
+            $.post('__ROOT__/admin/administrator/info', $(form).serialize(), function (res) {
+                if (res.error_code) {
+                    swal({
+                        type: 'error',
+                        title: '出错了',
+                        text: res.error_message,
+                        allowOutsideClick: false
+                    })
+                } else {
+                    swal({
+                        type: 'success',
+                        title: '成功',
+                        timer: 3000,
+                        allowOutsideClick: false
+                    }).then(result => {
+                        window.location.href = '__ROOT__/admin/administrator'
+                    })
+                }
+            }, 'json')
+        },
+    });
+</script>
+{/block}

@@ -40,12 +40,12 @@
                 shrinkToFit:true,
                 rowNum:10,
                 rowList:[10,20,30],
-                colNames:["序号","身份","合作商","操作"],
+                colNames:["序号","身份","商家角色","操作"],
                 colModel:[
-                    {name:"identity_id",index:"identity_id",width:60,sorttype:"int"},
-                    {name:"identity_name",index:"identity_name",sortable:false,width:100},
-                    {name:"partner_id",index:"partner_id",width:200,sortable:false},
-                    {name:"identity_id",index:"identity_id",width:200,sortable:false,formatter:formatOperation}
+                    {name:"identity_id",index:"identity_id",width:60,sorttype:"int",align: "center"},
+                    {name:"identity_name",index:"identity_name",sortable:false,width:100, align: "center"},
+                    {name:"is_partner_show",index:"is_partner_show",width:70,sortable:false, align: "center"},
+                    {name:"identity_id",index:"identity_id",width:120,sortable:false,formatter:formatOperation}
                     ],
                 pager:"#pager_list_1",
                 viewrecords:true,

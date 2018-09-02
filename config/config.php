@@ -158,7 +158,14 @@ return [
     // 显示错误信息
     'show_error_msg'         => false,
     // 异常处理handle类 留空使用 \think\exception\Handle
-    'exception_handle'       => '',
+    'exception_handle'       => '\app\common\exception\HttpException',
+    //支持定义单独的异常页面的模板地址(仅在部署模式下面生效)
+    'http_exception_template' => [
+        // 定义404错误的重定向页面地址
+        404 =>  APP_PATH.'common/view/error_page/404.html',
+        // 还可以定义其它的HTTP status
+        //401 =>  APP_PATH.'401.html',
+    ],
 
     // +----------------------------------------------------------------------
     // | 日志设置

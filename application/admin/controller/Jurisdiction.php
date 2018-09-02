@@ -15,6 +15,13 @@ class Jurisdiction extends AdminBase
         'checkLogin',
     ];
 
+    protected function _initialize()
+    {
+        parent::_initialize();
+        if(! PermissionHandler::can('all')) $this->throwPageException('无权访问');
+    }
+
+
     public function index()
     {
         if ($this->request->isAjax()) {
@@ -22,53 +29,6 @@ class Jurisdiction extends AdminBase
             return json($data);
         }
         return $this->fetch();
-    }
-
-    public function identityDetail($identityId)
-    {
-        if (!Request::instance()->isAjax()) {
-            $identity_arr = Db::table('identity')->where(['identityId' => $identityId])->find();
-            if (!$identity_arr) $this->error('未发现该身份');
-            $admin_jurisdiction = json_decode($identity_arr['jurisdiction'], true);
-
-            $jurisdiction_List = \JurisdictionHelper::identityJurisdictionJudge($admin_jurisdiction);
-
-            $this->assign('jurisdiction_List', json_encode($jurisdiction_List));
-            $this->assign('identity_arr', $identity_arr);
-
-            return $this->fetch();
-        } else {
-            $msg = ['error' => false, 'msg' => '修改成功'];
-            try {
-                $PostData     = Request::instance()->post();
-                $jurisdiction = isset($PostData['jurisdiction']) ? $PostData['jurisdiction'] : [];
-                //$identityId = $PostData['identityId'];
-                $identity_name = $PostData['identity_name'];
-
-                if (empty($identityId) || empty($identity_name)) throw new \Exception('系统数据不完整，请重试');
-                $identity_arr = Db::table('identity')->where(['identityId' => $identityId])->find();
-                if (!$identity_arr) throw new \Exception('该身份不存在！');
-                if ($identity_name != $identity_arr['identity_name']) {
-                    $identity_other = Db::table('identity')->where(['identity_name' => $identity_name])->find();
-                    if ($identity_other) throw new \Exception('该身份名称已存在！');
-                }
-
-                $rows = Db::table('identity')->where(['identityId' => $identityId])->update(['jurisdiction' => json_encode($jurisdiction), 'identity_name' => $identity_name]);
-                if (!$rows) {
-                    $msg['msg'] = '没有任何修改';
-                } else {
-                    //重新注册当前权限
-                    $user_identityId = session('administrator.identityId', '', 'think');
-                    if ($identityId == $user_identityId)
-                        session('administrator.jurisdiction', $jurisdiction, 'think');
-                }
-
-            } catch (\Exception $e) {
-                $msg['error'] = true;
-                $msg['msg']   = $e->getMessage();
-            }
-            return json($msg);
-        }
     }
 
     public function add($identity_id = null)
@@ -80,13 +40,11 @@ class Jurisdiction extends AdminBase
         }
         if ($this->request->isAjax()) {
             try {
-                $partner_id    = $this->request->post('partner_id', null);
+                $is_partner    = $this->request->post('is_partner', false);
                 $identity_name = $this->request->post('identity_name', '');
                 if (empty($identity_name)) throw new Exception('缺少参数');
                 $identity->identity_name = $identity_name;
-                if (!empty($partner_id)) {
-                    $identity->partner_id = $this->request->post('partner_id');
-                }
+                $identity->is_partner = $is_partner ? true : false;
                 $identity->save();
             } catch (Exception $e) {
                 $this->setReturnJsonError($e->getMessage());
@@ -98,7 +56,6 @@ class Jurisdiction extends AdminBase
     }
 
     /**
-     * @author Chen <654807719@qq.com>
      *
      * @param $id int ID
      * @param int $type 类型 1:角色权限 0:账号权限

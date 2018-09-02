@@ -72,17 +72,6 @@ class PermissionHandler
         return $this->permissions;
     }
 
-    //新增权限
-    public function pushAction($action)
-    {
-        
-    }
-
-    public function delAction($action)
-    {
-        
-    }
-
     public function canAction($actions)
     {
         if(in_array('all', $this->permissions)) return true;
@@ -100,6 +89,11 @@ class PermissionHandler
         }else{
             return  in_array($actions, $this->permissions);
         }
+    }
+
+    public function adminAction()
+    {
+        return $this->user->role->is_partner ? false : true;
     }
 
     public function cannotAction($action)

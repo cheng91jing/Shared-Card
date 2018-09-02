@@ -16,7 +16,7 @@
             <div class="ibox-content">
                 <form class="form-horizontal" id="partner-form">
                     <input type="hidden" name="partner_id" id="partner_id" value="{$partner.id ?? ''}">
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label class="col-sm-2 control-label" for="admin_mobile">所属管理员</label>
                         <div class="col-sm-6">
                             <div class="input-group">
@@ -29,27 +29,29 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="partner_type">类型</label>
                         <div class="col-sm-6">
-                            <select class="form-control" name="partner_type" id="partner_type">
+                            <select class="form-control" name="partner_type" id="partner_type" disabled>
                                 <option value="">请选择类型</option>
                                 <option value="1">自营</option>
                                 <option value="2">个人</option>
                                 <option value="3">企业</option>
                             </select>
+                            <span class="help-block text-warning">该选项为未来开发预留选项，暂无需选择！</span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="partner_cat">分类</label>
                         <div class="col-sm-6">
-                            <select class="form-control" name="partner_cat" id="partner_cat">
+                            <select class="form-control" name="partner_cat" id="partner_cat" disabled>
                                 <option value="">请选择分类</option>
                                 <option value="1">酒店</option>
                                 <option value="2">车行</option>
                                 <option value="3">饭店</option>
                             </select>
+                            <span class="help-block text-warning">该选项为未来开发预留选项，暂无需选择！</span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -68,7 +70,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-3 animated" id="admin-info">
+    <!--<div class="col-sm-3 animated" id="admin-info">
         <div class="panel panel-warning">
             <div class="panel-heading">管理员信息</div>
             <div class="panel-body">
@@ -100,28 +102,29 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div>-->
 </div>
 {/block}
 {block name="footer_js"}
 <script>
-    $("#search_admin").click(function (e) {
-        $("#admin-info").removeClass("fadeInRight").addClass("fadeOutRight");
-        $.post('__ROOT__/admin/merchant/search', {admin_mobile: $.trim($("#admin_mobile").val())}, function (res) {
-            if (res.error_code) {
-                swal({
-                    type: 'error',
-                    title: res.error_message,
-                    allowOutsideClick: false
-                })
-                return false;
-            }
-            $("#admin-info-mobile").html(res.data.admin.mobile);
-            $("#admin-info-username").html(res.data.admin.username);
-            $("#admin-info-merchant").html(res.data.partners.length ? res.data.partners.join('|') : '还未绑定商家');
-            $("#admin-info").removeClass("fadeOutRight").addClass("fadeInRight");
-        }, 'json')
-    });
+    // $("#search_admin").click(function (e) {
+    //     $("#admin-info").removeClass("fadeInRight").addClass("fadeOutRight");
+    //     $.post('__ROOT__/admin/merchant/search', {admin_mobile: $.trim($("#admin_mobile").val())}, function (res) {
+    //         if (res.error_code) {
+    //             swal({
+    //                 type: 'error',
+    //                 title: res.error_message,
+    //                 allowOutsideClick: false
+    //             })
+    //             return false;
+    //         }
+    //         $("#admin-info-mobile").html(res.data.admin.mobile);
+    //         $("#admin-info-username").html(res.data.admin.username);
+    //         $("#admin-info-merchant").html(!! res.data.partner ? res.data.partner : '还未绑定商家');
+    //         $("#admin-info-role").html(!! res.data.role ? res.data.role : '无身份');
+    //         $("#admin-info").removeClass("fadeOutRight").addClass("fadeInRight");
+    //     }, 'json')
+    // });
     $('#partner-form').validate({
         submitHandler: function (form) {
             $.post('__ROOT__/admin/merchant/add', $(form).serialize(), function (res) {

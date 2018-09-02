@@ -1,108 +1,271 @@
 {extend name="../../common/view/layout_base"}
 {block name="back"}
 <!--<div class="row border-bottom white-bg dashboard-header">-->
-    <!--<a class="btn btn-primary" href="javascript:void(0)" type="button" onclick="window.history.back()">-->
-        <!--<i class="fa fa-arrow-left"></i>&nbsp;上一页-->
-    <!--</a>-->
+<!--<a class="btn btn-primary" href="javascript:void(0)" type="button" onclick="window.history.back()">-->
+<!--<i class="fa fa-arrow-left"></i>&nbsp;上一页-->
+<!--</a>-->
 <!--</div>-->
 {/block}
 {block name="main"}
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="ibox ">
-                    <div class="ibox-title">
-                        <h5>管理员列表</h5>
-                        <div class="ibox-tools">
-                            <button onclick="window.location.href='__ROOT__/admin/administrator/addadmin'" type="button" class="btn btn-outline btn-primary btn-xs">新增管理员</button>
-                        </div>
-                    </div>
-                    <div class="ibox-content">
-                        <hr>
-                        <div class="jqGrid_wrapper" style="overflow: auto;">
-                            <table id="table_list_1"></table>
-                            <div id="pager_list_1"></div>
-                        </div>
-                        <hr>
-                    </div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>管理员列表</h5>
+                <div class="ibox-tools">
+                    <button onclick="window.location.href='__ROOT__/admin/administrator/info'" type="button"
+                            class="btn btn-outline btn-primary btn-xs">新增管理员
+                    </button>
                 </div>
             </div>
+            <div class="ibox-content">
+                <hr>
+                <div class="jqGrid_wrapper" style="overflow: auto;">
+                    <table id="table_list_1"></table>
+                    <div id="pager_list_1"></div>
+                </div>
+                <hr>
+            </div>
         </div>
+    </div>
+</div>
 {/block}
 {block name="footer_js"}
-    <script>
-        $(document).ready(function(){
-            $("#table_list_1").jqGrid({
-                url:'__ROOT__/admin/administrator/index',
-                mtype: "post",
-                datatype: "json",
-                styleUI:'Bootstrap',    //风格
-                height:350,
-                // autowidth:true,
-                shrinkToFit:true,
-                rowNum:10,
-                rowList:[10,20,30],
-                colNames:["序号","用户名","手机号", "身份", "上次登陆时间","上次登陆IP","注册时间","操作"],
-                colModel:[
-                    {name:"id",index:"id",width:60,sorttype:"int"},
-                    {name:"username",index:"username",sortable:false,width:100},
-                    {name:"mobile",index:"identity_name",sortable:false,width:100},
-                    {name:"identity_id",index:"identity_id",sorttype:false,width:100},
-                    {name:"login_time",index:"login_time",sortable:false,width:150},
-                    {name:"login_ip",index:"login_ip",sortable:false,width:100},
-                    {name:"create_time",index:"create_time",sorttype:"datetime",formatter:"datetime",width:150},
-                    {name:"id",index:"id",width:150,sortable:false,formatter:formatOperation}
-                    ],
-                pager:"#pager_list_1",
-                viewrecords:true,
-                caption:"管理员列表",
-                hidegrid:false,
-                sortable:true
-            });
-            $('#table_list_1').navGrid("#pager_list_1", {
-                    search: false, // show search button on the toolbar
-                    add: false,
-                    edit: false,
-                    del: false,
-                    refresh: true
+<div class="modal inmodal fade in" id="assign-partner" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                        class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">设置商家</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="partner-form">
+                    <input type="hidden" value="" name="admin_id" id="admin_id">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="admin-name">当前管理员</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" id="admin-name"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="partner_name">商家名称</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input class="form-control" name="partner_name" id="partner_name"
+                                       value=""
+                                       maxlength="20"
+                                       placeholder="请输入商家名称">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="button" id="search_partner">查询</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="partner_id">请选择商家</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" required name="partner_id" id="partner_id">
+                                <option value="">请先搜索需要分配的商家</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <button type="submit" class="btn btn-success">确认</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                <!--<button type="button" class="btn btn-primary">保存</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let original = null;
+    let grid = $("#table_list_1");
+    let form = $("#partner-form");
+    $(document).ready(function () {
+        grid.jqGrid({
+            url: '__ROOT__/admin/administrator/index',
+            mtype: "post",
+            datatype: "json",
+            styleUI: 'Bootstrap',    //风格
+            height: 350,
+            // autowidth:true,
+            shrinkToFit: true,
+            rowNum: 10,
+            rowList: [10, 20, 30],
+            colNames: ["序号", "用户名", "手机号", "身份", "商家", "上次登陆时间", "上次登陆IP", "注册时间", "操作"],
+            colModel: [
+                {name: "id", index: "id", width: 60, sorttype: "int", key: true},
+                {name: "username", index: "username", sortable: false, width: 100},
+                {name: "mobile", index: "mobile", sortable: false, width: 100},
+                {name: "role_name", index: "role_name", sorttype: false, width: 150, formatter: formatRole},
+                {
+                    name: "partner_name",
+                    index: "partner_name",
+                    sorttype: false,
+                    width: 150, formatter: formatPartner
                 },
-                {}, // edit options
-                {}, // add options
-                {}, // delete options
-                { multipleSearch: false, multipleGroup: false, showQuery: false } // search options - define multiple search
-            );
-            function formatOperation(cellValue, options, rowObject){
-                var operationHtml = '<span operationValue="'+cellValue+'"><a href="__ROOT__/admin/administrator/updateadmin/adminId/'+cellValue+'" type="button" class="btn btn-primary btn-xs" >详情</a> <a href="__ROOT__/admin/jurisdiction/permission?type=0&id='+cellValue+'" type="button" class="btn btn-success btn-xs">权限</a> <a onclick="delAdmin('+ cellValue +')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
-                return operationHtml;
-            }
-
-            function unformatOperation(cellValue, options, cellObject){
-                return $(cellObject.html()).attr('operationValue');
+                {name: "login_time", index: "login_time", sortable: false, width: 150},
+                {name: "login_ip", index: "login_ip", sortable: false, width: 100},
+                {name: "create_time", index: "create_time", sorttype: "datetime", formatter: "datetime", width: 150},
+                {name: "operation", index: "operation", width: 150, sortable: false, formatter: formatOperation}
+            ],
+            pager: "#pager_list_1",
+            viewrecords: true,
+            caption: "管理员列表",
+            hidegrid: false,
+            sortable: true,
+            loadComplete: function (data) {
+                original = data.rows;
             }
         });
-        function delAdmin(id){
-            parent.layer.alert('确认删除该管理员吗？',
-                {icon: -1, shadeClose:!0, title:'提示', btn: ['确认','取消']},
-                function () {
-                    parent.layer.closeAll();
-                    $.ajax({
-                        type:'POST',
-                        dataType:'json',
-                        url:'__ROOT__/admin/administrator/deladmin',
-                        data:{adminId:id},
-                        success: function (msg) {
-                            if(msg.error){
-                                parent.layer.alert(msg.msg);
-                            }else{
-                                $("#table_list_1").trigger("reloadGrid");
-                            }
+        grid.navGrid("#pager_list_1", {
+                search: false, // show search button on the toolbar
+                add: false,
+                edit: false,
+                del: false,
+                refresh: true
+            },
+            {}, // edit options
+            {}, // add options
+            {}, // delete options
+            {multipleSearch: false, multipleGroup: false, showQuery: false} // search options - define multiple search
+        );
+
+        grid.navButtonAdd('#pager_list_1',
+            {
+                buttonicon: "glyphicon-ok-circle",
+                title: "将该管理员设置为对应商家管理员，只能对商家类型的身份进行设置！",
+                caption: "设置商家",
+                position: "last",
+                onClickButton: function (e) {
+                    let grid = $('#table_list_1');
+                    let rowKey = grid.getGridParam("selrow");
+                    if (!rowKey) {
+                        layer.alert('请选选择需要设置的管理员');
+                    } else {
+                        let index = grid.jqGrid('getInd', rowKey);
+                        let admin = original[index - 1];
+                        if(! admin.role.is_partner){
+                            layer.alert('非商家类型身份的管理员不可设置！', {icon: 2});
                             return false;
-                        },
-                        error:function(XMLHttpRequest, textStatus, errorThrown){
-                            console.log(XMLHttpRequest);
                         }
-                    });
+                        form.find("#admin_id").val(admin.id);
+                        form.find("#admin-name").html(`${admin.username}（${admin.mobile}）`);
+                        $("#assign-partner").modal('show');
+                    }
                 }
-            );
+            });
+
+        function formatRole(cellValue, options, rowObject) {
+            return `${rowObject.role.identity_name} ${rowObject.role.is_partner ? '<span class="badge badge-info">商</span>' : ''}`;
         }
-    </script>
+
+        function formatPartner(cellValue, options, rowObject) {
+            html = `${rowObject.partner ? rowObject.partner.partner_name : '无'} `;
+            {auth:isadmin}
+            html += rowObject.partner
+                ? '<button type="button" onclick="removePartner(' + rowObject.id + ')" class="btn btn-danger btn-xs btn-rounded btn-outline"><i class="fa fa-times"></i>解除</button>'
+                : '';
+            {/auth:isadmin}
+            return html;
+        }
+        function formatOperation(cellValue, options, rowObject) {
+            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/administrator/info?admin_id=' + cellValue + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a href="__ROOT__/admin/jurisdiction/permission?type=0&id=' + cellValue + '" type="button" class="btn btn-success btn-xs">权限</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+            return operationHtml;
+        }
+
+        function unformatOperation(cellValue, options, cellObject) {
+            return $(cellObject.html()).attr('operationValue');
+        }
+
+        $('#assign-partner').on('hidden.bs.modal', function (e) {
+            document.getElementById('partner-form').reset();
+            form.find("#admin-name").html('');
+            form.find("#partner_id").html('<option value="">请先搜索需要分配的商家</option>');
+        })
+        $("#search_partner").on('click', function (e) {
+            let partner_name = $.trim($("#partner_name").val());
+            if (partner_name === '') {
+                layer.alert('请填写需要查询的商家！');
+                return false;
+            }
+            $.post("__ROOT__/admin/administrator/search", {partner_name}, function (res) {
+                if(!! res.error_code){
+                    layer.alert(res.error_message, {icon: 2});
+                    return false;
+                }
+                let options = '';
+                for (let partner of res.data.values()){
+                    let {id, partner_name} = partner;
+                    options += `<option value="${id}">${partner_name}</option>`;
+                }
+                $("#partner_id").html(options);
+            }, 'json')
+        })
+        form.validate({
+            submitHandler: function (f) {
+                let id = $.trim($(f).find('#admin_id').val());
+                if(id === '' || typeof id === 'undefined'){
+                    layer.alert('未知的管理员', {icon: 2});
+                    return false;
+                }
+                $.post('__ROOT__/admin/administrator/assignPartner', $(f).serialize(), function (res) {
+                    if(! res.error_code){
+                        $("#assign-partner").modal('hide');
+                        grid.trigger("reloadGrid");
+                    }else{
+                        layer.alert(res.error_message, {icon: 2});
+                    }
+                });
+            }
+        })
+    });
+    function removePartner(id) {
+        layer.confirm('是否确认解除该管理员所管理的对应商家！',
+            {icon: 3, title:'提示'},
+            function (index) {
+                $.post('__ROOT__/admin/administrator/remove', {id}, function (res) {
+                    layer.close(index)
+                    if(!! res.error_code){
+                        layer.msg(res.error_message, {icon: 1, time: 2000});
+                    }else{
+                        grid.trigger("reloadGrid");
+                    }
+                });
+        })
+    }
+    function delAdmin(id) {
+        parent.layer.alert('确认删除该管理员吗？',
+            {icon: -1, shadeClose: !0, title: '提示', btn: ['确认', '取消']},
+            function () {
+                parent.layer.closeAll();
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '__ROOT__/admin/administrator/deladmin',
+                    data: {adminId: id},
+                    success: function (msg) {
+                        if (msg.error) {
+                            parent.layer.alert(msg.msg);
+                        } else {
+                            $("#table_list_1").trigger("reloadGrid");
+                        }
+                        return false;
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        console.log(XMLHttpRequest);
+                    }
+                });
+            }
+        );
+    }
+</script>
 {/block}

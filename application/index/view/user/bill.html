@@ -1,0 +1,78 @@
+{extend name="../../common/view/layout_frontend"}
+{block name="title"}- 消费记录{/block}
+{block name="header_style"}
+<style>
+    .list-group-item{
+        border-left-style: none;
+    }
+    .list-group-item:first-child{
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    .list-group-item:last-child{
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .content-body{
+        width: 80%;
+        word-break: break-all;
+        word-wrap:break-word;
+        margin-bottom: 1rem;
+    }
+    .bill-money{
+        font-size: 2rem;
+    }
+    .bill-time{
+        font-size: 1.5rem;
+    }
+</style>
+{/block}
+{block name="back"}
+<nav class="navbar navbar-default" style="background-color:#f23030; border:none;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="javascript:void(0)" onclick="window.history.back();" style="color:#fff;">
+                <i class="glyphicon glyphicon-chevron-left"></i> 消费记录
+            </a>
+        </div>
+    </div>
+</nav>
+{/block}
+{block name="main"}
+<div class="container-fluid">
+    <div class="row">
+        <div class="list-group">
+            <div class="list-group-item">
+                <span class="label label-warning pull-right">支出</span>
+                <div class="content-body">
+                    线下付款 - 订单号：19820223453，购买商品支出。现金：30000；余额：3000
+                </div>
+                <span class="bill-time">2018-09-11 12:00:00</span>
+                <span class="bill-money pull-right text-warning">1999999.00</span>
+            </div>
+            <div class="list-group-item">
+                <span class="label label-success pull-right">支出</span>
+                <div class="content-body">
+                    线下付款 - 订单号：19820223453，购买商品支出
+                </div>
+                <span class="bill-time">2018-09-11 12:00:00</span>
+                <span class="bill-money pull-right text-warning">1999999.00</span>
+            </div>
+            <div class="list-group-item">
+                <span class="label label-success pull-right">支出</span>
+                <div class="content-body">
+                    线下付款 - 订单号：19820223453，购买商品支出
+                </div>
+                <span class="bill-time">2018-09-11 12:00:00</span>
+                <span class="bill-money pull-right text-warning">1999999.00</span>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    $(function () {
+    });
+</script>
+{/block}

@@ -18,9 +18,9 @@ use think\Exception;
  * @package app\common\model
  *
  * @property integer $id
- * @property integer $admin_id 所属后台用户
  * @property integer partner_type 类型
  * @property integer partner_cat 分类
+ * @property integer goods_discount 是否可以设置商品优惠
  * @property integer status 状态
  * @property string partner_name 名称
  * @property string address 地址
@@ -31,14 +31,14 @@ use think\Exception;
  */
 class Partner extends Base
 {
-    public function admin()
+    public function admins()
     {
-        return $this->hasOne(AdminUser::class, 'id', 'admin_id');
+        return $this->hasMany(AdminUser::class, 'partner_id', 'id');
     }
 
     /**
      * 商家基础信息
-     * @param array $param [admin_id, admin_mobile, partner_type, partner_cat, name]
+     * @param array $param [partner_type, partner_cat, name]
      *
      * @return $this
      * @throws Exception
@@ -46,19 +46,6 @@ class Partner extends Base
      */
     public function InfoBase(array $param)
     {
-        //如果传入 admin_id 或 admin_mobile 绑定用户
-        if(!empty($param['admin_id']) || !empty($param['admin_mobile'])){
-            $condition = !empty($param['admin_id']) ? $param['admin_id'] : ['mobile' => $param['admin_mobile']];
-            $admin = AdminUser::get($condition);
-            if(empty($admin)) throw new Exception('未找到该用户');
-//            if(!empty($this->admin_id) && $this->admin_id !== $admin->id){
-//                $new_admin = self::get($admin->id);
-//                if(!empty($new_admin)) throw new Exception('该用户已经绑定过商家，如果需要绑定，请先解除该用户所绑定的商家！');
-//            }
-            $this->admin_id = $admin->id;
-        }else{  //不绑定用户
-            $this->admin_id = 0;
-        }
         //类型
         if(!empty($param['partner_type'])){
 
@@ -74,6 +61,7 @@ class Partner extends Base
         }
         $this->partner_name = $param['partner_name'];
         $this->save();
+
         return $this;
     }
 }

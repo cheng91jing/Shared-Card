@@ -13,6 +13,13 @@ class Offline extends AdminBase
         'checkLogin',
     ];
 
+    protected function _initialize()
+    {
+        parent::_initialize();
+//        if(! $this->isPartnerAdmin) $this->throwPageException('非商家不可访问该页面!');
+    }
+
+
     public function index()
     {
         $order = new Order([

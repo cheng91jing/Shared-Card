@@ -62,7 +62,7 @@ abstract class Base extends Controller
 
 
 
-    public function _initialize()
+    protected function _initialize()
     {
         //设置API返回数据格式类，用作后台AJAX，或者前端API等
         $this->jsonReturn = new APIFormatResponse();

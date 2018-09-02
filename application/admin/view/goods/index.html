@@ -1,0 +1,89 @@
+{extend name="../../common/view/layout_base"}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>商品列表</h5>
+                <div class="ibox-tools">
+                    <button onclick="window.location.href='__ROOT__/admin/goods/info'" type="button"
+                            class="btn btn-outline btn-primary btn-xs">添加商品
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <hr>
+                <div class="jqGrid_wrapper" style="overflow: auto;">
+                    <table id="table_list_1"></table>
+                    <div id="pager_list_1"></div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    let original = null;
+    let grid = $("#table_list_1");
+    let form = $("#partner-form");
+    $(document).ready(function () {
+        grid.jqGrid({
+            url: '__ROOT__/admin/goods/index',
+            mtype: "post",
+            datatype: "json",
+            styleUI: 'Bootstrap',    //风格
+            height: 350,
+            // autowidth:true,
+            shrinkToFit: true,
+            rowNum: 10,
+            rowList: [10, 20, 30],
+            colNames: ["序号", "商品名称", "分类", "单价", "商品优惠", "状态", "商家", "添加时间","操作"],
+            colModel: [
+                {name: "goods_id", index: "goods_id", width: 60, sorttype: "int", key: true},
+                {name: "goods_name", index: "goods_name", align: "center", sortable: false, width: 150},
+                {name: "cat_info", index: "cat_info", align: "center", sortable: false, width: 150, formatter: formatCat},
+                {name: "goods_price", index: "goods_price", align: "center", sortable: false, width: 150},
+                {name: "discount_info", index: "discount_info", align: "center", sortable: false, width: 130,formatter: formatDiscount},
+                {name: "goods_status", index: "login_time", align: "center", sortable: false, width: 100},
+                {name: "partner.partner_name", index: "partner.partner_name", align: "center", sortable: false, width: 150},
+                {name: "add_time", index: "create_time", align: "center", sortable: false, width: 150},
+                {name: "operation", index: "operation", align: "center", width: 150, sortable: false, formatter: formatOperation}
+            ],
+            pager: "#pager_list_1",
+            viewrecords: true,
+            caption: "管理员列表",
+            hidegrid: false,
+            sortable: true,
+            loadComplete: function (data) {
+                original = data.rows;
+            }
+        });
+        grid.navGrid("#pager_list_1", {
+                search: false, // show search button on the toolbar
+                add: false,
+                edit: false,
+                del: false,
+                refresh: true
+            },
+            {}, // edit options
+            {}, // add options
+            {}, // delete options
+            {multipleSearch: false, multipleGroup: false, showQuery: false} // search options - define multiple search
+        );
+        function formatOperation(cellValue, options, rowObject) {
+            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/goods/info?goods_id=' + rowObject.goods_id + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+            return operationHtml;
+        }
+        function formatCat(cellValue, options, rowObject){
+            return `${rowObject.cat ? rowObject.cat.cat_name + `<span class="badge badge-warning">${rowObject.cat.cat_level}级分类</span>` : '未找到分类[错误]'}`;
+        }
+        function formatDiscount(cellValue, options, rowObject) {
+            return rowObject.goods_discount
+                ? `类型：${rowObject.discount_type_show}<br>数量：${rowObject.discount_number}`
+                : '<span class="badge badge-info">未开启</span>';
+        }
+    });
+</script>
+{/block}

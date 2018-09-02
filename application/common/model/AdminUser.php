@@ -11,7 +11,6 @@
 namespace app\common\model;
 
 use app\common\library\AuthHandler;
-use think\Request;
 
 /**
  * 后台用户表
@@ -31,13 +30,25 @@ use think\Request;
  * @property string $create_time 创建时间
  * @property string $login_time 上次登录时间
  * @property string $login_ip 登录IP
+ * @property AdminIdentity|null $role 身份
+ * @property Partner|null $partner 商家
  */
 class AdminUser extends BaseUser
 {
     //商家
-    public function partners()
+    public function partner()
     {
-        return $this->hasMany(Partner::class, 'admin_id', 'id');
+        return $this->hasOne(Partner::class, 'id', 'partner_id');
+    }
+
+    public function role()
+    {
+        return $this->hasOne(AdminIdentity::class, 'identity_id', 'identity_id');
+    }
+
+    public function roleIsPartner()
+    {
+        return ($this->identity && $this->identity->is_partner) ? true : false;
     }
     
     /**

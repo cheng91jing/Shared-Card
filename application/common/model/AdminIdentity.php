@@ -19,11 +19,19 @@ namespace app\common\model;
  * @property integer $identity_id
  * @property string $identity_name 身份名称
  * @property string $permission_ids 权限ID组
- * @property integer $partner_id 合伙人
- * @property integer $parent_id 父级
+ * @property integer is_partner 是否合伙人
  */
 class AdminIdentity extends Base
 {
+    public $append = [
+        'is_partner_show'
+    ];
+
+    public function getIsPartnerShowAttr($value, $data)
+    {
+        return $this->is_partner ? '是' : '否';
+    }
+    
     //获取身份的权限
     public static function getIdentityPermission($identity_id)
     {

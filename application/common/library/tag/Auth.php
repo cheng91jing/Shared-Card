@@ -20,6 +20,7 @@ class Auth extends TagLib
     protected $tags   =  [
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
         'can'     => ['attr' => 'action', 'close' => 1], //闭合标签，默认为不闭合
+        'isadmin'     => ['close' => 1], //闭合标签，默认为不闭合
 //        'open'      => ['attr' => 'name,type', 'close' => 1],
 
     ];
@@ -36,6 +37,15 @@ class Auth extends TagLib
     {
         $permission_class = '\app\common\library\PermissionHandler';
         $parse = "<?php if({$permission_class}::can(\"{$tag['action']}\")){ ?>";
+        $parse .= $content;
+        $parse .= '<?php }?>';
+        return $parse;
+    }
+
+    public function tagIsAdmin($tag, $content)
+    {
+        $permission_class = '\app\common\library\PermissionHandler';
+        $parse = "<?php if({$permission_class}::admin()){ ?>";
         $parse .= $content;
         $parse .= '<?php }?>';
         return $parse;

@@ -80,4 +80,9 @@ class User extends IndexBase
         }
         return json($this->jsonReturn);
     }
+
+    public function bill()
+    {
+        return $this->fetch();
+    }
 }
