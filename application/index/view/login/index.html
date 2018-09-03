@@ -119,7 +119,9 @@
             });
             return false;
         }
+        let loading = layer.open({type: 2,shadeClose: false});
         axios.post('__ROOT__/api/send_code/mobile', {sms_mobile}).then(res => {
+            layer.close(loading);
             if(!! res.data.error_code){
                 layer.open({
                     content: res.data.error_message,
