@@ -162,6 +162,17 @@ class CardCategory extends Base
             throw new Exception('面额错误');
         $this->denomination = number_format($param['denomination'], 2, '.', '');
         if(!empty($param['prefix'])) $this->prefix = strtoupper($param['prefix']);
+        $image = request()->file('image');
+        if(empty($this->image) && empty($image)) throw new Exception('创建新类型，必须上传图片');
+        //上传图片
+        if(!empty($image)){
+            $info = $image->validate(['size' => 1024 * 1024 * 2, 'ext' => 'jpeg,jpg,png,gif'])->move(ROOT_PATH . 'public' . DS . 'uploads');
+            if ($info) {
+                $this->image = '/uploads/' . $info->getSaveName();
+            } else {
+                throw new Exception($image->getError());
+            }
+        }
         $this->save();
         return $this;
     }

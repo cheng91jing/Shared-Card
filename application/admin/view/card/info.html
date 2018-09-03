@@ -1,5 +1,6 @@
 {extend name="../../common/view/layout_base"}
 {block name="header_resource"}
+<link href="__STATIC__/plugins/ace/ace.min.css" rel="stylesheet">
 <link href="__STATIC__/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 {/block}
 {block name="back"}
@@ -17,7 +18,7 @@
                 <h5>分类信息 <span class="text-warning">【{$cat.cat_id ? '修改' : '新增'}】</span></h5>
             </div>
             <div class="ibox-content">
-                <form class="form-horizontal" id="card-form">
+                <form class="form-horizontal" id="card-form" method="post"  enctype="multipart/form-data"  action="__ROOT__/admin/card/add" >
                     <input type="hidden" name="cat_id" id="cat_id" value="{$cat.cat_id ?? ''}">
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="cat_name">分类名称</label>
@@ -124,6 +125,17 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="image">图片</label>
+                        <div class="col-sm-6">
+                            {notempty name="$cat.image"}
+                            <img src="__ROOT__{$cat.image}"  class="img-responsive img-thumbnail" alt="">
+                            {/notempty}
+                            <hr>
+                            <input type="file" class="form-control upload_controller" name="image" id="image">
+                            <span class="help-block">创建时，图片必传；修改时，如果需要更换图片才需上传！</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-6">
                             <button type="submit" class="btn btn-outline btn-success dim" id="confirm_submit">确认提交
                             </button>
@@ -139,6 +151,8 @@
 <script src="__STATIC__/plugins/moment/moment.js"></script>
 <script src="__STATIC__/plugins/moment/moment-with-locales.min.js"></script>
 <script src="__STATIC__/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="__STATIC__/plugins/ace/ace.min.js"></script>
+<script src="__STATIC__/plugins/ace/ace-elements.min.js"></script>
 {/block}
 {block name="footer_js"}
 <script>
@@ -199,25 +213,26 @@
             }
         },
         submitHandler: function (form) {
-            $.post('__ROOT__/admin/card/add', $(form).serialize(), function (res) {
-                if (res.error_code) {
-                    swal({
-                        type: 'error',
-                        title: '出错了',
-                        text: res.error_message,
-                        allowOutsideClick: false
-                    })
-                } else {
-                    swal({
-                        type: 'success',
-                        title: '成功',
-                        timer: 3000,
-                        allowOutsideClick: false
-                    }).then(result => {
-                        window.location.href = '__ROOT__/admin/card'
-                    })
-                }
-            }, 'json')
+            form.submit();
+            // $.post('__ROOT__/admin/card/add', $(form).serialize(), function (res) {
+            //     if (res.error_code) {
+            //         swal({
+            //             type: 'error',
+            //             title: '出错了',
+            //             text: res.error_message,
+            //             allowOutsideClick: false
+            //         })
+            //     } else {
+            //         swal({
+            //             type: 'success',
+            //             title: '成功',
+            //             timer: 3000,
+            //             allowOutsideClick: false
+            //         }).then(result => {
+            //             window.location.href = '__ROOT__/admin/card'
+            //         })
+            //     }
+            // }, 'json')
         },
         // errorPlacement:function(error, element) {
         //     if(element.parent().hasClass('input-group')){
@@ -264,6 +279,50 @@
             }
         });
         // $("input[name='period_start'][value='{$cat.period_start ? $cat.period_start : 0}']").trigger('click');
+        $("#image").ace_file_input({
+            style:'well',
+            btn_choose:'点击上传图片(图片建议为1242*563)',
+            btn_change:null,
+            no_icon:'ace-icon fa fa-picture-o',
+            droppable:true,
+            thumbnail:'small',//small | fit
+            allowExt: ["jpeg", "jpg", "png", "gif", "bmp"],
+            allowMime: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/bmp"],
+            //,icon_remove:null//set null, to hide remove/reset button
+            before_change:function(files, dropped) {
+                var allowed_files = [];
+                for(var i = 0 ; i < files.length; i++) {
+                    var file = files[i];
+                    if(typeof file === "string") {
+                        //IE8 and browsers that don't support File Object
+                        if(! (/\.(jpe?g|png|gif|bmp)$/i).test(file) ) return false;
+                    }
+                    else {
+                        var type = $.trim(file.type);
+                        if( ( type.length > 0 && ! (/^image\/(jpe?g|png|gif|bmp)$/i).test(type) )
+                            || ( type.length == 0 && ! (/\.(jpe?g|png|gif|bmp)$/i).test(file.name) )//for android's default browser which gives an empty string for file.type
+                        ) continue;//not an image so don't keep this file
+                    }
+
+                    allowed_files.push(file);
+                }
+                if(allowed_files.length == 0) return false;
+
+                return allowed_files;
+            },
+            before_remove : function() {
+                return true;
+            },
+            preview_error : function(filename, error_code) {
+                //name of the file that failed
+                //error_code values
+                //1 = 'FILE_LOAD_FAILED',
+                //2 = 'IMAGE_LOAD_FAILED',
+                //3 = 'THUMBNAIL_FAILED'
+                //alert(error_code);
+            }
+
+        });
     });
 </script>
 {/block}

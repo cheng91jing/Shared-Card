@@ -24,6 +24,6 @@ class IndexBase extends Base
     {
         //TODO: 前端用户验证等
         parent::_initialize();
-//        if(! $this->request->isMobile()) $this->throwPageException('访问出错！');
+        if(! $this->request->isMobile()) $this->throwPageException('访问出错！请使用手机端打开该页面！');
     }
 }

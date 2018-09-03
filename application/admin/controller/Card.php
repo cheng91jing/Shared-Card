@@ -42,13 +42,14 @@ class Card extends AdminBase
         } else {
             $cat = CardCategory::get($cat_id);
         }
-        if ($this->request->isAjax()) {
+        if ($this->request->post()) {
             try {
                 $cat->infoOfAddAndUpdate($this->request->post('', '', 'trim'));
             } catch (Exception $e) {
-                $this->setReturnJsonError($e->getMessage());
+//                $this->setReturnJsonError($e->getMessage());
+                $this->error($e->getMessage());
             }
-            return json($this->jsonReturn);
+            $this->redirect('index');
         }
         return $this->fetch('info', compact('cat'));
     }
