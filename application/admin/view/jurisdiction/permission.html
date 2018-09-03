@@ -40,6 +40,7 @@
                             <div class="panel-options">
                                 <ul class="nav nav-tabs">
                                     {volist name="jurisdiction" id="head"}
+                                    {if condition="!empty($head.special) && $head.special == 2 && $special == 1"}{php}continue;{/php}{/if}
                                     <li class='{eq name="key" value="0"}active{/eq}'>
                                         <a data-toggle="tab" href="#tab-{$key}"><i class="{$head.icon}"></i>{$head.name}</a>
                                     </li>
@@ -50,6 +51,7 @@
                         <div class="panel-body">
                             <div class="tab-content">
                                 {volist name="jurisdiction" id="nav"}
+                                {if condition="!empty($nav.special) && $nav.special == 2 && $special == 1"}{php}continue;{/php}{/if}
                                 <div id="tab-{$key}" class='tab-pane {eq name="key" value="0"}active{/eq}'>
                                     <div class="panel panel-success permission-main">
                                         <div class="panel-heading permission-main-head">
@@ -59,11 +61,12 @@
                                                               condition="in_array($nav.id, $owned)" }checked{/if}
                                                     value="{$nav.id}">{$nav.name}</label>
                                             </div>
-                                            <span class="badge">简介文字</span>
+                                            {notempty name="nav.news"}<span class="label label-primary">{$nav.news}</span>{/notempty}
                                             <span class="pull-right badge">主菜单</span>
                                         </div>
                                         <ul class="list-group">
                                             {volist name="nav.child" id="child"}
+                                            {if condition="!empty($child.special) && $child.special == 2 && $special == 1"}{php}continue;{/php}{/if}
                                             <li class="list-group-item">
                                                 <div class="panel panel-warning permission-secondary">
                                                     <div class="panel-heading permission-secondary-head">
@@ -74,17 +77,18 @@
                                                                           }checked{/if}
                                                                 value="{$child.id}">{$child.name}</label>
                                                         </div>
-                                                        <span class="badge">简介文字</span>
+                                                        {notempty name="child.news"}<span class="label label-warning">{$child.news}</span>{/notempty}
                                                         <span class="pull-right badge">子菜单</span>
                                                     </div>
                                                     <div class="panel-body">
                                                         {volist name="child.permission" id="permission"}
+                                                        {if condition="!empty($permission.special) && $permission.special == 2 && $special == 1"}{php}continue;{/php}{/if}
                                                         <div class="checkbox-inline col-sm-2">
                                                             <label><input class="permission-full" type="checkbox"
                                                                           name="permission[]" {if
                                                                           condition="in_array($permission.id, $owned)"
                                                                           }checked{/if}
-                                                                value="{$permission.id}">{$permission.name}</label>
+                                                                value="{$permission.id}">{$permission.name}</label>{notempty name="permission.news"}<span class="label label-info">{$permission.news}</span>{/notempty}
                                                         </div>
                                                         {/volist}
                                                     </div>

@@ -16,12 +16,13 @@ class Offline extends AdminBase
     protected function _initialize()
     {
         parent::_initialize();
-//        if(! $this->isPartnerAdmin) $this->throwPageException('非商家不可访问该页面!');
+        if(! $this->isPartnerAdmin) $this->throwPageException('非商家不可访问该页面!');
     }
 
 
     public function index()
     {
+        $this->canThrowException('trade-offline-reduce');
         $order = new Order([
             'goods_price' => 0,
             'goods_number' => 0,
@@ -32,6 +33,7 @@ class Offline extends AdminBase
 
     public function deduction()
     {
+        $this->canThrowException('trade-offline-reduce');
         try{
             if(!$this->request->isPost()) throw new Exception('请求方式错误!');
             Order::offlineOrder($this->request->post('', '', 'trim'));

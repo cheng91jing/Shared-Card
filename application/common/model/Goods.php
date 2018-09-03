@@ -51,4 +51,33 @@ class Goods extends Base
 //        return $this->dt_name[$data['discount_type']];
         return $this->dt_name[$this->discount_type];
     }
+
+    /**
+     * 获取当前分类及子分类下的所有商品
+     *
+     * @param $cat_id integer 分类ID
+     * @param null $partner_id 商家ID
+     *
+     * @return array|false|static[]
+     * @throws \think\exception\DbException
+     */
+    public static function getCatAllGoods($cat_id, $partner_id = null)
+    {
+        $cat = GoodsCategory::get($cat_id);
+        if(empty($cat)) return [];
+        //获取该分类下的所有分类
+        $ids_2 = [];
+        $ids_3 = [];
+        if($cat->cat_level == 1){
+            $ids_2 = GoodsCategory::where('parent_id', $cat->cat_id)->column('cat_id');
+            if(!empty($ids_2))
+                $ids_3 = GoodsCategory::where('parent_id', 'in', $ids_2)->column('cat_id');
+        }elseif($cat->cat_level == 2){
+            $ids_3 = GoodsCategory::where('parent_id', $cat->cat_id)->column('cat_id');
+        }
+        $cat_ids = array_merge([$cat->cat_id], $ids_2, $ids_3);
+        $where['cat_id'] = ['in', $cat_ids];
+        if(!empty($partner_id)) $where['partner_id'] = $partner_id;
+        return self::all($where);
+    }
 }

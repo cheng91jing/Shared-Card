@@ -87,7 +87,7 @@
             shrinkToFit: true,
             rowNum: 10,
             rowList: [10, 20, 30],
-            colNames: ["编号", "用户", "类型", "状态", "启用", "期限", "开卡时间", "面额", "余额", "操作"],
+            colNames: ["编号", "用户", "类型", "状态", "启用", "期限", "开卡时间", "优惠", "面额", "余额", "操作"],
             colModel: [
                 {name: "card_number", index: "card_number", align: "center", width: 100, sortable: false},
                 {name: "user_show", index: "user_show", align: "center", sortable: false, width: 100, formatter:userFormat},
@@ -96,6 +96,7 @@
                 {name: "enable_show", index: "enable_show", align: "center", sortable: false, width: 50},
                 {name: "regular_range", index: "regular_range", align: "center", sortable: false, width: 100, formatter: regularFormat},
                 {name: "open_time", index: "open_time", align: "center", sortable: false, width: 100},
+                {name: "discount_info", index: "discount_info", align: "center", sortable: false, width: 100, formatter: discountFormat},
                 {name: "denomination", index: "denomination", align: "center", sortable: false, width: 100},
                 {name: "balance", index: "balance", align: "center", sortable: false, width: 100},
                 {name: "id", index: "id", align: "center", width: 100, sortable: false, formatter: formatOperation}
@@ -124,6 +125,10 @@
         );
         function regularFormat(cellValue, options, rowObject) {
             return !!rowObject.regular_start ? rowObject.regular_start + ' 至 ' + rowObject.regular_end : '暂无期限';
+        }
+
+        function discountFormat(cellValue, options, rowObject) {
+            return `类型：${rowObject.discount_type_show}<br>数量：${rowObject.discount_number}`;
         }
 
         function userFormat(cellValue, options, rowObject) {

@@ -15,8 +15,10 @@ class Goods extends AdminBase
 
     public function index()
     {
+        $this->canThrowException('goods-goods-list');
         if ($this->request->isAjax()) {
-            $data = GoodsModel::paginateScope([], [], ['cat', 'partner']);
+            $where = !empty($this->role->is_partner) ? !empty($this->partner) ? ['partner_id' => $this->partner->id] : '1 = 2' : [];
+            $data = GoodsModel::paginateScope($where, [], ['cat', 'partner']);
             return json($data);
         }
         return $this->fetch();
@@ -25,6 +27,7 @@ class Goods extends AdminBase
     public function info($goods_id = null)
     {
         if(! $this->partner) $this->throwPageException('只能商家才能访问!');
+        $this->canThrowException('goods-goods-info');
         if (empty($goods_id)) {
             $goods = new GoodsModel([
                 'cat_id' => 0,
@@ -71,4 +74,21 @@ class Goods extends AdminBase
         return $this->fetch('info', compact('goods', 'can_discount'));
     }
 
+    public function children($parent_id, $goods = false)
+    {
+        try{
+            if(!$this->request->isPost()) throw new Exception('请求方式错误!');
+            if(!is_numeric($parent_id)) throw new Exception('参数错误!');
+            $parent_id = empty($parent_id) ? 0 : intval($parent_id);
+            $cat_list = (new GoodsCategory)->where('parent_id', $parent_id)->order('cat_sort')->select();
+            $goods_list = [];
+            if(!! $goods){
+                $goods_list = GoodsModel::getCatAllGoods($parent_id, $this->partner ? $this->partner->id : null);
+            }
+            $this->setReturnJsonData(['cat_list' => $cat_list, 'goods_list' => $goods_list]);
+        }catch (Exception $e){
+            $this->setReturnJsonError($e->getMessage());
+        }
+        return json($this->jsonReturn);
+    }
 }

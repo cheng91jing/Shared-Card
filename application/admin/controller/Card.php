@@ -13,8 +13,16 @@ class Card extends AdminBase
         'checkLogin',
     ];
 
+    protected function _initialize()
+    {
+        parent::_initialize();
+        if($this->role->is_partner) $this->throwPageException('商家身份无权访问！');
+    }
+
+
     public function index()
     {
+        $this->canThrowException('card-category-list');
         if ($this->request->isAjax()) {
             $data = CardCategory::paginateScope();
             return json($data);
@@ -24,6 +32,7 @@ class Card extends AdminBase
 
     public function add($cat_id = null)
     {
+        $this->canThrowException('card-category-info');
         if (empty($cat_id)) {
             $cat = new CardCategory([
                 'period_start' => CardCategory::PS_FIRST,
@@ -46,6 +55,7 @@ class Card extends AdminBase
 
     public function status($id, $status)
     {
+        $this->canThrowException('card-category-status');
         try{
             if(!$this->request->isPost()) throw new Exception('请求错误');
             $cat = CardCategory::get($id);

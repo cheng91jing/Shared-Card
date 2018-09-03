@@ -22,6 +22,7 @@ use think\Exception;
  * @property integer offline_admin 线下管理员
  * @property string offline_note 线下备注
  * @property integer goods_id 商品id
+ * @property string goods_name 商品名称
  * @property float total_money 订单总金额
  * @property float cash_money 现金支付
  * @property float card_money 会员卡支付
@@ -91,6 +92,7 @@ class Order extends Base
         'order_status_show',
         'pay_status_show',
         'order_type_show',
+        'discount_type_show'
     ];
 
     public function getOrderStatusShowAttr($value, $data)
@@ -106,6 +108,11 @@ class Order extends Base
     public function getOrderTypeShowAttr($value, $data)
     {
         return $this->ot_name[$this->order_type];
+    }
+
+    public function getDiscountTypeShowAttr($value, $data)
+    {
+        return $this->dt_name[$this->discount_type];
     }
 
     //商家
@@ -132,6 +139,12 @@ class Order extends Base
         return $this->hasOne(AdminUser::class, 'id', 'offline_admin');
     }
 
+    //商品
+    public function goods()
+    {
+        return $this->hasOne(Goods::class, 'goods_id', 'goods_id');
+    }
+
 
     /**
      * 线下付款
@@ -154,7 +167,7 @@ class Order extends Base
             $admin = AuthHandler::$user;
             if (empty($admin)) throw new Exception('管理员未登陆！');
             $partner = Partner::get($admin->partner_id);
-            if (empty($partner) || ! $partner->status) throw new Exception('当前管理员不是商家，不可发起退款！');
+            if (empty($partner) || ! $partner->status) throw new Exception('当前管理员不是商家，不可发起订单扣款！');
             //获取用户
             $card = UserCard::verifyPaymentCode1($param['payment_code']);
             if (! $card) throw new Exception('付款码已失效！');
@@ -168,25 +181,31 @@ class Order extends Base
             $order->card_id     = $card->id;
             $order->total_money = round($param['total_money'], 2);
             $order->create_time = date('Y-m-d H:i:s');
+            $order->goods_number  = intval($param['goods_number']);
+            $order->offline_admin = $admin->id;
+            $order->order_type = $param['order_type'];
+            $goods = null;
             switch ($param['order_type']) {
                 case self::OT_OFFLINE_REDUCE:   //直扣
                     if (empty($param['remark'])) throw new Exception('线下直扣，备注信息必须填写');
                     $order->offline_note  = $param['remark'];
-                    $order->offline_admin = $admin->id;
                     $order->goods_price   = round($param['goods_price'], 2);
-                    $order->goods_number  = intval($param['goods_number']);
-
                     break;
                 case self::OT_OFFLINE_GOODS:    //商品
-                    $order->offline_admin = $admin->id;
-                    throw new Exception('暂未开放！');
+                    if(empty($param['goods_id'])) throw new Exception('线下商品必须选择商品！');
+                    $goods = Goods::get($param['goods_id']);
+                    if(empty($goods)) throw new Exception('未知的商品');
+                    if($goods->partner_id != $partner->id) throw new Exception('该商品不是当前商家的');
+                    $order->goods_id = $goods->goods_id;
+                    $order->goods_price = $goods->goods_price;
+                    $order->goods_name = $goods->goods_name;
                     break;
                 default:
                     throw new Exception('未知的订单类型！');
             }
             $order->order_sn = self::generateOrderSn($param['order_type']);
             //获取订单优惠相关信息
-            $discount_info          = self::getDiscount($order->total_money, $card);
+            $discount_info          = self::getDiscount($order->total_money, $card, $goods, $partner);
             $order->discount_type   = $discount_info['discount_type'];
             $order->discount_number = $discount_info['discount_number'];
             //判断支付金额
@@ -217,19 +236,25 @@ class Order extends Base
      *
      * @param $total float 总金额
      * @param UserCard $card 用户会员卡
-     * @param null $goods 商品
+     * @param null|\app\common\model\Goods $goods 商品
+     * @param null|\app\common\model\Partner $partner 商家
      *
      * @return array
      * @throws Exception
      */
-    private static function getDiscount($total, UserCard $card, $goods = null)
+    private static function getDiscount($total, UserCard $card, $goods = null, $partner = null)
     {
-        //按照会员卡优惠计算
-
-        //优惠类型
-        $discount_type = $card->discount_type;
-        //优惠额度
-        $discount_number = $card->discount_number;
+        if(!empty($goods) && !empty($partner) && !empty($goods->goods_discount) && !empty($partner->goods_discount)){
+            //商品优惠形式
+            //优惠类型
+            $discount_type = $goods->discount_type;
+            //优惠额度
+            $discount_number = $goods->discount_number;
+        }else{
+            //会员卡优惠形式
+            $discount_type = $card->discount_type;
+            $discount_number = $card->discount_number;
+        }
 
         if ($discount_type == CardCategory::DT_DISCOUNT) {
             //折扣

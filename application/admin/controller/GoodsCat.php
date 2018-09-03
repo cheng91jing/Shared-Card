@@ -17,12 +17,13 @@ class GoodsCat extends AdminBase
     protected function _initialize()
     {
         parent::_initialize();
-        if(! PermissionHandler::can('all')) $this->throwPageException('无权访问');
+        if($this->role->is_partner) $this->throwPageException('商家身份无权访问！');
     }
 
 
     public function index()
     {
+        $this->canThrowException('goods-category-list');
         $cat_list = GoodsCategory::getRelationList();
 //        print_r($cat_list);
         return $this->fetch('', compact('cat_list'));
@@ -30,6 +31,7 @@ class GoodsCat extends AdminBase
 
     public function add($name)
     {
+        $this->canThrowException('goods-category-info');
         try{
             if(!$this->request->isPost()) throw new Exception('请求方式错误!');
             $cat_name = trim($name);
@@ -47,6 +49,7 @@ class GoodsCat extends AdminBase
 
     public function operating()
     {
+        $this->canThrowException('goods-category-info');
         Db::startTrans();
         try{
             if(!$this->request->isPost()) throw new Exception('请求方式错误!');
@@ -61,17 +64,8 @@ class GoodsCat extends AdminBase
         return json($this->jsonReturn);
     }
 
-    public function children($parent_id)
+    public function del()
     {
-        try{
-            if(!$this->request->isPost()) throw new Exception('请求方式错误!');
-            if(!is_numeric($parent_id)) throw new Exception('参数错误!');
-            $parent_id = empty($parent_id) ? 0 : intval($parent_id);
-            $cat_list = (new GoodsCategory)->where('parent_id', $parent_id)->order('cat_sort')->select();
-            $this->setReturnJsonData($cat_list);
-        }catch (Exception $e){
-            $this->setReturnJsonError($e->getMessage());
-        }
-        return json($this->jsonReturn);
+        $this->canThrowException('goods-category-del');
     }
 }

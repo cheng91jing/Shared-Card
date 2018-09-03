@@ -21,6 +21,7 @@ class Member extends AdminBase
 
     public function index()
     {
+        $this->canThrowException('member-user-list');
         if ($this->request->isAjax()) {
             $data = User::paginateScope();
             return json($data);
@@ -28,6 +29,12 @@ class Member extends AdminBase
         return $this->fetch();
     }
 
+    //用户信息
+    public function info()
+    {
+        $this->canThrowException('member-user-info');
+    }
+    
     public function add($user_id = null)
     {
         throw new Exception('已关闭后台会员新增功能');

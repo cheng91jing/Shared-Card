@@ -215,17 +215,18 @@
     });
     function getCatChildren(parent_id = 0, current = 0) {
         let load = layer.load(1);
-        $.post('__ROOT__/admin/goods_cat/children', {parent_id}, res => {
+        $.post('__ROOT__/admin/goods/children', {parent_id}, res => {
             layer.close(load);
             if(! res.error_code){
                 let html = '';
                 let color = null;
-                for (let {cat_id, cat_name, cat_level} of res.data.values()){
+                let level = null;
+                for (let {cat_id, cat_name, cat_level} of res.data.cat_list.values()){
                     if(color === null){
-                        let level = parseInt(cat_level);
+                        level = parseInt(cat_level);
                         color = (level === 1) ? 'default' : ((level === 2) ? 'warning' : 'danger');
                     }
-                    html += `<label class="btn btn-${color} btn-outline btn-block"><input type="radio" data-name="${cat_name}" data-level="${cat_level}" value="${cat_id}" name="cat_1" class="cat_chose" autocomplete="off">${cat_name}</label>`;
+                    html += `<label class="btn btn-${color} btn-outline btn-block"><input type="radio" data-name="${cat_name}" data-level="${cat_level}" value="${cat_id}" name="cat_${level}" class="cat_chose" autocomplete="off">${cat_name}</label>`;
                 }
                 if(html === '') html = '<h3 class="text-center text-muted">未找到对应分类</h3>';
                 $(`#cat_list_${current + 1}`).html(html);

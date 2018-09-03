@@ -59,7 +59,9 @@ class Partner extends Base
             $new_name = self::get(['partner_name' => $param['partner_name']]);
             if(!empty($new_name)) throw new Exception('该名称已经被使用，请更换名称后再试！');
         }
+        $this->goods_discount = !empty($param['goods_discount']) ? true : false;
         $this->partner_name = $param['partner_name'];
+        $this->status = true;
         $this->save();
 
         return $this;

@@ -27,12 +27,14 @@ class Administrator extends AdminBase
     protected function _initialize()
     {
         parent::_initialize();
-        if(!empty($this->role->is_partner) && !empty($this->partner)) $this->throwPageException('商家身份需先绑定商家才能操作');
+        if(!empty($this->role->is_partner) && empty($this->partner)) $this->throwPageException('商家身份需先绑定商家才能操作');
     }
 
 
     public function index()
     {
+        $this->canThrowException('system-administrator-list');
+
         if($this->request->isAjax()){
             $where = !empty($this->role->is_partner) ? !empty($this->partner) ? ['partner_id' => $this->partner->id] : '1 = 2' : [];
             $data = AdminUser::paginateScope($where, [], ['role', 'partner']);
@@ -43,6 +45,7 @@ class Administrator extends AdminBase
 
     public function info($admin_id = null)
     {
+        $this->canThrowException('system-administrator-info');
         if(!empty($admin_id)){
             $admin = AdminUser::get($admin_id);
             if(empty($admin)) $this->error('未知的管理员');
@@ -87,12 +90,14 @@ class Administrator extends AdminBase
 
     public function assignPartner($partner_id, $admin_id)
     {
+        $this->canThrowException('system-administrator-partner');
         try{
             if(! $this->request->isPost()) throw new Exception('请求错误！');
             $partner = Partner::get($partner_id);
             $admin = AdminUser::get($admin_id);
             if(empty($partner)) throw new Exception('未知的商家');
             if(empty($admin)) throw new Exception('未知的管理员');
+            if(!$admin->role->is_partner) throw new Exception('非商家身份类型的管理员不可分配商家！');
             $admin->partner_id = $partner->id;
             $admin->save();
         }catch (Exception $e){
@@ -103,6 +108,7 @@ class Administrator extends AdminBase
 
     public function remove($id)
     {
+        $this->canThrowException('system-administrator-partner');
         try{
             if(! $this->request->isPost()) throw new Exception('请求错误！');
             $admin = AdminUser::get($id);
@@ -120,11 +126,16 @@ class Administrator extends AdminBase
         try{
             if(! $this->request->isPost()) throw new Exception('请求错误！');
             $partners = Partner::all(['partner_name' => ['LIKE' , "%{$partner_name}%"]]);
-            if(empty($partners)) throw new Exception('未找到该商家');
+            if(empty($partners)) throw new Exception('未找到任何符合要求的商家');
             $this->setReturnJsonData($partners);
         }catch (Exception $e){
             $this->setReturnJsonError($e->getMessage());
         }
         return json($this->jsonReturn);
+    }
+
+    public function del($admin_id)
+    {
+        //TODO:
     }
 }

@@ -145,6 +145,17 @@ abstract class Base extends Controller
         return false;
     }
 
+    protected function canThrowException($action)
+    {
+        if(!$this->can($action)){
+            if($this->request->isAjax()){
+                $this->throwJsonException($this->setReturnJsonError("权限不足！ACTION: {$action}", -1)->transformArray());
+            }else{
+                $this->throwPageException("权限不足！ACTION: {$action}");
+            }
+        }
+    }
+
     //系统初始化用户信息，权限等
     protected function initUserInfo(BaseUser $user)
     {

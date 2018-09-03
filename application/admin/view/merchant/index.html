@@ -44,11 +44,13 @@
             shrinkToFit: true,
             rowNum: 10,
             rowList: [10, 20, 30],
-            colNames: ["序号", "名称", /*"管理员",*/ "状态", "操作"],
+            colNames: ["序号", "名称", "商品优惠", "状态", "操作"],
             colModel: [
                 {name: "id", index: "id", align:"center",width: 60, sorttype: "int"},
                 {name: "partner_name", index: "partner_name",align:"center", sortable: false, width: 150},
-                // {name: "admin.mobile", index: "admin.mobile", align:"center", sortable: false, width: 150},
+                {name: "goods_discount", index: "goods_discount", align:"center", sortable: false, width: 150, formatter: function (cellValue, options, rowObject) {
+                        return parseInt(cellValue) === 1 ? '<span class="label label-primary">允许</span>' : '<span class="label label-danger">禁止</span>';
+                    }},
                 {name: "status", index: "status", align:"center", sortable: false, width: 100, formatter:switchFormat2},
                 {name: "id", index: "id", align:"center", width: 150, sortable: false, formatter: formatOperation}
             ],

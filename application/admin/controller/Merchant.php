@@ -23,6 +23,7 @@ class Merchant extends AdminBase
 
     public function index()
     {
+        $this->canThrowException('merchant-partner-list');
         if ($this->request->isAjax()) {
             $data = Partner::paginateScope();
             return json($data);
@@ -32,9 +33,10 @@ class Merchant extends AdminBase
 
     public function add($partner_id = null)
     {
+        $this->canThrowException('merchant-partner-info');
         if (empty($partner_id)) {
             $partner = new Partner([
-                'admin_id' => 0
+                'goods_discount' => 0
             ]);
         } else {
             $partner = Partner::get($partner_id);
@@ -42,7 +44,8 @@ class Merchant extends AdminBase
         if ($this->request->isAjax()) {
             try {
                 $partner_name = $this->request->post('partner_name', null, 'trim');
-                $partner->InfoBase(['partner_name' => $partner_name]);
+                $goods_discount = ! $this->request->post('goods_discount', null) ? false : true;
+                $partner->InfoBase(['partner_name' => $partner_name, 'goods_discount' => $goods_discount]);
             } catch (Exception $e) {
                 $this->setReturnJsonError($e->getMessage());
             }
@@ -68,6 +71,7 @@ class Merchant extends AdminBase
 
     public function status($id, $status)
     {
+        $this->canThrowException('merchant-partner-status');
         try{
             if(!$this->request->isPost()) throw new Exception('请求错误');
             $partner = Partner::get($id);

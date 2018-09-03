@@ -16,8 +16,15 @@ class CardUser extends AdminBase
         'checkLogin',
     ];
 
+    protected function _initialize()
+    {
+        parent::_initialize();
+        if($this->role->is_partner) $this->throwPageException('商家身份无权访问！');
+    }
+
     public function index()
     {
+        $this->canThrowException('card-user-list');
         if ($this->request->isAjax()) {
             $data = UserCard::paginateScope([], [], ['user', 'cat']);
             return json($data);
@@ -29,6 +36,7 @@ class CardUser extends AdminBase
 
     public function info($id)
     {
+        $this->canThrowException('card-user-info');
         if (empty($id)) {
             return $this->error('未知的会员卡');
         } else {
@@ -50,8 +58,10 @@ class CardUser extends AdminBase
         return $this->fetch('info', compact('user_card'));
     }
 
+    //发放会员卡
     public function grant()
     {
+        $this->canThrowException('card-user-grant');
         if($this->request->isAjax()){
             Db::startTrans();
             try{
@@ -79,6 +89,7 @@ class CardUser extends AdminBase
     //批量生成卡密
     public function batch()
     {
+        $this->canThrowException('card-user-batch');
         try{
             if(!$this->request->isPost()) throw new Exception('请求错误');
             $cat_id = $this->request->post("cat_id", null);
@@ -94,8 +105,10 @@ class CardUser extends AdminBase
         return json($this->jsonReturn);
     }
 
+    //状态
     public function status($id, $status)
     {
+        $this->canThrowException('card-user-status');
         try{
             if(!$this->request->isPost()) throw new Exception('请求错误');
             $cat = UserCard::get($id);

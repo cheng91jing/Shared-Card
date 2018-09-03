@@ -178,7 +178,7 @@
             return html;
         }
         function formatOperation(cellValue, options, rowObject) {
-            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/administrator/info?admin_id=' + cellValue + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a href="__ROOT__/admin/jurisdiction/permission?type=0&id=' + cellValue + '" type="button" class="btn btn-success btn-xs">权限</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+            var operationHtml = '<span operationValue="' + rowObject.id + '"><a href="__ROOT__/admin/administrator/info?admin_id=' + rowObject.id + '" type="button" class="btn btn-primary btn-xs" >详情</a> <!--<a href="__ROOT__/admin/jurisdiction/permission?type=0&id=' + rowObject.id + '" type="button" class="btn btn-success btn-xs">权限</a> --><a onclick="delAdmin(' + rowObject.id + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
             return operationHtml;
         }
 

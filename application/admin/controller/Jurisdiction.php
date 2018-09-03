@@ -18,12 +18,13 @@ class Jurisdiction extends AdminBase
     protected function _initialize()
     {
         parent::_initialize();
-        if(! PermissionHandler::can('all')) $this->throwPageException('无权访问');
+        if($this->role->is_partner) $this->throwPageException('商家身份无权访问！');
     }
 
 
     public function index()
     {
+        $this->canThrowException('system-role-list');
         if ($this->request->isAjax()) {
             $data = AdminIdentity::paginateScope();
             return json($data);
@@ -33,6 +34,7 @@ class Jurisdiction extends AdminBase
 
     public function add($identity_id = null)
     {
+        $this->canThrowException('system-role-info');
         if (empty($identity_id)) {
             $identity = new AdminIdentity();
         } else {
@@ -65,7 +67,9 @@ class Jurisdiction extends AdminBase
      */
     public function permission($id, $type = 1)
     {
+        $type ? $this->canThrowException('system-role-permission') : $this->canThrowException('system-administrator-permission');
         $model = $type ? AdminIdentity::get($id) : AdminUser::get($id);
+
         if (empty($model)) $this->error('未知的角色或管理员');
         if($this->request->isAjax()){
             try{
@@ -76,13 +80,14 @@ class Jurisdiction extends AdminBase
             }
             return json($this->jsonReturn);
         }
+        $special = $this->role->is_partner ? 1 : 2; //特殊标记，1：商家；2：管理员
         $owned = explode('|', $model->permission_ids);
 
         $jurisdiction = Config::get('jurisdiction');
-        return $this->fetch('permission', compact('model', 'jurisdiction', 'owned'));
+        return $this->fetch('permission', compact('model', 'jurisdiction', 'owned', 'special'));
     }
 
-    public function del($identityId)
+    public function del($role_id)
     {
     }
 

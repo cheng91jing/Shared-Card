@@ -1,12 +1,15 @@
 {extend name="../../common/view/layout_base"}
+{block name="header_resource"}
+<link href="__STATIC__/plugins/bootstrap-switch/bootstrap-switch.min.css" rel="stylesheet">
+{/block}
 {block name="main"}
 <!--<div class="row">-->
-    <!--<div class="col-sm-12">-->
-        <!--<blockquote class="text-warning">-->
-            <!--<h2>线下会员卡消费主页</h2>-->
-        <!--</blockquote>-->
-        <!--<hr>-->
-    <!--</div>-->
+<!--<div class="col-sm-12">-->
+<!--<blockquote class="text-warning">-->
+<!--<h2>线下会员卡消费主页</h2>-->
+<!--</blockquote>-->
+<!--<hr>-->
+<!--</div>-->
 <!--</div>-->
 <div class="row">
     <div class="col-sm-4">
@@ -14,28 +17,29 @@
             <div class="ibox-title">线下会员卡消费</div>
             <div class="ibox-content">
                 <blockquote class="text-warning" style="font-size:14px">
-                    扣款操作
+                    线下直扣时，无需在右侧选择商品，线下商品则必须先选择商品才行
                 </blockquote>
                 <form class="form-horizontal" id="form-offline">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="order_type">订单类型</label>
+                        <label class="col-sm-4 control-label">订单类型</label>
                         <div class="col-sm-8">
-                            <select class="form-control" name="order_type" id="order_type" required>
-                                <option value="">请选择订单类型</option>
-                                {volist name="$order->ot_name" id="name"}
-                                {neq name="$key" value="2"}
-                                <option value="{$key}" {eq name="$key" value="1"}disabled{/eq}>
-                                {$name}{eq name="$key" value="1"}（开发中）{/eq}
-                                </option>
-                                {/neq}
-                                {/volist}
-                            </select>
+                            {volist name="$order->ot_name" id="name"}
+                            {neq name="$key" value="2"}
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="order_type" value="{$key}">
+                                    {$name}
+                                </label>
+                            </div>
+                            {/neq}
+                            {/volist}
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="payment_code">付款码</label>
                         <div class="col-sm-8">
-                            <input type="text" name="payment_code" id="payment_code" class="form-control" required value=""
+                            <input type="text" name="payment_code" id="payment_code" class="form-control" required
+                                   value=""
                                    placeholder="输入用户付款码">
                             <p class="form-control-static text-danger">可使用扫码枪扫描自动输入，或者手动填写</p>
                         </div>
@@ -52,7 +56,8 @@
                                     <button class="btn btn-success" type="button" id="manual">手动输入</button>
                                 </span>
                             </div>
-                            <p class="form-control-static text-warning">实际扣款金额依据总金额与会员卡的具体优惠方式，由后台计算自动扣除！</p>
+                            <span class="help-block text-success">总金额可以由单价和数量自动计算获取，也可以手动修改！</span>
+                            <span class="help-block text-warning">实际扣款金额依据总金额与会员卡的具体优惠方式，由后台计算自动扣除！</span>
                         </div>
                     </div>
                     <div class="form-group order_type_1" style="display: none;">
@@ -83,8 +88,10 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">商品数量</label>
                         <div class="col-sm-8 ">
-                            <input class="form-control calculate-price" type="text" value="{$order->goods_number ?? ''}" name="goods_number" id="goods_number"
-                                   placeholder="购买商品数量" required 	digits="digits" min="1">
+                            <input class="form-control calculate-price" type="text" value="{$order->goods_number ?? ''}"
+                                   name="goods_number" id="goods_number"
+                                   placeholder="购买商品数量" required digits="digits" min="1">
+                            <p class="form-control-static ">记录</p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -105,33 +112,50 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-8" id="member_info">
+    <div class="col-sm-2">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">选择商品</h3>
+            </div>
+            <div class="panel-body">
+                <div class="btn-group" data-toggle="buttons" id="goods_list" style="display:unset">
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-{/block}
-{block name="footer_js"}
-<div class="modal inmodal" id="grant_card" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-        <div class="modal-content animated fadeInDown">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
-                        class="sr-only">关闭</span>
-                </button>
-                <h4 class="modal-title">测试</h4>
-                <!--<small class="font-bold">这里可以显示副标题。</small>-->
+    <div class="col-sm-4">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">选择商品分类</h3>
             </div>
-            <div class="modal-body">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary">提交</button>
+            <div class="panel-body" id="cat_list">
+                <div class="col-sm-4">
+                    <h3 class="text-muted text-center">一级分类</h3>
+                    <div class="btn-group" data-toggle="buttons" id="cat_list_1" style="display:unset">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <h3 class="text-warning text-center">二级分类</h3>
+                    <div class="btn-group" data-toggle="buttons" id="cat_list_2" style="display:unset">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <h3 class="text-danger text-center">三级分类</h3>
+                    <div class="btn-group" data-toggle="buttons" id="cat_list_3" style="display:unset">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+{/block}
+{block name="footer_resource"}
+<script src="__STATIC__/plugins/bootstrap-switch/bootstrap-switch.min.js"></script>
+{/block}
+{block name="footer_js"}
 <script>
     $(function () {
-        $("#order_type").on('change', function (e) {
+        $("input:radio[name='order_type']").on('change', function (e) {
             let order_type_1 = $(".order_type_1");
             let goods_price = $("#goods_price");
             switch (parseInt($(this).val())) {
@@ -145,50 +169,65 @@
             }
         });
         $(".calculate-price").on('blur', function (e) {
-            let gp = $("#goods_price");
-            let gn = $("#goods_number");
-            let price = parseFloat(gp.val());
-            let number = parseInt(gn.val());
-            if(isNaN(price)) price = 0;
-            if(isNaN(number)) number = 0;
-            let total = (price * 100 * number) / 100;
-            $("#total_money").val(total);
+            calculate_price();
         });
         $("#manual").on('click', function (e) {
             let totalEle = $("#total_money");
-            if(totalEle.attr("readonly") === 'readonly'){
+            if (totalEle.attr("readonly") === 'readonly') {
                 totalEle.removeAttr('readonly');
-            }else{
+            } else {
                 totalEle.prop('readonly', 'readonly');
             }
         });
+        $("body").on('change', '#cat_list input:radio', function(e){
+            let chose_id = $(this).val();
+            let level = parseInt($(this).data('level'));
+            if(level === 1) $("#cat_list_2").html('');
+            if(level < 3) $("#cat_list_3").html('');
+            getCatChildren(chose_id, level);
+        });
+        $("body").on('change', '#goods_list input:radio', async function(e){
+            let goods_name = $(this).data('name');
+            let goods_price = $(this).data('price');
+            let goods_id = $(this).val();
+            $("#goods_price").val(goods_price);
+            $("#goods_name").val(goods_name);
+            $("#goods_id").val(goods_id);
+            calculate_price();
+        });
+        getCatChildren();
     });
     $.validator.addMethod('isPrice', function (value, element, param) {
-        if(isNaN(value)) return false;
+        if (isNaN(value)) return false;
         let number = /^[0-9]+(.[0-9]{1,2})?$/;
         return this.optional(element) || (number.test(value));
     }, '<i class="fa fa-times-circle"></i>只能填写最多2位小数点，大于0的数字！');
     let formValid = $("#form-offline").validate({
         rules: {
-            goods_price:{
-                isPrice: !0
+            order_type: "required",
+            goods_price: {
+                isPrice: !0,
+                min: 1
+            },
+            total_money: {
+                isPrice: !0,
+                min: 1
             },
             remark: {
                 required: function (e) {
-                    let order_type = $("#order_type").val();
+                    let order_type = $("input:radio[name='order_type']:checked").val();
                     return order_type === '0';
                 }
             },
             goods_name: {
                 required: function (e) {
-                    let order_type = $("#order_type").val();
-                    console.log(order_type);
+                    let order_type = $("input:radio[name='order_type']:checked").val();
                     return order_type === '1';
                 }
             }
         },
-        messages:{
-            remark:{
+        messages: {
+            remark: {
                 required: '<i class="fa fa-times-circle"></i>订单类型为线下直扣时，必须填写！'
             },
             goods_name: {
@@ -197,14 +236,14 @@
         },
         submitHandler: form => {
             $.post('__ROOT__/admin/offline/deduction', $(form).serialize(), function (res) {
-                if(res.error_code){
+                if (res.error_code) {
                     swal({
                         type: 'error',
                         title: '出错了',
                         text: res.error_message,
                         allowOutsideClick: false
                     })
-                }else{
+                } else {
                     swal({
                         type: 'success',
                         title: '成功',
@@ -218,5 +257,45 @@
             }, 'json')
         }
     });
+    function calculate_price(){
+        let gp = $("#goods_price");
+        let gn = $("#goods_number");
+        let price = parseFloat(gp.val());
+        let number = parseInt(gn.val());
+        if (isNaN(price)) price = 0;
+        if (isNaN(number)) number = 0;
+        let total = (price * 100 * number) / 100;
+        $("#total_money").val(total);
+    }
+    function getCatChildren(parent_id = 0, current = 0) {
+        let load = layer.load(1);
+        return $.post('__ROOT__/admin/goods/children', {parent_id,goods:1}, res => {
+            layer.close(load);
+            if(! res.error_code){
+                //分类
+                let html = '';
+                let color = null;
+                let level = null;
+                for (let {cat_id, cat_name, cat_level} of res.data.cat_list.values()){
+                    if(color === null){
+                        level = parseInt(cat_level);
+                        color = (level === 1) ? 'default' : ((level === 2) ? 'warning' : 'danger');
+                    }
+                    html += `<label class="btn btn-${color} btn-outline btn-block"><input type="radio" data-name="${cat_name}" data-level="${cat_level}" value="${cat_id}" name="cat_${level}" class="cat_chose" autocomplete="off">${cat_name}</label>`;
+                }
+                if(html === '') html = '<h3 class="text-center text-muted">未找到对应分类</h3>';
+                if(level <= 3) $(`#cat_list_${level}`).html(html);
+                //商品
+                let html_goods = '';
+                for (let {goods_id, goods_name, goods_price} of res.data.goods_list.values()){
+                    html_goods += `<label class="btn btn-info btn-outline btn-block"><input type="radio" data-price="${goods_price}" data-name="${goods_name}" value="${goods_id}" name="goods" class="goods_chose" autocomplete="off">${goods_name}</label>`;
+                }
+                if(html_goods === '') html_goods = '<h3 class="text-center text-muted">未找到对应商品</h3>';
+                $(`#goods_list`).html(html_goods);
+            }else{
+                layer.msg(res.error_message);
+            }
+        })
+    }
 </script>
 {/block}

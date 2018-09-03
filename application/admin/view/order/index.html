@@ -95,7 +95,7 @@
         function goodsInfoFormat(cellValue, options, rowObject) {
             return `
             单价：${rowObject.goods_price} 数量：${rowObject.goods_number}<br>
-            ${rowObject.order_type === 0 ? '备注：' + rowObject.offline_note : '商品：'}
+            ${rowObject.order_type === 0 ? '备注：' + rowObject.offline_note : '商品：' + rowObject.goods_name}
             `;
         }
 

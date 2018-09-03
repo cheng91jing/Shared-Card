@@ -31,10 +31,6 @@ use think\Exception;
  */
 class UserCard extends Base
 {
-    protected $append = [
-        'enable_show',
-        //        'activating_show',
-    ];
     const CARD_NUMBER_TRANSFORM = '6790348512';
     //动态码最大值，根据动态码的最大位数【建议为7位才能生成18位数字】
     const MAX_DYNAMIC_NUMBER = '9999999';
@@ -72,6 +68,12 @@ class UserCard extends Base
         self::UDT_REDUCE   => '直减',
     ];
 
+    protected $append = [
+        'enable_show',
+        'discount_type_show'
+        //        'activating_show',
+    ];
+
     public function getEnableShowAttr($value, $data)
     {
         return $this->uce_name[$this->enable];
@@ -85,6 +87,11 @@ class UserCard extends Base
     public function getStatusShowAttr($value, $data)
     {
         return $this->ucs_name[$this->status];
+    }
+
+    public function getDiscountTypeShowAttr($value, $data)
+    {
+        return $this->udt_name[$this->discount_type];
     }
 
 
