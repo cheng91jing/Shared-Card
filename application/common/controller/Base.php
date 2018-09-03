@@ -81,7 +81,8 @@ abstract class Base extends Controller
         if($session_user && !empty($session_user['id']) && !empty($session_user['access_token'])){
             try{
                 //使用用户模型获取用户数据
-                $user = ($this->user_model)::get($session_user['id']);
+                $model = $this->user_model;
+                $user = $model::get($session_user['id']);
                 if(empty($user)) throw new Exception('未知用户');
                 $approved = AuthHandler::verify($user->id, $session_user['access_token'], [$user->auth_code, $user->login_code]);
                 if(!$approved) throw new Exception('登陆验证失败');
