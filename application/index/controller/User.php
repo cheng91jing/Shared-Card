@@ -31,8 +31,10 @@ class User extends IndexBase
         $card_image = !empty($card->cat->image) ? $card->cat->image : '/static/img/center/card_ordinary.png';
         //计算期限
         $regular_days = false;
-        if(empty($card)){
+        if(empty($card)) {
             $regular = '无';
+        }elseif (! $card->enable){
+            $regular = '未启用';
         }elseif (strtotime($card->regular_start) > time()){
             $regular = '期限未至';
         }else{
