@@ -23,9 +23,9 @@ Route::group('admin', function (){
     Route::any('home', 'admin/layout/index');
 });
 
-Route::group('index', function (){
-    Route::any('home', 'index/user/center');
-});
+//Route::group('index', function (){
+//    Route::any('home', 'index/user/center');
+//});
 
 return [
 
