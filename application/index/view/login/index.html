@@ -32,7 +32,7 @@
 </nav>
 {/block}
 {block name="main"}
-<div class="container" style="padding: 20% 15px;">
+<div class="container" style="padding: 10% 15px;">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">会员登录/注册</h3>
@@ -88,15 +88,15 @@
 <script>
     $("#sms-form").validate({
         submitHandler: function(f){
-            axios.post('__ROOT__/index/login', $(f).serialize())
-                .then(res => {
+            return axios.post('__ROOT__/index/login', $(f).serialize())
+                .then(function(res){
                     if(! res.data.error_code){
                         swal({
                             icon: 'success',
                             title: '登录成功',
                             timer: 2000,
                             allowOutsideClick: false
-                        }).then(result => {
+                        }).then(function(result){
                             window.location.href = '__ROOT__/index/user/center'
                         })
                     }else{
@@ -106,7 +106,6 @@
                         });
                     }
                 })
-            return false;
         }
     });
     //发送验证码
@@ -120,7 +119,7 @@
             return false;
         }
         let loading = layer.open({type: 2,shadeClose: false});
-        axios.post('__ROOT__/api/send_code/mobile', {sms_mobile}).then(res => {
+        axios.post('__ROOT__/api/send_code/mobile', {sms_mobile}).then(function(res){
             layer.close(loading);
             if(!! res.data.error_code){
                 layer.open({
@@ -132,7 +131,7 @@
                 //开始倒计时
                 startCountDown();
             }
-        }).catch(error => {
+        }).catch(function(error){
             console.log(error)
         });
     });
@@ -141,7 +140,7 @@
     function startCountDown() {
         let b = $("#sms_button");
         max = 60;
-        interval = setInterval(() => {
+        interval = setInterval(function(){
             --max;
             if(max > 0){
                 if(typeof b.attr('disabled') === 'undefined') b.prop('disabled', true);

@@ -1,0 +1,79 @@
+{extend name="../../common/view/layout_base"}
+{block name="header_resource"}
+<link href="__STATIC__/plugins/bootstrap-switch/bootstrap-switch.min.css" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>会员账单列表</h5>
+            </div>
+            <div class="ibox-content">
+                <hr>
+                <div class="jqGrid_wrapper" style="overflow: auto;">
+                    <table id="table_list_1"></table>
+                    <div id="pager_list_1"></div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_resource"}
+<script src="__STATIC__/plugins/bootstrap-switch/bootstrap-switch.min.js"></script>
+{/block}
+{block name="footer_js"}
+<script>
+    let loading = false;
+    $(document).ready(function () {
+        let table = $("#table_list_1");
+        table.jqGrid({
+            url: '__ROOT__/admin/bill/index',
+            mtype: "post",
+            datatype: "json",
+            styleUI: 'Bootstrap',    //风格
+            height: 350,
+            // autowidth:true,
+            shrinkToFit: true,
+            rowNum: 10,
+            rowList: [10, 20, 30],
+            colNames: ["序号", "用户", "类型", "收支", "金额", "详情", "时间"],
+            colModel: [
+                {name: "id", index: "id", align:"center",width: 60, sorttype: "int", key: true},
+                {name: "user.mobile", index: "user.mobile",align:"center", sortable: false, width: 100},
+                {name: "type_show", index: "type_show",align:"center", sortable: false, width: 70},
+                {name: "is_consume", index: "is_consume",align:"center", sortable: false, width: 70, formatter: consumeFormat},
+                {name: "amount", index: "amount", align:"center", sortable: false, width: 100},
+                {name: "note", index: "note", align:"center", sortable: false, width: 300},
+                {name: "add_time", index: "add_time", align:"center", sortable: false, width: 100},
+            ],
+            pager: "#pager_list_1",
+            viewrecords: true,
+            caption: "会员卡类别",
+            hidegrid: false,
+            sortable: true,
+            page: 1,
+            loadComplete: function () {
+                $("#table_list_1 input[type='checkbox']").bootstrapSwitch();
+            }
+        });
+        table.navGrid("#pager_list_1", {
+                search: false, // show search button on the toolbar
+                add: false,
+                edit: false,
+                del: false,
+                refresh: true
+            },
+            {}, // edit options
+            {}, // add options
+            {}, // delete options
+            {multipleSearch: false, multipleGroup: false, showQuery: false} // search options - define multiple search
+        );
+        function consumeFormat(cellValue, options, rowObject) {
+            return `<span class="label label-${cellValue === 1 ? 'warning' : 'primary'}">${cellValue === 1 ? '支出' : '收入'}</span>`;
+        }
+    });
+</script>
+{/block}

@@ -31,8 +31,8 @@
 <nav class="navbar navbar-default" style="background-color:#f23030; border:none;">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="javascript:void(0)" onclick="window.history.back();" style="color:#fff;">
-                <i class="glyphicon glyphicon-chevron-left"></i> 消费记录
+            <a class="navbar-brand" href="__ROOT__/index/user/center" style="color:#fff;">
+                <i class="glyphicon glyphicon-chevron-left"></i> 账单
             </a>
         </div>
     </div>
@@ -41,8 +41,12 @@
 {block name="main"}
 <div class="container-fluid">
     <div class="row">
-        <div class="list-group">
-            <div class="list-group-item">
+        <div class="alert alert-warning alert-dismissible" role="alert" style="display: none" id="empty_alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>对不起!</strong> 您还没有任何账单记录！
+        </div>
+        <div class="list-group" id="bill_list" style="margin-bottom: 0">
+            <!--<div class="list-group-item">
                 <span class="label label-warning pull-right">支出</span>
                 <div class="content-body">
                     线下付款 - 订单号：19820223453，购买商品支出。现金：30000；余额：3000
@@ -65,14 +69,58 @@
                 </div>
                 <span class="bill-time">2018-09-11 12:00:00</span>
                 <span class="bill-money pull-right text-warning">1999999.00</span>
-            </div>
+            </div>-->
         </div>
+        <div class="alert alert-warning text-center" role="alert" style="padding: 5px; display: none;" id="list_more" >没有更多！</div>
     </div>
 </div>
 {/block}
 {block name="footer_js"}
 <script>
+    let page = 1;
+    let rows = 10;
+    let loading = false;
+    let more = true;    //是否还有更多
     $(function () {
+        $(window).scroll(function(){
+            if(Math.abs(document.body.clientHeight - document.documentElement.clientHeight) <= (document.documentElement.scrollTop || document.body.scrollTop))
+            {
+                if(more) getBillList();
+            }
+        });
+        getBillList();
     });
+    function getBillList() {
+        if(loading) return false;
+        loading = true;
+        $.post('__ROOT__/index/user/bill', {page:page, rows:rows}, function (res) {
+            loading = false;
+            if(! res.error_code){
+                let html = '';
+                let list = res.data.rows;
+                if(page === 1 && list.length === 0) $("#empty_alert").show();
+                for(let i = 0; i < list.length; i++){
+                    html += '<div class="list-group-item"> ' +
+                        '<span class="label label-' + (list[i].is_consume ? 'warning' : 'success') + ' pull-right">' + (list[i].is_consume ? '支出' : '收入') + '</span> ' +
+                    '<div class="content-body">' + list[i].note + '</div> ' +
+                    '<span class="bill-time text-info">' + list[i].add_time + '</span> ' +
+                    '<span class="bill-money pull-right text-warning">'+ list[i].amount +'</span>' +
+                    '</div>' ;
+                }
+                $("#bill_list").append(html);
+                if(list.length < rows){
+                    layer.open({content: '没有更多了', skin: 'msg', time: 2});
+                    $("#list_more").show();
+                    more = false;
+                }
+            }else{
+                layer.open({
+                    content: res.error_message
+                    ,skin: 'msg'
+                    ,time: 2
+                })
+            }
+        }, 'json');
+    }
 </script>
 {/block}

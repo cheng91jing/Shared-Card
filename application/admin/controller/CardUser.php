@@ -114,6 +114,11 @@ class CardUser extends AdminBase
             $cat = UserCard::get($id);
             if(empty($cat)) throw new Exception('不存在的会员卡');
             $cat->status = $status ? true : false;
+            //判断当前用户是否已经有其他会员卡
+            if($cat->status && !empty($cat->user_id)){
+                $exists = UserCard::getExistsCard($cat->user_id);
+                if(!empty($exists) && $exists->id != $cat->id) throw new Exception('该用户现在已经有有效的会员卡，无法开启！');
+            }
             $cat->save();
         }catch (Exception $e){
             $this->setReturnJsonError($e->getMessage());

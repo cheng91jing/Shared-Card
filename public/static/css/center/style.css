@@ -10,21 +10,19 @@ img {border: 0;}
 
 
 /*新增会员中心CSS*/
-
-.vipcenter { padding: 0px;}
-.vipcenter .vipheader { padding: 1rem 0 0; background: #fff}
-.vipcenter .vipheader .touxiang { width: 72px; height: 72px; margin: 0px auto; border-radius: 100%; border: 2px solid #fff;}
-.vipcenter .vipheader .touxiang img { border-radius: 100%; width: 100%;}
-.vipcenter .vipheader .name { font-size: 1.4em; text-align: center; color: #fff; line-height: 2em;}
-.vipcenter .vipheader .gztt { font-size: 1em; text-align: center; color: #fff;}
-.vipcenter .vipsan { color: #969595; padding: 14px 0; background: #fff; overflow: auto; margin-bottom: 1.5rem;}
-.vipcenter .vipsan div { border-right:1px solid #ccc;}
-.vipcenter .vipsan div:last-child { border: 0px;}
-.vipcenter .vipsan a { color: #969595; }
-.vipcenter .vipsan h4 {color: #6bcf6d; font-size: 1em; line-height: 1.5em;}
-.vipcenter .vipsan span {font-size: 2rem;}
-.vipcenter .vipsan p {padding: 0px; margin: 5px 0 0;}
-.vipcenter .vipsan p i {font-size: 1.2rem;}
+.vipheader { padding: 1rem 0 0; background: #fff}
+.vipheader .touxiang { width: 72px; height: 72px; margin: 0px auto; border-radius: 100%; border: 2px solid #fff;}
+.vipheader .touxiang img { border-radius: 100%; width: 100%;}
+.vipheader .name { font-size: 1.4em; text-align: center; color: #fff; line-height: 2em;}
+.vipheader .gztt { font-size: 1em; text-align: center; color: #fff;}
+.vipsan { color: #969595; padding: 14px 0; background: #fff; overflow: auto; margin-bottom: 1.5rem;}
+.vipsan div { border-right:1px solid #ccc;}
+.vipsan div:last-child { border: 0px;}
+.vipsan a { color: #969595; }
+.vipsan h4 {color: #6bcf6d; font-size: 1em; line-height: 1.5em;}
+.vipsan span {font-size: 1.7rem;}
+.vipsan p {padding: 0px; margin: 5px 0 0;}
+.vipsan p i {font-size: 1.2rem;}
 /*
 .vipcenter .vipul { background: #fff; padding: 0px; margin: 0px; border-width: 1px 0;}
 .vipcenter .vipul li { padding: 0px 0px; overflow: auto; border-bottom:1px solid #e8e8e8; position: relative;}
@@ -96,27 +94,11 @@ img {border: 0;}
     left: 23.5%;
     font-size: 1.4rem;
 }
-.vipcenter .vipheader .vip-card{
-    position:relative; 
-    height:14rem;
-    background: url(../images/card_ordinary.png) 
-    no-repeat;background-size: 100% 100%;
+.vipheader .vip-card{
+    position:relative;
  }
 @media screen and (min-width: 750px){
-    .vipcenter .vipheader .vip-card{ 
-        height:29rem; 
-    }
     .user-mobile{
         font-size: 3rem;
-    }
-}
-@media screen and (min-width: 970px){
-    .vipcenter .vipheader .vip-card{ 
-        height:33rem; 
-    }
-}
-@media screen and (min-width: 1170px){
-    .vipcenter .vipheader .vip-card{ 
-        height:40rem;
     }
 }

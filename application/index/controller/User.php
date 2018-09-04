@@ -3,6 +3,7 @@ namespace app\index\controller;
 
 use app\common\controller\IndexBase;
 use app\common\library\Barcode;
+use app\common\model\Bill;
 use app\common\model\UserCard;
 use Carbon\Carbon;
 use think\Exception;
@@ -85,6 +86,23 @@ class User extends IndexBase
 
     public function bill()
     {
+        if($this->request->isAjax()){
+            try{
+                $bill_list = Bill::paginateScope(['user_id' => $this->user->id], [], [], 'add_time DESC');
+                $this->setReturnJsonData($bill_list);
+            }catch (Exception $e){
+                $this->setReturnJsonError($e->getMessage());
+            }
+            return json($this->jsonReturn);
+        }
         return $this->fetch();
+    }
+
+    public function activating()
+    {
+        $user = $this->user;
+        //获取用户会员卡
+        $card = UserCard::getExistsCard($user->id);
+        return $this->fetch('', compact('user', 'card'));
     }
 }

@@ -27,6 +27,18 @@ return [
                     ],
                 ],
             ],
+            [
+                'name'       => '用户账单',
+                'id'         => 'member-bill',
+                'nav'        => true,
+                'href'       => 'admin/bill',
+                'permission' => [
+                    [
+                        'name' => '列表',
+                        'id'   => 'member-bill-list',
+                    ]
+                ],
+            ],
         ],
     ],
     [

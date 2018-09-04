@@ -214,6 +214,7 @@
                 } else {
                     layer.msg('发放成功');
                     $('#grant_card').modal('hide');
+                    table.trigger("reloadGrid");
                 }
             }, 'json')
         }

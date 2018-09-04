@@ -8,7 +8,7 @@ namespace app\common\model;
  * @property int id
  * @property integer user_id 用户ID
  * @property integer admin_id 管理员ID
- * @property int type 类型
+ * @property int bill_type 类型
  * @property int is_consume 支出/收入
  * @property float amount 金额
  * @property string add_time 时间
@@ -31,9 +31,23 @@ class Bill extends Base
         self::BT_ORDER_REFUND => '订单退款 - 订单号：%s；退款单号：%s：现金：%s；余额：%s',
     ];
 
+    protected $append = [
+        'type_show'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
     protected function getAddTimeAttr($value, $data)
     {
         return date('Y-m-d H:i:s', $value);
+    }
+
+    protected function getTypeShowAttr($value, $data)
+    {
+        return self::$bt_name[$this->bill_type];
     }
 
     /**
@@ -51,7 +65,7 @@ class Bill extends Base
         $bill->note = sprintf(self::$note_format[self::BT_ORDER_PAYMENT], $order->order_sn, $cash, $balance);
         $bill->user_id = $order->user_id;
         $bill->admin_id = $order->offline_admin;
-        $bill->type = self::BT_ORDER_PAYMENT;
+        $bill->bill_type = self::BT_ORDER_PAYMENT;
         $bill->is_consume = true;
         $bill->amount = $balance + $cash;
         $bill->add_time = time();

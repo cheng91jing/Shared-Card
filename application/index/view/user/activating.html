@@ -1,0 +1,45 @@
+{extend name="../../common/view/layout_frontend"}
+{block name="title"}- 会员卡激活{/block}
+{block name="header_style"}
+<style>
+</style>
+{/block}
+{block name="back"}
+<nav class="navbar navbar-default" style="background-color:#f23030; border:none;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="__ROOT__/index/user/center" style="color:#fff;">
+                <i class="glyphicon glyphicon-chevron-left"></i> 激活
+            </a>
+        </div>
+    </div>
+</nav>
+{/block}
+{block name="main"}
+<div class="container">
+    <div class="row">
+        <div class="" style="width: 95%;margin: 10% auto;">
+            <div class="panel panel-info " style="">
+                <div class="panel-heading text-center "
+                     style="border-bottom: none;font-size: 1.7rem;color: #f23030;">
+                    会员卡激活
+                </div>
+                <div class="panel-body">
+                    {notempty name="card"}
+                    <div class="alert alert-danger" role="alert"><strong>无法激活!</strong> 当前用户已经有正在使用的会员卡！</div>
+                    {else/}
+                    <div class="alert alert-warning" role="alert">暂不提供线下激活服务，请联系客服手动开通！</div>
+                    {/notempty}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    $(function () {
+
+    });
+</script>
+{/block}

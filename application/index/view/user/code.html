@@ -11,7 +11,7 @@
 <nav class="navbar navbar-default" style="background-color:#f23030; border:none;">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="javascript:void(0)" onclick="window.history.back();" style="color:#fff;">
+            <a class="navbar-brand" href="__ROOT__/index/user/center" style="color:#fff;">
                 <i class="glyphicon glyphicon-chevron-left"></i> 付款码
             </a>
         </div>
@@ -73,7 +73,7 @@
         getCode();
         function getCode() {
             return axios.post('__ROOT__/index/user/paymentcode')
-                .then(res => {
+                .then(function(res) {
                     if(!res.data.error_code){
                         $("#bar").attr('src', `data:image/png;base64,${res.data.data.bar}`);
                         $("#qr").attr('src', `data:image/png;base64,${res.data.data.qr}`);
@@ -82,7 +82,7 @@
                         $("#code_show").removeClass('hide').addClass('show');
                         $("#confirm").removeClass('show').addClass('hide');
                         if(countdown === null){
-                            countdown = setInterval(() => {
+                            countdown = setInterval(function(){
                                 getCode();
                             }, 30000);
                         }
