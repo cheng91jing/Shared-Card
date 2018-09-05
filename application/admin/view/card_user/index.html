@@ -74,8 +74,8 @@
 </div>
 <script>
     let loading = false;
+    let table = $("#table_list_1");
     $(document).ready(function () {
-        let table = $("#table_list_1");
         table.jqGrid({
             url: '__ROOT__/admin/card_user/index',
             mtype: "post",
@@ -158,46 +158,40 @@
         $("#generator").click(function () {
             swal({
                 title: '会员卡密生成',
-                html: `
-<p class="text-danger">请选择你要生成的会员卡类型与数量！</p>
-<hr>
-<div class="form-group">
-    <label for="generator-cat" class="sr-only">用户名</label>
-    <select id="generator-cat" required class="form-control">
-        <option value="">请选择会员卡类型</option>
+                html: '<p class="text-danger">请选择你要生成的会员卡类型与数量！</p><hr><div class="form-group"><label for="generator-cat" class="sr-only">用户名</label><select id="generator-cat" required class="form-control"><option value="">请选择会员卡类型</option>' +
         {volist name="$card_cat" id="cat"}
-        <option value="{$cat.cat_id}">{$cat.cat_name}</option>
+        '<option value="{$cat.cat_id}">{$cat.cat_name}</option>' +
         {/volist}
-    </select>
-</div>
-<div class="form-group">
-    <label for="generator-number" class="sr-only">生成数量</label>
-    <input type="text" required placeholder="请输入需要生成的会员卡数量（整数）" id="generator-number" class="form-control">
-</div>`,
+    '</select></div><div class="form-group"><label for="generator-number" class="sr-only">生成数量</label> <input type="text" required placeholder="请输入需要生成的会员卡数量（整数）" id="generator-number" class="form-control"></div>',
                 showCancelButton: true,
                 confirmButtonText: '确认生成',
                 cancelButtonText: '取消',
                 showLoaderOnConfirm: true,
-                preConfirm: () => {
+                preConfirm: function(){
                     let cat_id = $("#generator-cat").val();
                     let number = parseInt($("#generator-number").val());
                     if($.trim(cat_id) === '' || isNaN(number) || number <= 0){
                         swal.showValidationError('请按照要求填写或输入！');
                         return false;
                     }
-                    return new Promise((resolve) => {
-                        $.post('__ROOT__/admin/card_user/batch', {cat_id, number}, function (res) {
-                            resolve(res)
-                        }, 'json');
-                    })
+                    return $.post('__ROOT__/admin/card_user/batch', {cat_id, number}, function (res) {
+                        let data = res;
+                        let message = !data.error_code ? '生成成功' : data.error_message;
+                        let icon = !data.error_code ? 1 : 2;
+                        layer.alert(message, {icon});
+                        table.trigger("reloadGrid");
+                    }, 'json');
                 },
-                allowOutsideClick: () => !swal.isLoading()
-            }).then((result) => {
-                let data = result.value;
-                let message = !data.error_code ? '生成成功' : data.error_message;
-                let icon = !data.error_code ? 1 : 2;
-                layer.alert(message, {icon});
-                table.trigger("reloadGrid");
+                allowOutsideClick: function(){
+                    return !swal.isLoading()
+                }
+            }).then(function(result){
+                console.log(result);
+                // let data = result.value;
+                // let message = !data.error_code ? '生成成功' : data.error_message;
+                // let icon = !data.error_code ? 1 : 2;
+                // layer.alert(message, {icon});
+                // table.trigger("reloadGrid");
             })
         });
     });

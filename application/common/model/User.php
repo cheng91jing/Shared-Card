@@ -19,6 +19,9 @@ use think\Exception;
  *
  * @property integer $id
  * @property string $mobile 手机号
+ * @property integer $is_real 是否实名
+ * @property string $real_name 真实姓名
+ * @property string $id_code 身份证号
  * @property string $auth_code 鉴权随机字符串
  * @property string $login_code 登录状态鉴权随机数
  * @property string $create_time 创建时间
@@ -28,12 +31,26 @@ use think\Exception;
 class User extends BaseUser
 {
     protected $append = [
-        'mobile_show'
+        'mobile_show',
+        'real_name_show',
+        'id_code_show',
     ];
 
     public function getMobileShowAttr($value, $data)
     {
         return $this->mobile ? substr_replace($this->mobile, '****', 3, 4) : '';
+    }
+
+    public function getRealNameShowAttr($value, $data)
+    {
+        if(empty($this->real_name)) return null;
+        return str_pad(substr($this->real_name, -1),  mb_strlen($this->real_name, 'utf-8'), '*', STR_PAD_LEFT);
+    }
+
+    public function getIdCodeShowAttr($value, $data)
+    {
+        if(empty($this->id_code)) return null;
+        return substr($this->id_code, 0, 1) . str_repeat('*', strlen($this->id_code) - 2) . substr($this->id_code, -1);
     }
 
     /**

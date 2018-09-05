@@ -24,8 +24,10 @@ class Layout extends AdminBase
     {
         $user_nav = Config::get('jurisdiction');    //获取用户导航
         $user = $this->user;
+        $is_partner = $this->isPartnerAdmin;
+        $homeURL = $is_partner ? '/admin/offline' : '/admin/layout/home';
         $permission = PermissionHandler::getInstance();
-        return $this->fetch('', compact('user_nav', 'user', 'permission'));
+        return $this->fetch('', compact('user_nav', 'user', 'permission', 'homeURL', 'is_partner'));
     }
 
     public function home()

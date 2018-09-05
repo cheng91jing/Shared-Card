@@ -197,16 +197,19 @@
                 layer.alert('请填写需要查询的商家！');
                 return false;
             }
-            $.post("__ROOT__/admin/administrator/search", {partner_name}, function (res) {
+            $.post("__ROOT__/admin/administrator/search", {partner_name:partner_name}, function (res) {
                 if(!! res.error_code){
                     layer.alert(res.error_message, {icon: 2});
                     return false;
                 }
                 let options = '';
-                for (let partner of res.data.values()){
-                    let {id, partner_name} = partner;
-                    options += `<option value="${id}">${partner_name}</option>`;
+                for (let i = 0; i < res.data.length; i++){
+                    options += '<option value="'+ res.data[i].id + '">' + res.data[i].partner_name + '</option>';
                 }
+                // for (let partner of res.data.values()){
+                //     let {id, partner_name} = partner;
+                //     options += `<option value="${id}">${partner_name}</option>`;
+                // }
                 $("#partner_id").html(options);
             }, 'json')
         })
@@ -232,7 +235,7 @@
         layer.confirm('是否确认解除该管理员所管理的对应商家！',
             {icon: 3, title:'提示'},
             function (index) {
-                $.post('__ROOT__/admin/administrator/remove', {id}, function (res) {
+                $.post('__ROOT__/admin/administrator/remove', {id: id}, function (res) {
                     layer.close(index)
                     if(!! res.error_code){
                         layer.msg(res.error_message, {icon: 1, time: 2000});
@@ -242,30 +245,30 @@
                 });
         })
     }
-    function delAdmin(id) {
-        parent.layer.alert('确认删除该管理员吗？',
-            {icon: -1, shadeClose: !0, title: '提示', btn: ['确认', '取消']},
-            function () {
-                parent.layer.closeAll();
-                $.ajax({
-                    type: 'POST',
-                    dataType: 'json',
-                    url: '__ROOT__/admin/administrator/deladmin',
-                    data: {adminId: id},
-                    success: function (msg) {
-                        if (msg.error) {
-                            parent.layer.alert(msg.msg);
-                        } else {
-                            $("#table_list_1").trigger("reloadGrid");
-                        }
-                        return false;
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        console.log(XMLHttpRequest);
-                    }
-                });
-            }
-        );
-    }
+    // function delAdmin(id) {
+    //     parent.layer.alert('确认删除该管理员吗？',
+    //         {icon: -1, shadeClose: !0, title: '提示', btn: ['确认', '取消']},
+    //         function () {
+    //             parent.layer.closeAll();
+    //             $.ajax({
+    //                 type: 'POST',
+    //                 dataType: 'json',
+    //                 url: '__ROOT__/admin/administrator/deladmin',
+    //                 data: {adminId: id},
+    //                 success: function (msg) {
+    //                     if (msg.error) {
+    //                         parent.layer.alert(msg.msg);
+    //                     } else {
+    //                         $("#table_list_1").trigger("reloadGrid");
+    //                     }
+    //                     return false;
+    //                 },
+    //                 error: function (XMLHttpRequest, textStatus, errorThrown) {
+    //                     console.log(XMLHttpRequest);
+    //                 }
+    //             });
+    //         }
+    //     );
+    // }
 </script>
 {/block}

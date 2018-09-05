@@ -77,11 +77,11 @@
             return operationHtml;
         }
         function formatCat(cellValue, options, rowObject){
-            return `${rowObject.cat ? rowObject.cat.cat_name + `<span class="badge badge-warning">${rowObject.cat.cat_level}级分类</span>` : '未找到分类[错误]'}`;
+            return rowObject.cat ? rowObject.cat.cat_name + '<span class="badge badge-warning">' + rowObject.cat.cat_level + '级分类</span>' : '未找到分类[错误]';
         }
         function formatDiscount(cellValue, options, rowObject) {
             return rowObject.goods_discount
-                ? `类型：${rowObject.discount_type_show}<br>数量：${rowObject.discount_number}`
+                ? '类型：' + rowObject.discount_type_show + '<br>数量：' + rowObject.discount_number
                 : '<span class="badge badge-info">未开启</span>';
         }
     });

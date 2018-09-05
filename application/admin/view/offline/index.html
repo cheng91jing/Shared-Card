@@ -276,20 +276,32 @@
                 let html = '';
                 let color = null;
                 let level = null;
-                for (let {cat_id, cat_name, cat_level} of res.data.cat_list.values()){
+                for(let i = 0; i < res.data.cat_list.length; i++){
+                    let cat = res.data.cat_list[i];
                     if(color === null){
-                        level = parseInt(cat_level);
+                        level = parseInt(cat.cat_level);
                         color = (level === 1) ? 'default' : ((level === 2) ? 'warning' : 'danger');
                     }
-                    html += `<label class="btn btn-${color} btn-outline btn-block"><input type="radio" data-name="${cat_name}" data-level="${cat_level}" value="${cat_id}" name="cat_${level}" class="cat_chose" autocomplete="off">${cat_name}</label>`;
+                    html += '<label class="btn btn-' + color + ' btn-outline btn-block"><input type="radio" data-name="' + cat.cat_name + '" data-level="' + cat.cat_level + '" value="' + cat.cat_id + '" name="cat_' + level + '" class="cat_chose" autocomplete="off">' + cat.cat_name + '</label>';
                 }
+                // for (let {cat_id, cat_name, cat_level} of res.data.cat_list.values()){
+                //     if(color === null){
+                //         level = parseInt(cat_level);
+                //         color = (level === 1) ? 'default' : ((level === 2) ? 'warning' : 'danger');
+                //     }
+                //     html += `<label class="btn btn-${color} btn-outline btn-block"><input type="radio" data-name="${cat_name}" data-level="${cat_level}" value="${cat_id}" name="cat_${level}" class="cat_chose" autocomplete="off">${cat_name}</label>`;
+                // }
                 if(html === '') html = '<h3 class="text-center text-muted">未找到对应分类</h3>';
                 if(level <= 3) $(`#cat_list_${level}`).html(html);
                 //商品
                 let html_goods = '';
-                for (let {goods_id, goods_name, goods_price} of res.data.goods_list.values()){
-                    html_goods += `<label class="btn btn-info btn-outline btn-block"><input type="radio" data-price="${goods_price}" data-name="${goods_name}" value="${goods_id}" name="goods" class="goods_chose" autocomplete="off">${goods_name}</label>`;
+                for(let j = 0; j < res.data.cat_list.length; j++){
+                    let goods = res.data.goods_list[j];
+                    html_goods += '<label class="btn btn-info btn-outline btn-block"><input type="radio" data-price="' + goods.goods_price + '" data-name="${goods_name}" value="' + goods.goods_id + '" name="goods" class="goods_chose" autocomplete="off">' + goods.goods_name + '</label>';
                 }
+                // for (let {goods_id, goods_name, goods_price} of res.data.goods_list.values()){
+                //     html_goods += `<label class="btn btn-info btn-outline btn-block"><input type="radio" data-price="${goods_price}" data-name="${goods_name}" value="${goods_id}" name="goods" class="goods_chose" autocomplete="off">${goods_name}</label>`;
+                // }
                 if(html_goods === '') html_goods = '<h3 class="text-center text-muted">未找到对应商品</h3>';
                 $(`#goods_list`).html(html_goods);
             }else{

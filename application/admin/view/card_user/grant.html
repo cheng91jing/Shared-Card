@@ -97,7 +97,6 @@
         },
         submitHandler: function (form) {
             $.post('__ROOT__/admin/card/add', $(form).serialize(), function (res) {
-                console.log(res);
                 if (res.error_code) {
                     swal({
                         type: 'error',

@@ -238,7 +238,7 @@
         $("#submit_cat").on('click', function (e) {
             let load_index = layer.load(1);
             let data = cat_list.nestable('serialize');
-            $.post('__ROOT__/admin/goods_cat/operating', {data}, function (res) {
+            $.post('__ROOT__/admin/goods_cat/operating', {data:data}, function (res) {
                 layer.close(load_index);
                 layer.alert(! res.error_code ? '成功！' : res.error_message, {icon: 1});
             })
@@ -253,18 +253,9 @@
                 layer.msg('分类名称不能为空');
                 return false;
             }
-            $.post('__ROOT__/admin/goods_cat/add', {name}, function (res) {
+            $.post('__ROOT__/admin/goods_cat/add', {name:name}, function (res) {
                 if (!res.error_code) {
-                    $("#cat_list").prepend(`
-<li class="dd-item" data-id="${res.data.cat_id}">
-    <div class="dd-handle">拖动</div>
-    <div class="dd-content">
-        <span>${res.data.cat_name}</span>
-        <a class="pull-right text-danger icon_opt update_cat"><i class="fa fa-trash-alt"></i></a>
-        <a class="pull-right text-warning icon_opt delete_cat"><i class="fa fa-edit"></i></a>
-    </div>
-</li>
-`);
+                    $("#cat_list").prepend('<li class="dd-item" data-id="'+ res.data.cat_id + '"><div class="dd-handle">拖动</span></div><div class="dd-content"><span>' + res.data.cat_name + '</span><a class="pull-right text-danger icon_opt update_cat"><i class="fa fa-trash-alt"></i></a> <a class="pull-right text-warning icon_opt delete_cat"><i class="fa fa-edit"></i></a> </div> </li>');
                 } else {
                     layer.msg(res.error_message);
                 }

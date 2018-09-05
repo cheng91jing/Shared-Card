@@ -105,4 +105,10 @@ class User extends IndexBase
         $card = UserCard::getExistsCard($user->id);
         return $this->fetch('', compact('user', 'card'));
     }
+
+    public function real()
+    {
+        $user = $this->user;
+        return $this->fetch('', compact('user'));
+    }
 }

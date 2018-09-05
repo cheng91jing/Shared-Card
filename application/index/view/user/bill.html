@@ -108,7 +108,7 @@
                     '</div>' ;
                 }
                 $("#bill_list").append(html);
-                if(list.length < rows){
+                if(list.length < rows && $("#empty_alert").is(':hidden')){
                     layer.open({content: '没有更多了', skin: 'msg', time: 2});
                     $("#list_more").show();
                     more = false;
