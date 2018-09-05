@@ -22,6 +22,10 @@ return [
                         'id'   => 'member-user-list',
                     ],
                     [
+                        'name' => '新增',
+                        'id'   => 'member-user-add',
+                    ],
+                    [
                         'name' => '信息',
                         'id'   => 'member-user-info',
                     ],

@@ -2,12 +2,19 @@
 namespace app\index\controller;
 
 use app\common\controller\IndexBase;
-use think\Config;
 
 class Index extends IndexBase
 {
-//    public function index()
-//    {
-//        return json(Config::get('customize.aaa'));
-//    }
+    public function index()
+    {
+        $param = $this->request->param();
+        //跳转接口
+        
+    }
+
+    private function verfiyParam($param)
+    {
+        $config = config('customize.hngs_auth');
+        //参数为 access_key agent_id mobile
+    }
 }

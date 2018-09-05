@@ -30,29 +30,31 @@ class Member extends AdminBase
     }
 
     //用户信息
-    public function info()
+    public function info($user_id)
     {
         $this->canThrowException('member-user-info');
+        $user = User::get($user_id);
+        if(empty($user)) $this->error('未找到该用户');
+        return $this->fetch('', compact('user'));
     }
     
-    public function add($user_id = null)
+    public function add()
     {
-        if (empty($user_id)) {
-            $user = new User();
-        } else {
-            $user = User::get($user_id);
-        }
+        $this->canThrowException('member-user-add');
         if ($this->request->isAjax()) {
             try {
                 $mobile = $this->request->post('mobile', null, 'trim');
-                $user->account($mobile);
+                $real_name = $this->request->post('real_name', null, 'trim');
+                $id_code = $this->request->post('id_code', null, 'trim');
+                $real = (!empty($real_name) && !empty($id_code) && strlen($id_code) === 18)
+                    ? compact('real_name', 'id_code')
+                    : [];
+                (new User)->account($mobile, $real);
             } catch (Exception $e) {
                 $this->setReturnJsonError($e->getMessage());
             }
             return json($this->jsonReturn);
         }
-
-        return $this->fetch('info', compact('user'));
     }
 
 

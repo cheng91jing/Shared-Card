@@ -41,7 +41,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation"  class="active hide">
                     <a href="#code-login" aria-controls="password-login" role="tab"
-                       data-toggle="tab">短信登录/注册</a>
+                       data-toggle="tab">实名认证</a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -95,18 +95,10 @@
 <script>
     $("#real-form").validate({
         submitHandler: function(f){
-            axios.post('__ROOT__/index/login/index', $(f).serialize())
+            axios.post('__ROOT__/index/user/real', $(f).serialize())
                 .then(function(res){
-                    console.log(res);
                     if(! res.data.error_code){
-                        // swal({
-                        //     icon: 'success',
-                        //     title: '登录成功',
-                        //     timer: 2000,
-                        //     allowOutsideClick: false
-                        // }).then(function(result){
-                            window.location.href = '__ROOT__/index/user/center'
-                        // })
+                        window.location.reload();
                     }else{
                         layer.open({
                             content: res.data.error_message,

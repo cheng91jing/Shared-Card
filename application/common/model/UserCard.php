@@ -131,6 +131,7 @@ class UserCard extends Base
         $userCard          = new static();
         $userCard->user_id = $user->id;
         $userCard->cat_id  = $cat->cat_id;
+        if(! $user->is_real) throw new Exception("用户：{$user->mobile} 还未实名认证，不能发卡！");
         //检测该用户下是否有能使用的会员卡
         if (! ! self::getExistsCard($user->id)) throw new Exception("用户：{$user->mobile} 已经有会员卡了");
         if ($cat->isInvalid()) throw new Exception("会员卡类型：{$cat->cat_name} 不可用!");
@@ -212,6 +213,7 @@ class UserCard extends Base
         if (! self::verifyCardPassword($card, $password)) throw new Exception('卡密错误！');
         $cat = CardCategory::get($card->cat_id);
         if ($cat->isInvalid()) throw new Exception('当前会员卡类型无效，不可激活！');
+        if(! $user->is_real) throw new Exception("用户：{$user->mobile} 还未实名认证，不能发卡！");
         if (! ! self::getExistsCard($user->id)) throw new Exception('该用户已有正在使用的会员卡！');
 
         $card->user_id = $user->id;

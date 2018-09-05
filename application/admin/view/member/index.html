@@ -6,7 +6,7 @@
                     <div class="ibox-title">
                         <h5>用户列表</h5>
                         <div class="ibox-tools">
-                            <button onclick="window.location.href='__ROOT__/admin/member/add'" type="button" class="btn btn-outline btn-primary btn-xs">新增用户</button>
+                            <button onclick="addUser()" type="button" class="btn btn-outline btn-primary btn-xs">新增用户</button>
                         </div>
                     </div>
                     <div class="ibox-content">
@@ -22,9 +22,53 @@
         </div>
 {/block}
 {block name="footer_js"}
+<div class="modal inmodal" id="add-user" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content animated fadeInDown">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                        class="sr-only">关闭</span>
+                </button>
+                <h4 class="modal-title">新增用户</h4>
+                <!--<small class="font-bold">这里可以显示副标题。</small>-->
+            </div>
+            <form class="form-horizontal" id="add-user-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="mobile">手机号</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="mobile" name="mobile" value=""
+                                   placeholder="请填写手机号" type="text" rangelength="[11,11]" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="real_name">真实姓名</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="real_name" name="real_name" value=""
+                                   placeholder="请填写用户姓名" type="text" rangelength="[2,10]">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="id_code">身份证号</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" id="id_code" name="id_code" value=""
+                                   placeholder="请填写用户身份证号" type="text" rangelength="[18,18]">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
     <script>
+        let grid = $("#table_list_1");
+        let model = $("#add-user");
         $(document).ready(function(){
-            $("#table_list_1").jqGrid({
+            grid.jqGrid({
                 url:'__ROOT__/admin/member/index',
                 mtype: "post",
                 datatype: "json",
@@ -50,7 +94,7 @@
                 hidegrid:false,
                 sortable:true
             });
-            $('#table_list_1').navGrid("#pager_list_1", {
+            grid.navGrid("#pager_list_1", {
                     search: false, // show search button on the toolbar
                     add: false,
                     edit: false,
@@ -67,13 +111,47 @@
                 else return rowObject.real_name_show + '<br>' + rowObject.id_code_show;
             }
             function formatOperation(cellValue, options, rowObject){
-                var operationHtml = '<span operationValue="'+cellValue+'"><a href="__ROOT__/admin/member/add?user_id='+cellValue+'" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin('+ cellValue +')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+                var operationHtml = '<span operationValue="'+cellValue+'"><a href="__ROOT__/admin/member/info?user_id='+cellValue+'" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin('+ cellValue +')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
                 return operationHtml;
             }
 
             function unformatOperation(cellValue, options, cellObject){
                 return $(cellObject.html()).attr('operationValue');
             }
+
+            let Formvalid = $('#add-user-form').validate({
+                submitHandler: function (form) {
+                    $.post('__ROOT__/admin/member/add', $(form).serialize(), function (res) {
+                        model.modal('hide');
+                        if(res.error_code){
+                            swal({
+                                type: 'error',
+                                title: '出错了',
+                                text: res.error_message,
+                                allowOutsideClick: false
+                            })
+                        } else {
+                            swal({
+                                type: 'success',
+                                title: '添加成功',
+                                timer: 3000,
+                                allowOutsideClick: false
+                            }).then(result => {
+                                grid.trigger("reloadGrid");
+                            })
+                        }
+                    }, 'json')
+                },
+            });
+
+            model.on('hidden.bs.modal', function (e) {
+                document.getElementById('add-user-form').reset();
+                Formvalid.resetForm();
+                $('#add-user-form .form-group').removeClass('has-error has-success');
+            })
         });
+        function addUser() {
+            model.modal('show');
+        }
     </script>
 {/block}

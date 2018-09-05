@@ -295,7 +295,7 @@
                 if(level <= 3) $(`#cat_list_${level}`).html(html);
                 //商品
                 let html_goods = '';
-                for(let j = 0; j < res.data.cat_list.length; j++){
+                for(let j = 0; j < res.data.goods_list.length; j++){
                     let goods = res.data.goods_list[j];
                     html_goods += '<label class="btn btn-info btn-outline btn-block"><input type="radio" data-price="' + goods.goods_price + '" data-name="${goods_name}" value="' + goods.goods_id + '" name="goods" class="goods_chose" autocomplete="off">' + goods.goods_name + '</label>';
                 }

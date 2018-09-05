@@ -75,8 +75,8 @@
             return axios.post('__ROOT__/index/user/paymentcode')
                 .then(function(res) {
                     if(!res.data.error_code){
-                        $("#bar").attr('src', `data:image/png;base64,${res.data.data.bar}`);
-                        $("#qr").attr('src', `data:image/png;base64,${res.data.data.qr}`);
+                        $("#bar").attr('src', 'data:image/png;base64,' + res.data.data.bar);
+                        $("#qr").attr('src', 'data:image/png;base64,' + res.data.data.qr);
                         $("#payment_code_number").html(res.data.data.init_code);
                         code = res.data.data.code;
                         $("#code_show").removeClass('hide').addClass('show');

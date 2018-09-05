@@ -39,7 +39,17 @@
 {block name="footer_js"}
 <script>
     $(function () {
-
+        {empty name="user->is_real"}
+        layer.open({
+            content: '请先填写实名信息后才能，激活会员卡！',
+            btn: '去实名',
+            anim: 'up',
+            shadeClose: false,
+            yes: function (index) {
+                window.location.href = '__ROOT__/index/user/real'
+            }
+        })
+        {/empty}
     });
 </script>
 {/block}

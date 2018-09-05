@@ -109,6 +109,21 @@ class User extends IndexBase
     public function real()
     {
         $user = $this->user;
+        if($this->request->isPost()){
+            try{
+                $param = $this->request->post('', null, 'trim');
+                if(empty($param['real_name']) || empty($param['id_code']) || strlen($param['id_code']) !== 18)
+                    throw new Exception('参数错误！');
+                //实名认证
+                $user->is_real = true;
+                $user->real_name = $param['real_name'];
+                $user->id_code = $param['id_code'];
+                $user->save();
+            }catch (Exception $e){
+                $this->setReturnJsonError($e->getMessage());
+            }
+            return json($this->jsonReturn);
+        }
         return $this->fetch('', compact('user'));
     }
 }
