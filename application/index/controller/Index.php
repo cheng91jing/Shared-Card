@@ -35,7 +35,7 @@ class Index extends IndexBase
             if(empty($param['agent']) || empty($param['noncestr']) ||
                 empty($param['time']) || /*empty($param['mobile']) ||*/
                 empty($param['sign'])) throw new Exception('不是从授权的第三方跳转！');
-            if(intval($param['time']) > time() || time() - intval($param['time']) > 30) throw new Exception('参数错误！')
+            if(intval($param['time']) > time() || time() - intval($param['time']) > 30) throw new Exception('参数错误！');
             $checkSign = $this->getSignature($param, $config['access_key']);
             if($checkSign != $param['sign']) throw new Exception('授权检测失败！');
         }catch (Exception $e){
