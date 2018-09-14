@@ -1,0 +1,81 @@
+{extend name="../../common/view/layout_frontend"}
+{block name="title"}- {$hotel['title']}{/block}
+{block name="header_style"}
+<style>
+    .hotel-title{
+        margin: 10px 0 !important;
+    }
+</style>
+{/block}
+{block name="back"}
+<nav class="navbar navbar-default navbar-fixed-top" id="nav-header" style="background-color: rgba(242,48,48,0); border-width: 0;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="__ROOT__/index/hotel/index" style="color: #ffffff">
+                <i class="glyphicon glyphicon-chevron-left"></i>
+            </a>
+            <p class="navbar-text" style="margin: 0 0 0 50px;font-size:2rem;line-height:50px;color: #ffffff">{$hotel['title']}</p>
+        </div>
+    </div>
+</nav>
+{/block}
+{block name="main"}
+<div class="container" style="padding: 0">
+    <div style="position: relative">
+        <img style="" class="img-responsive" src="__ROOT__{$hotel['header_img']}" alt="">
+    </div>
+    <div class="col-xs-12" style="padding: 10px;">
+        <h3 class="hotel-title">{$hotel['title']} <small>{$hotel['type']}</small></h3>
+        <div class="hotel-address">
+            <div class="col-xs-9" style="padding-left: 0">
+                <h5>{$hotel['address']}<!--<small>玉沙路距我65m</small>--></h5>
+            </div>
+            <div class="col-xs-3" style="padding: 0">
+                <h5 class="text-right"><a href="javascript:void (0)">地图/导航 <i class="fa fa-chevron-right"></i></a></h5>
+            </div>
+        </div>
+        <div class="hotel-badge">
+            <div class="col-xs-9" style="padding-left: 0">
+                <h5>{$hotel['open_time']}</h5>
+                <div class="hotel-badge">
+                    <span><i class="fa fa-briefcase"></i>商务服务</span>
+                    <span><i class="fa fa-clock"></i>叫醒服务</span>
+                    <span><i class="fa fa-chess-board"></i>棋牌室</span>
+                </div>
+            </div>
+            <div class="col-xs-3" style="padding: 0">
+                <h5 class="text-right"><a href="javascript:void (0)">详情/设施 <i class="fa fa-chevron-right"></i></a></h5>
+            </div>
+        </div>
+        {notempty name="hotel['mobile']"}
+        <div class="">
+            <div class="col-xs-9" style="padding-left: 0">
+                <h4><i class="fa fa-phone-volume"></i>&nbsp;{$hotel['mobile']}</h4>
+            </div>
+            <div class="col-xs-3" style="padding: 0">
+                <h5 class="text-right"><a href="tel:{$hotel['mobile']}">点击拨号 <i class="fa fa-phone"></i></a></h5>
+            </div>
+        </div>
+        {/notempty}
+    </div>
+    <div class="hotel-detail">
+        <img class="img-responsive" src="__ROOT__{$hotel['detail_img']}" alt="">
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    $(function () {
+        $(window).scroll(function(){
+            let max = 150;
+            let top = document.documentElement.scrollTop || document.body.scrollTop;
+            console.log(max, top);
+            if(max >= (document.documentElement.scrollTop || document.body.scrollTop))
+            {
+                console.log(11);
+                $("#nav-header").css({backgroundColor: 'rgba(242,48,48,' + (top / max) + ')'})
+            }
+        });
+    });
+</script>
+{/block}

@@ -1,0 +1,44 @@
+{extend name="../../common/view/layout_frontend"}
+{block name="title"}- 酒店列表{/block}
+{block name="header_style"}
+<style>
+    .list-group-item{
+        margin-bottom: 15px;
+        border-radius: 10px !important;
+    }
+</style>
+{/block}
+{block name="back"}
+<nav class="navbar navbar-default" style="background-color:#f23030; border:none;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="__ROOT__/index/user/center" style="color:#fff;">
+                <i class="glyphicon glyphicon-chevron-left"></i> 酒店列表
+            </a>
+        </div>
+    </div>
+</nav>
+{/block}
+{block name="main"}
+<div class="container">
+    <div class="row">
+        <div class="list-group" style="padding: 0 5%;">
+            <div onclick="window.location.href = '__ROOT__/index/hotel/yunhu'" class="list-group-item">
+                <h4 class="list-group-item-heading">琼中云湖酒店</h4>
+                <p class="list-group-item-text"></p>
+            </div>
+            <div onclick="window.location.href = '__ROOT__/index/hotel/haidb'" class="list-group-item">
+                <h4 class="list-group-item-heading">民宿高端酒店</h4>
+                <p class="list-group-item-text"></p>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer_js"}
+<script>
+    $(function () {
+
+    });
+</script>
+{/block}

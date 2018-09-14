@@ -55,31 +55,39 @@
         <div class="col-xs-4 text-center col-padding-none">
             <a href="javascript:void(0)" {notempty name="card"}id="card"{/notempty} >
                 <h4>
+                    {notempty name="card"}
                     <span>8</span> 折
+                    {else /}
+                    无
+                    {/notempty}
                 </h4>
                 <p>餐饮优惠&nbsp;<i class="glyphicon glyphicon-menu-right"></i></p>
             </a>
         </div>
     </div>
-    <div class="list-group nav-list">
-        <a href="__ROOT__/index/user/activating" class="list-group-item">
+    <ul class="list-group nav-list">
+        <li onclick="window.location.href = '__ROOT__/index/hotel/index'" class="list-group-item">
+            <span class="nav-style">预定酒店</span>
+            <span class="glyphicon glyphicon-menu-right pull-right"></span>
+        </li>
+        <li onclick="window.location.href = '__ROOT__/index/user/activating'" class="list-group-item">
             <span class="nav-style">激活/有效期</span>
             <span class="glyphicon glyphicon-menu-right pull-right"></span>
-        </a>
-        <a href="__ROOT__/index/user/real" class="list-group-item">
+        </li>
+        <li onclick="window.location.href = '__ROOT__/index/user/real'" class="list-group-item">
             <span class="nav-style">实名信息</span>
             <span class="glyphicon glyphicon-menu-right pull-right"></span>
             <span class="label label-{$user->is_real ? 'success' : 'danger'} pull-right">{$user->is_real ? '已实名' : '未实名'}</span>
-        </a>
-        <a href="__ROOT__/index/user/bill" class="list-group-item">
+        </li>
+        <li onclick="window.location.href = '__ROOT__/index/user/bill'" class="list-group-item">
             <span class="nav-style">账单</span>
             <span class="glyphicon glyphicon-menu-right pull-right"></span>
-        </a>
-        <a href="javascript:void (0);" class="list-group-item" id="go-logout">
+        </li>
+        <li class="list-group-item" id="go-logout">
             <span class="nav-style">退出登录</span>
             <span class="fas fa-sign-out-alt pull-right"></span>
-        </a>
-    </div>
+        </li>
+    </ul>
 </div>
 <!-- <div class="footnav">
   <div class="col-xs-3 text-center"><a href="index.html"><i class="iconfont icon-shop"></i><p>积分商城</p></a></div>
