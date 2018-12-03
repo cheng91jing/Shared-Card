@@ -48,7 +48,7 @@
                         </div>
                     </li>
                     {volist name="user_nav" id="nav"}
-                    {if condition="$permission->can($nav.id)"}
+                    {if condition="$nav.nav && $permission->can($nav.id)"}
                     <li>
                         <a href="__ROOT__/{$nav.href ? $nav.href : 'javascript:void(0)'}">
                             {notempty name="$nav.icon"}<i class="{$nav.icon}"></i>{/notempty}
@@ -58,7 +58,7 @@
                         {notempty name="$nav.child"}
                         <ul class="nav nav-second-level">
                             {volist name="nav.child" id="child"}
-                            {if condition="$permission->can($child.id)"}
+                            {if condition="$child.nav && $permission->can($child.id)"}
                             <li>
                                 <a class="J_menuItem" href="__ROOT__/{$child.href ? $child.href : 'javascript:void(0)'}">{$child.name}</a>
                             </li>

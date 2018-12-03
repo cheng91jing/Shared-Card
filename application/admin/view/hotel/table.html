@@ -7,12 +7,7 @@
     <div class="col-sm-12">
         <div class="ibox ">
             <div class="ibox-title">
-                <h5>商家列表</h5>
-                <div class="ibox-tools">
-                    <button onclick="window.location.href='__ROOT__/admin/merchant/add'" type="button"
-                            class="btn btn-outline btn-primary btn-xs">新增商家
-                    </button>
-                </div>
+                <h5>酒店列表</h5>
             </div>
             <div class="ibox-content">
                 <hr>
@@ -35,7 +30,7 @@
     $(document).ready(function () {
         let table = $("#table_list_1");
         table.jqGrid({
-            url: '__ROOT__/admin/merchant/index',
+            url: '__ROOT__/admin/hotel/table',
             mtype: "post",
             datatype: "json",
             styleUI: 'Bootstrap',    //风格
@@ -44,29 +39,17 @@
             shrinkToFit: true,
             rowNum: 10,
             rowList: [10, 20, 30],
-            colNames: ["序号", "名称", "商品优惠", "酒店预订","状态", "操作"],
+            colNames: ["序号", "所属商家", "是否开启" ,"是否显示", "操作"],
             colModel: [
                 {name: "id", index: "id", align:"center",width: 60, sorttype: "int"},
-                {name: "partner_name", index: "partner_name",align:"center", sortable: false, width: 150},
-                {name: "goods_discount", index: "goods_discount", align:"center", sortable: false, width: 150, formatter: function (cellValue, options, rowObject) {
-                        return parseInt(cellValue) === 1 ? '<span class="label label-primary">允许</span>' : '<span class="label label-danger">禁止</span>';
-                    }},
-                {
-                    name: "hotel",
-                    index: "hotel",
-                    align:"center",
-                    sortable: false,
-                    width: 150,
-                    formatter: function (cellValue, options, rowObject) {
-                        return '<a  class="btn btn-xs '+ (!cellValue ? 'btn-warning' : 'btn_primary') +'" href="__ROOT__/admin/hotel/info?partner='+ rowObject.id +'">' + (!cellValue ? '点击开通' : '设置详情') + '</a>'
-                    }
-                },
-                {name: "status", index: "status", align:"center", sortable: false, width: 100, formatter:switchFormat2},
+                {name: "patner.partner_name", index: "patner.partner_name",align:"center", sortable: false, width: 150},
+                {name: "status", index: "status", align:"center", sortable: false, width: 100, formatter:switchFormat1},
+                {name: "is_show", index: "status", align:"center", sortable: false, width: 100, formatter:switchFormat2},
                 {name: "id", index: "id", align:"center", width: 150, sortable: false, formatter: formatOperation}
             ],
             pager: "#pager_list_1",
             viewrecords: true,
-            caption: "会员卡类别",
+            caption: "酒店列表",
             hidegrid: false,
             sortable: true,
             page: 1,
@@ -87,10 +70,13 @@
             {multipleSearch: false, multipleGroup: false, showQuery: false} // search options - define multiple search
         );
         function switchFormat2(cellValue, options, rowObject) {
-            return '<input type="checkbox" data-id="' + rowObject.id +'" '+ (cellValue === 1 ? 'checked' : '') +' data-size="mini" data-on-color="success" data-off-color="warning" />';
+            return '<input type="checkbox" data-id="' + rowObject.cat_id +'" '+ (cellValue === 1 ? 'checked' : '') +' data-field="is_show" data-size="mini" data-on-color="success" data-off-color="warning" />';
+        }
+        function switchFormat1(cellValue, options, rowObject) {
+            return '<input type="checkbox" data-id="' + rowObject.cat_id +'" '+ (cellValue === 1 ? 'checked' : '') +' data-field="status" data-size="mini" data-on-color="success" data-off-color="warning" />';
         }
         function formatOperation(cellValue, options, rowObject) {
-            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/merchant/add?partner_id=' + cellValue + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
+            var operationHtml = '<span operationValue="' + cellValue + '"><a href="__ROOT__/admin/hotel/info?hotel_id=' + cellValue + '" type="button" class="btn btn-primary btn-xs" >详情</a> <a onclick="delAdmin(' + cellValue + ')" class="btn btn-danger btn-xs btn-bitbucket"><i class="fa fa-times"></i></a></span>';
             return operationHtml;
         }
 
@@ -109,7 +95,7 @@
         $.ajax({
             type:'POST',
             dataType:'json',
-            url:'__ROOT__/admin/merchant/status',
+            url:'__ROOT__/admin/card/status',
             data:{
                 id:id,
                 status:state ? 1 : 0

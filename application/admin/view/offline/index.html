@@ -196,6 +196,8 @@
             calculate_price();
         });
         getCatChildren();
+        //初始化线下商品类型
+        $("input:radio[name='order_type'][value='1']").trigger('click');
     });
     $.validator.addMethod('isPrice', function (value, element, param) {
         if (isNaN(value)) return false;
@@ -297,7 +299,7 @@
                 let html_goods = '';
                 for(let j = 0; j < res.data.goods_list.length; j++){
                     let goods = res.data.goods_list[j];
-                    html_goods += '<label class="btn btn-info btn-outline btn-block"><input type="radio" data-price="' + goods.goods_price + '" data-name="${goods_name}" value="' + goods.goods_id + '" name="goods" class="goods_chose" autocomplete="off">' + goods.goods_name + '</label>';
+                    html_goods += '<label class="btn btn-info btn-outline btn-block"><input type="radio" data-price="' + goods.goods_price + '" data-name="' + goods.goods_name + '" value="' + goods.goods_id + '" name="goods" class="goods_chose" autocomplete="off">' + goods.goods_name + '</label>';
                 }
                 // for (let {goods_id, goods_name, goods_price} of res.data.goods_list.values()){
                 //     html_goods += `<label class="btn btn-info btn-outline btn-block"><input type="radio" data-price="${goods_price}" data-name="${goods_name}" value="${goods_id}" name="goods" class="goods_chose" autocomplete="off">${goods_name}</label>`;

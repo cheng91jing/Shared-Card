@@ -25,7 +25,7 @@ class Merchant extends AdminBase
     {
         $this->canThrowException('merchant-partner-list');
         if ($this->request->isAjax()) {
-            $data = Partner::paginateScope();
+            $data = Partner::paginateScope([], [], ['hotel']);
             return json($data);
         }
         return $this->fetch();

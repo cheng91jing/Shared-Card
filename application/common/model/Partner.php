@@ -36,6 +36,11 @@ class Partner extends Base
         return $this->hasMany(AdminUser::class, 'partner_id', 'id');
     }
 
+    public function hotel()
+    {
+        return $this->hasOne(Hotel::class, 'partner_id', 'id');
+    }
+
     /**
      * 商家基础信息
      * @param array $param [partner_type, partner_cat, name]

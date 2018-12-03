@@ -125,6 +125,30 @@ return [
                     ],
                 ],
             ],
+            [
+                'name'       => '酒店管理',
+                'id'         => 'goods-hotel',
+                'nav'        => true,
+                'href'       => 'admin/hotel',
+//                'news'  => '管理员专属',
+//                'special' => 2,
+                'permission' => [
+                    [
+                        'name' => '酒店列表',
+                        'id'   => 'goods-hotel-table',
+                        'news'  => '管理员专属',
+                        'special' => 2,
+                    ],
+                    [
+                        'name' => '酒店信息[增/改]',
+                        'id'   => 'goods-hotel-info',
+                    ],
+                    [
+                        'name' => '酒店删除',
+                        'id'   => 'goods-hotel-del',
+                    ],
+                ],
+            ],
         ],
     ],
     [

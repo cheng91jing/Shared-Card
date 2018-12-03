@@ -69,8 +69,9 @@ class Jurisdiction extends AdminBase
     {
         $type ? $this->canThrowException('system-role-permission') : $this->canThrowException('system-administrator-permission');
         $model = $type ? AdminIdentity::get($id) : AdminUser::get($id);
-
         if (empty($model)) $this->error('未知的角色或管理员');
+        $owned = explode('|', $model->permission_ids);
+        if(in_array('all', $owned)) $this->error('ALL 权限的角色或管理员权限不可更改！');
         if($this->request->isAjax()){
             try{
                 $model->permission_ids = implode('|', $this->request->post('permission/a', []));
@@ -81,8 +82,6 @@ class Jurisdiction extends AdminBase
             return json($this->jsonReturn);
         }
         $special = $this->role->is_partner ? 1 : 2; //特殊标记，1：商家；2：管理员
-        $owned = explode('|', $model->permission_ids);
-
         $jurisdiction = Config::get('jurisdiction');
         return $this->fetch('permission', compact('model', 'jurisdiction', 'owned', 'special'));
     }
